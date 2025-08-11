@@ -1,13 +1,14 @@
-package com.example.demo;
+package com.project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ConfigServerApplication {
+
+public class InsuranceClaimProcessingApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ConfigServerApplication.class, args);
+		SpringApplication.run(InsuranceClaimProcessingApplication.class, args);
 	}
 
 }
