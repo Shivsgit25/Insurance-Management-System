@@ -1,13 +1,15 @@
-package com.example.demo;
+package com.project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 @SpringBootApplication
-public class ServiceRegistryApplication {
+@EnableEurekaServer
+public class EurekaServiceRegistryApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ServiceRegistryApplication.class, args);
+		SpringApplication.run(EurekaServiceRegistryApplication.class, args);
 	}
 
 }

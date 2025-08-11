@@ -1,10 +1,10 @@
-package com.example.demo;
+package com.project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ServiceRegistryApplicationTests {
+class EurekaServiceRegistryApplicationTests {
 
 	@Test
 	void contextLoads() {
