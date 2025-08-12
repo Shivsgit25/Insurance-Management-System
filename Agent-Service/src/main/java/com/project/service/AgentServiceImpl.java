@@ -35,29 +35,28 @@ public class AgentServiceImpl implements AgentService {
     	return repo.findById(agentId);
     	
     }
+
+	@Override
+	public Agent updateAgent(int agentId, Agent updateAgent) {
+		return repo.findById(agentId)
+				.map(agent -> {
+					agent.setName(updateAgent.getName());
+					agent.setContactInfo(updateAgent.getContactInfo());
+					agent.setAgentId(updateAgent.getAgentId());
+					return repo.save(agent);
+				})
+				.orElseThrow(()-> new RuntimeException("Agent not found"));
+	
+	}
+
+	@Override
+	public String deleteAgent(int agentId) {
+		
+	      repo.deleteById(agentId);
+	      return "Agent Deleted";
+	}
 	
 	
-
-//	@Override
-//	public Optional<Agent> getAgentById(Long agentId) {
-//
-//		return repo.findById(agentId);
-//	}
-
-//	@Override
-//	public Agent updateAgent(Long id, Agent updatedAgent) {
-//	
-//		return repo.findById(id)
-//				.map(agent -> {
-//					agent.setName(updatedAgent.getName());
-//					agent.setContactInfo(updatedAgent.getContactInfo());
-//					agent.setAssignedPolicies(updatedAgent.getAssignedPolicies());
-//					return repo.save(agent);
-//					
-//				})
-//				.orElseThrow(() -> new RuntimeException("Agent not found"));
-//	}
-//
 //	@Override
 //	public String deleteAgent(int agentId) {
 //		repo.deleteById(agentId);

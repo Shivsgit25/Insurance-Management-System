@@ -11,13 +11,19 @@ public class Agent {
 	int agentId;
 	String contactInfo;
     String name;
+    
+    @ElementCollection
+    @CollectionTable(name="agent_policies", joinColumns=@JoinColumn(name="agentId"))
+    @Column(name = "policy_id")
+    List<Integer> assignedPolicies;
 
 
-	public Agent(int agentId, String name, String contactInfo) {
+	public Agent(int agentId, String name, String contactInfo,List<Integer> assignedPolicies) {
 		super();
 		this.agentId = agentId;
 		this.name = name;
 		this.contactInfo = contactInfo;
+		this.assignedPolicies=assignedPolicies;
 
 	}
 
@@ -49,11 +55,11 @@ public class Agent {
 		this.contactInfo = contactInfo;
 	}
 
-//	public List<Long> getAssignedPolicies() {
-//		return assignedPolicies;
-//	}
-//
-//	public void setAssignedPolicies(List<Long> assignedPolicies) {
-//		this.assignedPolicies = assignedPolicies;
-//	}
+	public List<Integer> getAssignedPolicies() {
+		return assignedPolicies;
+	}
+
+	public void setAssignedPolicies(List<Integer> assignedPolicies) {
+		this.assignedPolicies = assignedPolicies;
+	}
 }

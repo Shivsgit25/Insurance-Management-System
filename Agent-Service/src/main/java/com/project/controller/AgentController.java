@@ -33,50 +33,33 @@ public class AgentController {
 		return ResponseEntity.ok(ser.getAllAgents());
 	}
 	
-	@GetMapping("get/{id}")
-	public ResponseEntity<Agent> getAgentById(@PathVariable int id){
-		return ser.getAgentById(id)
+	@GetMapping("get/{agentId}")
+	public ResponseEntity<Agent> getAgentById(@PathVariable int agentId){
+		return ser.getAgentById(agentId)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 				
 	}
 	
+    @PutMapping("/update/{agentId}")
+	public ResponseEntity<Agent> updateAgent(@PathVariable int agentId, @RequestBody Agent agent){
+		try {
+		Agent updated = ser.updateAgent(agentId,agent);
+		return ResponseEntity.ok(updated);
+		} catch(Exception e) {
+			return ResponseEntity.notFound().build();
+		}
+		
+	}
+    
+    @DeleteMapping("/delete/{agentId}")
+    public String deleteAgent(@PathVariable int agentId) {
+    	ser.deleteAgent(agentId);
+    	return "Agent Deleted";
+    }
+	
 
 	
-//	@GetMapping("get/{id}")
-//	public ResponseEntity<Agent> getAgentById(@PathVariable Long id){
-//		return ser.getAgentById(id)
-//				.map(ResponseEntity::ok)
-//				.orElse(ResponseEntity.notFound().build());
-//		
-//		
-//	}
-//	
 	
-	
-//	@GetMapping("/{id}")
-//	public String getAgentById(@PathVariable Long id) {
-//		return ser.getAgentById(id);
-//	}
-	
-//	@PutMapping("/update/{id}")
-//	public ResponseEntity<Agent> updateAgent(@PathVariable Long id,@RequestBody Agent agent){
-//		try {
-//			Agent updatedag = ser.updateAgent(id, agent);
-//			return ResponseEntity.ok(updatedag);
-//			
-//		}
-//		catch(Exception e) {
-//			return ResponseEntity.notFound().build();
-//		}
-//	}
-	
-	//delete the data
-//	@DeleteMapping("/delete/{id}")
-//	public String deleteAgent(@PathVariable Long id) {
-//		ser.deleteAgent(id);
-//		return "Agent Deleted";
-//		
-//	}
 
 }

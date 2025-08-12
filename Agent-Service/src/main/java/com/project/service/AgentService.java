@@ -12,10 +12,7 @@ public interface AgentService {
 	String createAgent(Agent agent);
 	
 	
-//	
-//	Optional<Agent> getAgentById(int agentId);
-//	
-////	Agent updateAgent(Long agentId,Agent updatedAgent);
+
 //	
 //	String deleteAgent(Long agentId);
 
@@ -23,7 +20,9 @@ public interface AgentService {
 	
 	Optional<Agent> getAgentById(int agentId);
 	
+	Agent updateAgent(int agentId, Agent updateAgent);
 	
 	
+	String deleteAgent(int agentId);
 
 }
