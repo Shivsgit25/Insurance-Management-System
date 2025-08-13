@@ -18,11 +18,11 @@ public interface AgentService {
 
 	List<Agent> getAllAgents();
 	
-	Optional<Agent> getAgentById(int agentId);
+	Optional<Agent> getAgentById(Integer agentId);
 	
-	Agent updateAgent(int agentId, Agent updateAgent);
+	Agent updateAgent(Integer agentId, Agent updateAgent);
 	
 	
-	String deleteAgent(int agentId);
+	String deleteAgent(Integer agentId);
 
 }

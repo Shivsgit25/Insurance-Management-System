@@ -30,14 +30,14 @@ public class AgentServiceImpl implements AgentService {
 	
 	}
 	
-
-    public Optional<Agent> getAgentById(int agentId){
+    @Override
+    public Optional<Agent> getAgentById(Integer agentId){
     	return repo.findById(agentId);
     	
     }
 
 	@Override
-	public Agent updateAgent(int agentId, Agent updateAgent) {
+	public Agent updateAgent(Integer agentId, Agent updateAgent) {
 		return repo.findById(agentId)
 				.map(agent -> {
 					agent.setName(updateAgent.getName());
@@ -55,11 +55,15 @@ public class AgentServiceImpl implements AgentService {
 	}
 
 	@Override
-	public String deleteAgent(int agentId) {
+	public String deleteAgent(Integer agentId) {
 		
 	      repo.deleteById(agentId);
 	      return "Agent Deleted";
 	}
+
+	
+
+	
 	
 
 

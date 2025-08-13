@@ -34,7 +34,7 @@ public class AgentController {
 	}
 	
 	@GetMapping("get/{agentId}")
-	public ResponseEntity<Agent> getAgentById(@PathVariable int agentId){
+	public ResponseEntity<Agent> getAgentById(@PathVariable Integer agentId){
 		return ser.getAgentById(agentId)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
@@ -42,7 +42,7 @@ public class AgentController {
 	}
 	
     @PutMapping("/update/{agentId}")
-	public ResponseEntity<Agent> updateAgent(@PathVariable int agentId, @RequestBody Agent agent){
+	public ResponseEntity<Agent> updateAgent(@PathVariable Integer agentId, @RequestBody Agent agent){
 		try {
 		Agent updated = ser.updateAgent(agentId,agent);
 		return ResponseEntity.ok(updated);
@@ -53,7 +53,7 @@ public class AgentController {
 	}
     
     @DeleteMapping("/delete/{agentId}")
-    public String deleteAgent(@PathVariable int agentId) {
+    public String deleteAgent(@PathVariable Integer agentId) {
     	ser.deleteAgent(agentId);
     	return "Agent Deleted";
     }
