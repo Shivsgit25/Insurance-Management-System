@@ -2,9 +2,12 @@ package com.project.model;
 
 
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +31,18 @@ public class Policy {
     private Integer customerId;
     private Integer agentId;
     private Integer claimId;
+    
+
+    private LocalDate entryDate;
+    private LocalDate expiryDate;
+
+    @PrePersist
+    public void setDates() {
+        this.entryDate = LocalDate.now();
+        if (validityPeriod != null) {
+            this.expiryDate = entryDate.plusYears(validityPeriod);
+        }
+    }
 
 
 //    @ManyToOne
