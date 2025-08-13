@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.project.model.Policy;
 
 @Repository
-public interface PolicyRepository extends JpaRepository<Policy, Long> {
-    List<Policy> findByCustomerId(Long customerId);
-    List<Policy> findByAgentId(Long agentId);
+public interface PolicyRepository extends JpaRepository<Policy, Integer> {
+    List<Policy> findByCustomerId(Integer customerId);
+    List<Policy> findByAgentId(Integer agentId);
 
 }
 
