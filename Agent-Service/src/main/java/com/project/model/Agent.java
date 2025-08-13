@@ -8,86 +8,65 @@ import java.util.List;
 public class Agent {
 
 	@Id
-	int agentId;
-	String contactInfo;
-    String name;
-    int policyId;
-    int claimId;
-    int customerId;
+	private Integer agentId;
+	private String contactInfo;
+    private String name;
+    private Integer policyId;
+    private Integer claimId;
     
     
-//    @ElementCollection
-//    @CollectionTable(name="agent_policies", joinColumns=@JoinColumn(name="agentId"))
-//    @Column(name = "policy_id")
-//    List<Integer> assignedPolicies;
-
-
-	public Agent(int agentId, String name, String contactInfo,int policyId,int claimId,int customerId) {
+    public Agent() {
+		super();
+	}
+	public Agent(Integer agentId, String contactInfo, String name, Integer policyId, Integer claimId,
+			Integer customerId) {
 		super();
 		this.agentId = agentId;
-		this.name = name;
 		this.contactInfo = contactInfo;
-		this.policyId=policyId;
-		this.claimId=claimId;
-		this.customerId=customerId;
-		
-//		this.assignedPolicies=assignedPolicies;
-
+		this.name = name;
+		this.policyId = policyId;
+		this.claimId = claimId;
+		this.customerId = customerId;
 	}
-
-	public Agent() {
-		super();
-	}
-
-	public int getAgentId() {
+	private Integer customerId;
+	public Integer getAgentId() {
 		return agentId;
 	}
-
-	public void setAgentId(int agentId) {
+	public void setAgentId(Integer agentId) {
 		this.agentId = agentId;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getContactInfo() {
 		return contactInfo;
 	}
-
 	public void setContactInfo(String contactInfo) {
 		this.contactInfo = contactInfo;
 	}
-
-	public int getPolicyId() {
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Integer getPolicyId() {
 		return policyId;
 	}
-
-	public void setPolicyId(int policyId) {
+	public void setPolicyId(Integer policyId) {
 		this.policyId = policyId;
 	}
-
-	public int getClaimId() {
+	public Integer getClaimId() {
 		return claimId;
 	}
-
-	public void setClaimId(int claimId) {
+	public void setClaimId(Integer claimId) {
 		this.claimId = claimId;
 	}
-
-	public int getCustomerId() {
+	public Integer getCustomerId() {
 		return customerId;
 	}
-
-	public void setCustomerId(int customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
-
-	
+    
+    
 
 
 	
