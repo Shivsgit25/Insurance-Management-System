@@ -1,6 +1,6 @@
 package com.project.model;
 
-import java.time.LocalDate;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,15 +18,16 @@ import lombok.NoArgsConstructor;
 public class Policy {
     @Id
     @GeneratedValue
-    private Long policyId;
+    private Integer policyId;
 
     private String name;
     private Double premiumAmount;
     private String coverageDetails;
-    private LocalDate validityPeriod;
+    private Integer validityPeriod;
     
-    private Long customerId;
-    private Long agentId;
+    private Integer customerId;
+    private Integer agentId;
+    private Integer claimId;
 
 
 //    @ManyToOne
