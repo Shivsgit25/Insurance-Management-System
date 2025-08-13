@@ -58,6 +58,20 @@ public class AgentController {
     	return "Agent Deleted";
     }
 	
+    //get agent by customerId
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<Agent>> getAgentByCustomer(@PathVariable Integer customerId){
+    	List<Agent> agents = ser.getAgentByCustomer(customerId);
+    	return ResponseEntity.ok(agents);
+    }
+    
+    //get agent by policyId
+    @GetMapping("/policy/{policyId}")
+    public ResponseEntity<List<Agent>> getAgentByPolicy(@PathVariable Integer policyId){
+    	List<Agent> agents = ser.getAgentByPolicy(policyId);
+    	return ResponseEntity.ok(agents);
+    }
+    
 
 	
 	
