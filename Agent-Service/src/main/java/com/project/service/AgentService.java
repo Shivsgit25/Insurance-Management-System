@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
 import com.project.model.Agent;
+import com.project.model.AgentPolicy;
 
 public interface AgentService {
 	
@@ -24,5 +25,21 @@ public interface AgentService {
 	
 	
 	String deleteAgent(Integer agentId);
+
+
+
+	AgentPolicy getAgentByPolicyId(Integer agentId);
+
+
+
+	List<Agent> getAgentByPolicy(Integer policyId);
+
+
+
+	List<Agent> getAgentByCustomer(Integer customerId);
+
+
+
+	
 
 }

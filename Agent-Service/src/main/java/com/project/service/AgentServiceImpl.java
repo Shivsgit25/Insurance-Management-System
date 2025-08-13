@@ -6,7 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.client.PolicyClient;
 import com.project.model.Agent;
+import com.project.model.AgentPolicy;
+import com.project.model.Policy;
 import com.project.repository.AgentRepository;
 //import com.project.repository.AgentRepository;
 
@@ -16,6 +19,9 @@ public class AgentServiceImpl implements AgentService {
 	
 	@Autowired
 	private AgentRepository repo;
+	
+	@Autowired
+	PolicyClient policyclient;
 
 	@Override
 	public String createAgent(Agent agent) {
@@ -59,6 +65,33 @@ public class AgentServiceImpl implements AgentService {
 		
 	      repo.deleteById(agentId);
 	      return "Agent Deleted";
+	}
+	
+	
+	public AgentPolicy getAgentByPolicyId(Integer agentId) {
+		Optional<Agent> optional = repo.findById(agentId);
+		
+		Agent agent = optional.get();
+		Policy policy = policyclient.getPolicyById(agent.getPolicyId());
+		
+		AgentPolicy agentpolicy = new AgentPolicy();
+		agentpolicy.setAgent(agent);
+		agentpolicy.setPolicy(policy);
+		
+		return agentpolicy;
+		
+		
+	}
+	
+	
+	public List<Agent> getAgentByPolicy(Integer policyId){
+		return repo.findByPolicyId(policyId);
+	}
+
+	
+	public List<Agent> getAgentByCustomer(Integer customerId) {
+		
+		return repo.findByCustomerId(customerId);
 	}
 
 	
