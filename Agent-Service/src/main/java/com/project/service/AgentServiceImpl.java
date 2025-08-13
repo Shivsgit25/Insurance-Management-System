@@ -43,6 +43,11 @@ public class AgentServiceImpl implements AgentService {
 					agent.setName(updateAgent.getName());
 					agent.setContactInfo(updateAgent.getContactInfo());
 					agent.setAgentId(updateAgent.getAgentId());
+					agent.setPolicyId(updateAgent.getPolicyId());
+					agent.setClaimId(updateAgent.getClaimId());
+					agent.setCustomerId(updateAgent.getCustomerId());
+					
+					
 					return repo.save(agent);
 				})
 				.orElseThrow(()-> new RuntimeException("Agent not found"));
