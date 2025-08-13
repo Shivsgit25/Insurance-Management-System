@@ -4,26 +4,34 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "agents")
+@Table(name = "agent")
 public class Agent {
 
 	@Id
 	int agentId;
 	String contactInfo;
     String name;
+    int policyId;
+    int claimId;
+    int customerId;
     
-    @ElementCollection
-    @CollectionTable(name="agent_policies", joinColumns=@JoinColumn(name="agentId"))
-    @Column(name = "policy_id")
-    List<Integer> assignedPolicies;
+    
+//    @ElementCollection
+//    @CollectionTable(name="agent_policies", joinColumns=@JoinColumn(name="agentId"))
+//    @Column(name = "policy_id")
+//    List<Integer> assignedPolicies;
 
 
-	public Agent(int agentId, String name, String contactInfo,List<Integer> assignedPolicies) {
+	public Agent(int agentId, String name, String contactInfo,int policyId,int claimId,int customerId) {
 		super();
 		this.agentId = agentId;
 		this.name = name;
 		this.contactInfo = contactInfo;
-		this.assignedPolicies=assignedPolicies;
+		this.policyId=policyId;
+		this.claimId=claimId;
+		this.customerId=customerId;
+		
+//		this.assignedPolicies=assignedPolicies;
 
 	}
 
@@ -55,11 +63,32 @@ public class Agent {
 		this.contactInfo = contactInfo;
 	}
 
-	public List<Integer> getAssignedPolicies() {
-		return assignedPolicies;
+	public int getPolicyId() {
+		return policyId;
 	}
 
-	public void setAssignedPolicies(List<Integer> assignedPolicies) {
-		this.assignedPolicies = assignedPolicies;
+	public void setPolicyId(int policyId) {
+		this.policyId = policyId;
 	}
+
+	public int getClaimId() {
+		return claimId;
+	}
+
+	public void setClaimId(int claimId) {
+		this.claimId = claimId;
+	}
+
+	public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
+	
+
+
+	
 }
