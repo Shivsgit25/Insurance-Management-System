@@ -6,19 +6,22 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.client.CustomerClient;
 import com.project.exception.ResourceNotFoundException;
+import com.project.model.CustomerDTO;
 import com.project.model.Policy;
+import com.project.model.PolicyCustomer;
 import com.project.repository.PolicyRepository;
 
 @Service
 public class PolicyServiceImpl implements PolicyService {
 
 	@Autowired
-	private PolicyRepository policyRepository;
+	PolicyRepository policyRepository;
 
-//
-//    @Autowired
-//    private CustomerRepository customerRepository;
+
+    @Autowired
+    CustomerClient customerClient;
 //
 //    @Autowired
 //    private AgentRepository agentRepository;
@@ -89,7 +92,33 @@ public class PolicyServiceImpl implements PolicyService {
 	@Override
 	public List<Policy> getPoliciesByAgent(Integer agentId) {
 		return policyRepository.findByAgentId(agentId);
-
 	}
 
+	@Override
+	public PolicyCustomer getPoliciesByCustomerId(Integer customerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Policy> getallpoliciesbycustomerId(Integer customerId) {
+		List<Policy> policies = policyRepository.findAllByCustomerId(customerId);
+		return policies;
+	}
+
+//    @Override
+//	public PolicyCustomer getPoliciesByCustomerId(Integer customerId) {
+//		Optional<Policy> optional = policyRepository.findById(customerId);
+//		Policy policy = optional.get();
+//		CustomerDTO customerdto = customerClient.getCustomerByPolicyId(policyId);
+//		PolicyCustomer policyCustomer = new PolicyCustomer();
+//		customerdto.
+//		policyCustomer.setPolicy(policy);
+//		return policyCustomer;
+//
+//	}
+	
+	
+
 }
+ 
