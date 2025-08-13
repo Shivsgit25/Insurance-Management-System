@@ -11,6 +11,7 @@ import com.project.model.Policy;
 public interface PolicyRepository extends JpaRepository<Policy, Integer> {
     List<Policy> findByCustomerId(Integer customerId);
     List<Policy> findByAgentId(Integer agentId);
+	List<Policy> findAllByCustomerId(Integer customerId);
 
 }
 

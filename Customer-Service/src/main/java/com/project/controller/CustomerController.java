@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.Customer;
+import com.project.model.CustomerPolicy;
 import com.project.service.CustomerService;
 
 @RestController
@@ -34,5 +35,10 @@ public class CustomerController {
 	@PostMapping("/deleteCustomer/{id}")
 	public String deleteCustomerById(@PathVariable("id") int id) {
 		return service.deleteByCustomerId(id);
+	}
+	
+	@GetMapping("/getCustomerPolicyDetails/{cid}")
+	public CustomerPolicy test(@PathVariable("cid") Integer cid) {
+		return service.getCustPolyCombo(cid);
 	}
 }
