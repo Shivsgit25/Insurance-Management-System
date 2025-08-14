@@ -81,6 +81,5 @@ public class PolicyController {
     @GetMapping("/test/{customerId}") // Corrected path to match PolicyController
     public List<Policy> getCollection(@PathVariable("customerId") Integer customerId){
     	return policyService.getallpoliciesbycustomerId(customerId);
-    }
-
+    } 
 }
