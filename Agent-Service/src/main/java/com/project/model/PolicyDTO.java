@@ -1,6 +1,6 @@
 package com.project.model;
 
-public class Policy {
+public class PolicyDTO {
 	
 	private Integer policyId;
 
@@ -38,7 +38,7 @@ public class Policy {
 	public void setValidityPeriod(Integer validityPeriod) {
 		this.validityPeriod = validityPeriod;
 	}
-	public Policy(Integer policyId, String name, Double premiumAmount, String coverageDetails, Integer validityPeriod) {
+	public PolicyDTO(Integer policyId, String name, Double premiumAmount, String coverageDetails, Integer validityPeriod) {
 		super();
 		this.policyId = policyId;
 		this.name = name;
@@ -46,7 +46,7 @@ public class Policy {
 		this.coverageDetails = coverageDetails;
 		this.validityPeriod = validityPeriod;
 	}
-	public Policy() {
+	public PolicyDTO() {
 		super();
 	}
     

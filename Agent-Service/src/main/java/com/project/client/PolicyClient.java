@@ -1,14 +1,20 @@
 package com.project.client;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.project.model.Policy;
+import com.project.model.PolicyDTO;
 
-@FeignClient(name="Policy-Service", path="/policies")
+@FeignClient(name="POLICY-SERVICE", path="/api/policies")
 public interface PolicyClient {
-	@GetMapping("/policies/{policyId}")
-	Policy getPolicyById(@PathVariable Integer policyId);
+	@GetMapping("/testing/{agentId}")
+
+	public List<PolicyDTO> getCollection(@PathVariable("agentId") Integer agentId);
+
+	
+	
 	
 }
