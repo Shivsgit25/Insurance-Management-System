@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.PolicyClient;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
 import com.project.model.AgentCustomer;
 import com.project.model.AgentPolicy;
+import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
 import com.project.model.PolicyDTO;
 import com.project.repository.AgentRepository;
@@ -28,7 +30,10 @@ public class AgentServiceImpl implements AgentService {
 	PolicyClient policyclient;
 	
 	@Autowired
-	CustomerClient customerclient; 
+	CustomerClient customerclient;
+	
+	@Autowired
+	ClaimClient claimclient;
 
 	@Override
 	public String createAgent(Agent agent) {
@@ -95,11 +100,11 @@ public class AgentServiceImpl implements AgentService {
 	 return agentpolicy;
 	}
 
-	@Override
-	public AgentCustomer getAgentCustCombo(Integer aid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public AgentCustomer getAgentCustCombo(Integer aid) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public CustomerDTO getCustomerForAgent(Integer cid) {
@@ -111,9 +116,20 @@ public class AgentServiceImpl implements AgentService {
 
 	@Override
 	public AgentClaim getAllClaims() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ClaimDTO> claims = claimclient.getAllClaims().getBody();
+		Integer agentId = claims.isEmpty() ? null : claims.get(0).getAgentId();
+	    Optional<Agent> opt = repo.findById(agentId);
+	    Agent agent = opt.orElse(new Agent()); // fallback if not found
+	    AgentClaim agentClaim = new AgentClaim();
+	    agentClaim.setAgent(agent);
+	    agentClaim.setClaim(claims);
+	    return agentClaim;
 	}
+	
+	@Override
+    public ClaimDTO approveClaim(Integer claimId) {
+        return claimclient.updateClaimStatus(claimId, ClaimDTO.ClaimStatus.APPROVED).getBody();
+    }
 
 //	@Override
 //	public AgentCustomer getAgentCustCombo(Integer aid) {

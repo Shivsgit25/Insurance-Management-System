@@ -99,6 +99,12 @@ public class AgentController {
 	public ResponseEntity<AgentClaim> getAllClaims(){
     	return ResponseEntity.ok(ser.getAllClaims());
     }
+    
+    @PutMapping("/approve-claim/{claimId}")
+    public ResponseEntity<ClaimDTO> approveClaim(@PathVariable Integer claimId) {
+        ClaimDTO updatedClaim = ser.approveClaim(claimId);
+        return ResponseEntity.ok(updatedClaim);
+    }
      
 
 	

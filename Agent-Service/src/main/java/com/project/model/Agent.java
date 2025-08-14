@@ -14,6 +14,7 @@ public class Agent {
     private Integer policyId;
     private Integer claimId;
     
+
     
     public Agent() {
 		super();
