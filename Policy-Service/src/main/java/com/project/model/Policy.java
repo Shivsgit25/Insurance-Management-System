@@ -30,7 +30,7 @@ public class Policy {
     
     private Integer customerId;
     private Integer agentId;
-    private Integer claimId;
+   
     
 
     private LocalDate entryDate;

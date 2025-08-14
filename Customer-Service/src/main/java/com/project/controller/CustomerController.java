@@ -1,6 +1,9 @@
 package com.project.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;
 import com.project.service.CustomerService;
@@ -36,9 +40,26 @@ public class CustomerController {
 	public String deleteCustomerById(@PathVariable("id") int id) {
 		return service.deleteByCustomerId(id);
 	}
+	@GetMapping("/getAllCustomer")
+		public List<Customer> getAllCustomer() {
+			return service.getAllCustomer();
+		}
 	
 	@GetMapping("/getCustomerPolicyDetails/{cid}")
-	public CustomerPolicy test(@PathVariable("cid") Integer cid) {
+	public CustomerPolicy getPolicyDetailsOnCustomer(@PathVariable("cid") Integer cid) {
 		return service.getCustPolyCombo(cid);
+	}
+//	@PostMapping("/getCustomerInformationForClaim/{cid}")
+//	public List<Customer> getCustomerInformationForClaim(@PathVariable("cid") Integer cid) {
+//		return service.getCustomerInfoForClaim(cid);
+//	}
+	@PostMapping("/file")
+    public String fileClaim(@RequestBody ClaimDTO claim) {
+        service.fileClaim(claim);
+        return "CLAIM FILLED";
+    }
+	@GetMapping("/getCustomerForAgent/{id}")
+	public Customer getCustomerForAgent(@PathVariable("id") Integer id) {
+		return service.getCustomerForAgent(id);
 	}
 }
