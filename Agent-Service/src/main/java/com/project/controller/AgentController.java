@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.Agent;
+import com.project.model.AgentCustomer;
 import com.project.model.AgentPolicy;
 //import com.project.model.CustomerPolicy;
 import com.project.service.AgentService;
@@ -61,11 +62,11 @@ public class AgentController {
     }
 	
     //get agent by customerId
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Agent>> getAgentByCustomer(@PathVariable Integer customerId){
-    	List<Agent> agents = ser.getAgentByCustomer(customerId);
-    	return ResponseEntity.ok(agents);
-    }
+//    @GetMapping("/customer/{customerId}")
+//    public ResponseEntity<List<Agent>> getAgentByCustomer(@PathVariable Integer customerId){
+//    	List<Agent> agents = ser.getAgentByCustomer(customerId);
+//    	return ResponseEntity.ok(agents);
+//    }
     
     //get agent by policyId
     @GetMapping("/policy/{policyId}")
@@ -80,6 +81,17 @@ public class AgentController {
     	return ser.getAgentPolyCombo(aid);
 	}
     
+    @GetMapping("/getCustomerForAgent/{aid}")
+	public AgentCustomer getCustomerForAgent(@PathVariable("aid") Integer aid) {
+		
+    	return ser.getCustomerForAgent(aid);
+	}
+    
+//    @GetMapping("/getAgentCustomerDetails/{aid}")
+//    public AgentCustomer custo(@PathVariable("aid") Integer aid) {
+//    	return ser.getAgentCustCombo(aid);
+//    }
+     
 
 	
 	

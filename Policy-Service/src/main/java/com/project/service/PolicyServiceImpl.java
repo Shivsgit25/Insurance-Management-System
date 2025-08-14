@@ -5,12 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.project.client.CustomerClient;
-import com.project.exception.ResourceNotFoundException;
-import com.project.model.CustomerDTO;
 import com.project.model.Policy;
-import com.project.model.PolicyCustomer;
 import com.project.repository.PolicyRepository;
 
 @Service
@@ -19,10 +14,10 @@ public class PolicyServiceImpl implements PolicyService {
 	@Autowired
 	PolicyRepository policyRepository;
 
-
-    @Autowired
-    CustomerClient customerClient;
-//
+	
+//    @Autowired
+//    CustomerClient customerClient;
+	
 //    @Autowired
 //    private AgentRepository agentRepository;
 //
@@ -49,29 +44,27 @@ public class PolicyServiceImpl implements PolicyService {
 
 	@Override
 	public Policy updatePolicy(Integer policyId, Policy updatedPolicy) {
-		Optional<Policy> existingPolicyOpt = policyRepository.findById(policyId);
-		if (existingPolicyOpt.isPresent()) {
-			Policy existingPolicy = existingPolicyOpt.get();
-			existingPolicy.setName(updatedPolicy.getName());
-			existingPolicy.setPremiumAmount(updatedPolicy.getPremiumAmount());
-			existingPolicy.setCoverageDetails(updatedPolicy.getCoverageDetails());
-			existingPolicy.setValidityPeriod(updatedPolicy.getValidityPeriod());
-			existingPolicy.setCustomerId(updatedPolicy.getCustomerId());
-			existingPolicy.setAgentId(updatedPolicy.getAgentId());
-			return policyRepository.save(existingPolicy);
-		} else {
-			throw new RuntimeException("Policy not found with ID: " + policyId);
-
-		}
-
-	}
+	        Optional<Policy> existingPolicyOpt = policyRepository.findById(policyId);
+	        if (existingPolicyOpt.isPresent()) {
+	            Policy existingPolicy = existingPolicyOpt.get();
+	            existingPolicy.setName(updatedPolicy.getName());
+	            existingPolicy.setPremiumAmount(updatedPolicy.getPremiumAmount());
+	            existingPolicy.setCoverageDetails(updatedPolicy.getCoverageDetails());
+	            existingPolicy.setValidityPeriod(updatedPolicy.getValidityPeriod());
+	            existingPolicy.setCustomerId(updatedPolicy.getCustomerId());
+	            existingPolicy.setAgentId(updatedPolicy.getAgentId());
+	            return policyRepository.save(existingPolicy);
+	        }
+	        return null;
+	    }
 
 	@Override
 	public void deletePolicy(Integer policyId) {
-		Policy policy = policyRepository.findById(policyId)
-				.orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
-		policyRepository.delete(policy);
-
+		Optional<Policy> policyOpt = policyRepository.findById(policyId);
+		if (policyOpt.isPresent()) {
+		    Policy policy = policyOpt.get();
+		    policyRepository.delete(policy);
+		}
 	}
 
 	@Override
@@ -81,7 +74,7 @@ public class PolicyServiceImpl implements PolicyService {
 
 	@Override
 	public Policy getPolicyById(Integer policyId) {
-		return policyRepository.findById(policyId).orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
+		return policyRepository.findById(policyId).orElse(null);
 	}
 
 	@Override
@@ -95,16 +88,18 @@ public class PolicyServiceImpl implements PolicyService {
 	}
 
 	@Override
-	public PolicyCustomer getPoliciesByCustomerId(Integer customerId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<Policy> getallpoliciesbycustomerId(Integer customerId) {
 		List<Policy> policies = policyRepository.findAllByCustomerId(customerId);
 		return policies;
 	}
+
+	@Override
+	public List<Policy> getallpoliciesbyagentId(Integer agentId) {
+		List<Policy> policies = policyRepository.findAllByAgentId(agentId);
+		return policies;
+	}
+
+
 
 //    @Override
 //	public PolicyCustomer getPoliciesByCustomerId(Integer customerId) {
@@ -121,4 +116,8 @@ public class PolicyServiceImpl implements PolicyService {
 	
 
 }
+
+
+
+
  
