@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.project.client.PolicyClient;
 import com.project.model.Agent;
 import com.project.model.AgentPolicy;
-import com.project.model.Policy;
+import com.project.model.PolicyDTO;
 import com.project.repository.AgentRepository;
 //import com.project.repository.AgentRepository;
 
@@ -68,20 +68,6 @@ public class AgentServiceImpl implements AgentService {
 	}
 	
 	
-	public AgentPolicy getAgentByPolicyId(Integer agentId) {
-		Optional<Agent> optional = repo.findById(agentId);
-		
-		Agent agent = optional.get();
-		Policy policy = policyclient.getPolicyById(agent.getPolicyId());
-		
-		AgentPolicy agentpolicy = new AgentPolicy();
-		agentpolicy.setAgent(agent);
-		agentpolicy.setPolicy(policy);
-		
-		return agentpolicy;
-		
-		
-	}
 	
 	
 	public List<Agent> getAgentByPolicy(Integer policyId){
@@ -93,6 +79,20 @@ public class AgentServiceImpl implements AgentService {
 		
 		return repo.findByCustomerId(customerId);
 	}
+
+	@Override
+	public AgentPolicy getAgentPolyCombo(Integer aid) {
+	  List<PolicyDTO> policydto = policyclient.getCollection(aid);
+	  Optional<Agent> opt = repo.findById(aid);
+	  Agent agent = opt.get();
+	  AgentPolicy agentpolicy = new AgentPolicy();
+	  agentpolicy.setAgent(agent);
+	  agentpolicy.setPolicy(policydto);
+	  
+	 return agentpolicy;
+	}
+
+
 
 	
 

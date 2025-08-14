@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+//import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.Agent;
+import com.project.model.AgentPolicy;
+//import com.project.model.CustomerPolicy;
 import com.project.service.AgentService;
 @RestController
 @RequestMapping("/agents")
@@ -71,6 +73,12 @@ public class AgentController {
     	List<Agent> agents = ser.getAgentByPolicy(policyId);
     	return ResponseEntity.ok(agents);
     }
+    
+    @GetMapping("/getAgentPolicyDetails/{aid}")
+	public AgentPolicy test(@PathVariable("aid") Integer aid) {
+		
+    	return ser.getAgentPolyCombo(aid);
+	}
     
 
 	
