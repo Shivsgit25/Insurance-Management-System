@@ -24,12 +24,21 @@ public class PolicyController {
     private PolicyService policyService;
 
     // Create a new policy
-    @PostMapping("/customer/{customerId}/agent/{agentId}")
-    public ResponseEntity<Policy> createPolicy(
-            @PathVariable Integer customerId,
-            @PathVariable Integer agentId,
-            @RequestBody Policy policy) {
-        Policy createdPolicy = policyService.createPolicy(policy, customerId, agentId);
+//    @PostMapping("/create")
+//    public ResponseEntity<Policy> createPolicy(
+//            @RequestParam Integer customerId,
+//            @RequestParam Integer agentId,
+//            @RequestBody Policy policy) {
+//        Policy createdPolicy = policyService.createPolicy(policy, customerId, agentId);
+//        return ResponseEntity.ok(createdPolicy);
+//    }
+    @PostMapping("/create")
+    public ResponseEntity<Policy> createPolicy(@RequestBody Policy request) {
+        Policy createdPolicy = policyService.createPolicy(
+            request,
+            request.getCustomerId(),
+            request.getAgentId()
+        );
         return ResponseEntity.ok(createdPolicy);
     }
 

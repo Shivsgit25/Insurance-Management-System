@@ -6,11 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.client.CustomerClient;
 import com.project.exception.ResourceNotFoundException;
-import com.project.model.CustomerDTO;
 import com.project.model.Policy;
-import com.project.model.PolicyCustomer;
 import com.project.repository.PolicyRepository;
 
 @Service
@@ -19,10 +16,10 @@ public class PolicyServiceImpl implements PolicyService {
 	@Autowired
 	PolicyRepository policyRepository;
 
-
-    @Autowired
-    CustomerClient customerClient;
 //
+//    @Autowired
+//    CustomerClient customerClient;
+
 //    @Autowired
 //    private AgentRepository agentRepository;
 //
@@ -94,11 +91,6 @@ public class PolicyServiceImpl implements PolicyService {
 		return policyRepository.findByAgentId(agentId);
 	}
 
-	@Override
-	public PolicyCustomer getPoliciesByCustomerId(Integer customerId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public List<Policy> getallpoliciesbycustomerId(Integer customerId) {
