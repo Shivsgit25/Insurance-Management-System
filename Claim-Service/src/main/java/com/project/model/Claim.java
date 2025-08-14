@@ -7,12 +7,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity representing a Claim in the insurance system. Maps to a database table
  * storing claim details.
  */
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "claim_info")
 public class Claim {
 
@@ -59,130 +65,6 @@ public class Claim {
 		REJECTED // Claim has been rejected
 	}
 
-	// -------------------- Getters and Setters --------------------
 
-	/**
-	 * Gets the claim ID.
-	 * 
-	 * @return claimId
-	 */
-	public int getClaimId() {
-		return claimId;
-	}
-
-	/**
-	 * Sets the claim ID.
-	 * 
-	 * @param claimId the unique identifier for the claim
-	 */
-	public void setClaimId(Integer claimId) {
-		this.claimId = claimId;
-	}
-
-	/**
-	 * Gets the policy ID associated with the claim.
-	 * 
-	 * @return policyId
-	 */
-	public int getPolicyId() {
-		return policyId;
-	}
-
-	/**
-	 * Sets the policy ID.
-	 * 
-	 * @param policyId the identifier of the insurance policy
-	 */
-	public void setPolicyId(Integer policyId) {
-		this.policyId = policyId;
-	}
-
-	/**
-	 * Gets the customer ID who filed the claim.
-	 * 
-	 * @return customerId
-	 */
-	public int getCustomerId() {
-		return customerId;
-	}
-
-	/**
-	 * Sets the customer ID.
-	 * 
-	 * @param customerId the identifier of the customer
-	 */
-	public void setCustomerId(Integer customerId) {
-		this.customerId = customerId;
-	}
-
-	/**
-	 * Gets the claim amount.
-	 * 
-	 * @return claimAmount
-	 */
-	public Double getClaimAmount() {
-		return claimAmount;
-	}
-
-	/**
-	 * Sets the claim amount.
-	 * 
-	 * @param claimAmount the amount being claimed
-	 */
-	public void setClaimAmount(Double claimAmount) {
-		this.claimAmount = claimAmount;
-	}
-
-	/**
-	 * Gets the current status of the claim.
-	 * 
-	 * @return status
-	 */
-	public int getAgentId() {
-		return agentId;
-	}
-
-	public void setAgentId(Integer agentId) {
-		this.agentId = agentId;
-	}
-	
-	public Status getStatus() {
-		return status;
-	}
-
-	/**
-	 * Sets the status of the claim.
-	 * 
-	 * @param status the current state of the claim
-	 */
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-	/**
-	 * @param claimId
-	 * @param policyId
-	 * @param customerId
-	 * @param claimAmount
-	 * @param status
-	 */
-	public Claim(Integer claimId, Integer policyId, Integer customerId, Double claimAmount, Integer agentId, Status status) {
-		super();
-		this.claimId = claimId;
-		this.policyId = policyId;
-		this.customerId = customerId;
-		this.claimAmount = claimAmount;
-		this.agentId = agentId;
-		this.status = status;
-	}
-
-	/**
-	 * Default Constructor
-	 */
-	public Claim() {
-		super();
-	}
-	
-	
 	
 }

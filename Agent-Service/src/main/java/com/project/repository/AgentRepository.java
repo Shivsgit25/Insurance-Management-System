@@ -1,6 +1,7 @@
 package com.project.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,6 @@ public interface AgentRepository extends JpaRepository<Agent, Integer> {
 
 	
 
-	List<Agent> findByCustomerId(Integer customerId);
+	Optional<Agent> findByCustomerId(Integer customerId);
 
 }

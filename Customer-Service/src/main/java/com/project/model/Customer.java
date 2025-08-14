@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "customer_info_service")
 public class Customer {
 	@Id
-	private int customerId;
+	private Integer customerId;
 	private String name;
 	private String email;
 	private Long phone;
