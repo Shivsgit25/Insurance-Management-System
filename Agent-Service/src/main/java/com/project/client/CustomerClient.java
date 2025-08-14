@@ -14,6 +14,6 @@ public interface CustomerClient {
 	
 	
 	@GetMapping("/getCustomerForAgent/{id}")
-	public List<CustomerDTO> getCustomerForAgent(@PathVariable("id") Integer id);
+	public CustomerDTO getCustomerForAgent(@PathVariable("id") Integer id);
 
 }
