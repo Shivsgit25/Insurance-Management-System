@@ -26,7 +26,7 @@ public interface ClaimService {
 	 * @param status  the new status to assign (e.g., APPROVED, REJECTED)
 	 * @return the updated Claim entity with the new status
 	 */
-	Claim reviewClaim(Long claimId, Claim.Status status);
+	Claim reviewClaim(Integer claimId, Claim.Status status);
 
 	/**
 	 * Retrieves a claim by its unique ID. Useful for viewing detailed claim
@@ -35,7 +35,7 @@ public interface ClaimService {
 	 * @param claimId the ID of the claim to retrieve
 	 * @return the Claim entity if found
 	 */
-	Claim getClaimById(Long claimId);
+	Claim getClaimById(Integer claimId);
 
 	/**
 	 * Retrieves all claims filed by a specific customer. Enables customer-centric
@@ -44,5 +44,5 @@ public interface ClaimService {
 	 * @param customerId the ID of the customer
 	 * @return a list of Claim entities associated with the customer
 	 */
-	List<Claim> getClaimsByCustomer(Long customerId);
+	List<Claim> getClaimsByCustomer(Integer customerId);
 }

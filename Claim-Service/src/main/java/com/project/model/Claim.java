@@ -6,12 +6,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * Entity representing a Claim in the insurance system. Maps to a database table
  * storing claim details.
  */
 @Entity
+@Table(name = "claim_info")
 public class Claim {
 
 	/**
@@ -19,17 +21,17 @@ public class Claim {
 	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long claimId;
+	private Integer claimId;
 
 	/**
 	 * Identifier of the associated insurance policy.
 	 */
-	private Long policyId;
+	private Integer policyId;
 
 	/**
 	 * Identifier of the customer who filed the claim.
 	 */
-	private Long customerId;
+	private Integer customerId;
 
 	/**
 	 * Amount being claimed by the customer.
@@ -38,6 +40,11 @@ public class Claim {
 
 	/**
 	 * Current status of the claim. Stored as a string in the database.
+	 */
+	private Integer agentId;
+
+	/**
+	 * Identifier of the agent from which the customer claiming.
 	 */
 	@Enumerated(EnumType.STRING)
 	private Status status;
@@ -59,7 +66,7 @@ public class Claim {
 	 * 
 	 * @return claimId
 	 */
-	public Long getClaimId() {
+	public int getClaimId() {
 		return claimId;
 	}
 
@@ -68,7 +75,7 @@ public class Claim {
 	 * 
 	 * @param claimId the unique identifier for the claim
 	 */
-	public void setClaimId(Long claimId) {
+	public void setClaimId(Integer claimId) {
 		this.claimId = claimId;
 	}
 
@@ -77,7 +84,7 @@ public class Claim {
 	 * 
 	 * @return policyId
 	 */
-	public Long getPolicyId() {
+	public int getPolicyId() {
 		return policyId;
 	}
 
@@ -86,7 +93,7 @@ public class Claim {
 	 * 
 	 * @param policyId the identifier of the insurance policy
 	 */
-	public void setPolicyId(Long policyId) {
+	public void setPolicyId(Integer policyId) {
 		this.policyId = policyId;
 	}
 
@@ -95,7 +102,7 @@ public class Claim {
 	 * 
 	 * @return customerId
 	 */
-	public Long getCustomerId() {
+	public int getCustomerId() {
 		return customerId;
 	}
 
@@ -104,7 +111,7 @@ public class Claim {
 	 * 
 	 * @param customerId the identifier of the customer
 	 */
-	public void setCustomerId(Long customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 
@@ -131,6 +138,14 @@ public class Claim {
 	 * 
 	 * @return status
 	 */
+	public int getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
+	}
+	
 	public Status getStatus() {
 		return status;
 	}
@@ -151,17 +166,18 @@ public class Claim {
 	 * @param claimAmount
 	 * @param status
 	 */
-	public Claim(Long claimId, Long policyId, Long customerId, Double claimAmount, Status status) {
+	public Claim(Integer claimId, Integer policyId, Integer customerId, Double claimAmount, Integer agentId, Status status) {
 		super();
 		this.claimId = claimId;
 		this.policyId = policyId;
 		this.customerId = customerId;
 		this.claimAmount = claimAmount;
+		this.agentId = agentId;
 		this.status = status;
 	}
 
 	/**
-	 * 
+	 * Default Constructor
 	 */
 	public Claim() {
 		super();

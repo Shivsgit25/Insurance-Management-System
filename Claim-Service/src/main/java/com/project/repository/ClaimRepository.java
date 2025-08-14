@@ -8,7 +8,7 @@ import java.util.List;
  * Repository interface for Claim entity. Provides CRUD operations and custom
  * query methods for accessing claim data.
  */
-public interface ClaimRepository extends JpaRepository<Claim, Long> {
+public interface ClaimRepository extends JpaRepository<Claim, Integer> {
 
 	/**
 	 * Retrieves all claims associated with a specific customer ID. Spring Data JPA
@@ -18,7 +18,7 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
 	 * @return a list of Claim entities filed by the given customer
 	 */
 	
-	List<Claim> findByCustomerId(Long customerId);
+	List<Claim> findByCustomerId(Integer customerId);
 
 	// -------------------- Inherited Methods from JpaRepository
 	// --------------------

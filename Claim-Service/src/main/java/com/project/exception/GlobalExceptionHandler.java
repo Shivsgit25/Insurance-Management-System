@@ -1,48 +1,51 @@
 package com.project.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 /**
- * Global exception handler for REST APIs. This class intercepts exceptions
- * thrown by controller methods and returns appropriate HTTP responses.
+ * Global exception handler for REST APIs.
  */
-@RestControllerAdvice // Indicates that this class provides centralized exception handling across all
-						// controllers
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	/**
-	 * Handles ClaimNotFoundException specifically. This method is triggered when a
-	 * ClaimNotFoundException is thrown in any controller.
-	 *
-	 * @param ex the exception instance containing the error details
-	 * @return a ResponseEntity with the exception message and HTTP status 404 (Not
-	 *         Found)
-	 */
-	@ExceptionHandler(ClaimNotFoundException.class)
-	public ResponseEntity<String> handleClaimNotFound(ClaimNotFoundException ex) {
-		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-	}
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-	/**
-	 * Handles all other uncaught exceptions. Acts as a fallback for any exception
-	 * not explicitly handled by other methods.
-	 *
-	 * @param ex the exception instance containing the error details
-	 * @return a ResponseEntity with a generic error message and HTTP status 500
-	 *         (Internal Server Error)
-	 */
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<String> handleGeneralException(Exception ex) {
-		return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-	
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException ex) {
-	    return ResponseEntity.badRequest().body("Validation failed: " + ex.getMessage());
-	}
+    /**
+     * Handles ClaimNotFoundException.
+     */
+    @ExceptionHandler(ClaimNotFoundException.class)
+    public ResponseEntity<String> handleClaimNotFound(ClaimNotFoundException ex) {
+        logger.warn("Claim not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 
+    /**
+     * Handles validation errors from @Valid annotated inputs.
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException ex) {
+        String errors = ex.getBindingResult()
+                          .getFieldErrors()
+                          .stream()
+                          .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                          .collect(Collectors.joining(", "));
+        logger.warn("Validation failed: {}", errors);
+        return ResponseEntity.badRequest().body("Validation failed: " + errors);
+    }
+
+    /**
+     * Handles all other uncaught exceptions.
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGeneralException(Exception ex) {
+        logger.error("Unhandled exception occurred", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body("Internal Server Error");
+    }
 }
