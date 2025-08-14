@@ -25,4 +25,6 @@ public interface CustomerService {
 	public List<Customer> getCustomerInfoForClaim(Integer cid);
 
 	public void fileClaim(ClaimDTO claim);
+
+	public Customer getCustomerForAgent(Integer id);
 }
