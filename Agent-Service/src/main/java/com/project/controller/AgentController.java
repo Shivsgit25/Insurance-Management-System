@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.Agent;
+import com.project.model.AgentClaim;
 import com.project.model.AgentCustomer;
 import com.project.model.AgentPolicy;
+import com.project.model.ClaimDTO;
+import com.project.model.CustomerDTO;
 //import com.project.model.CustomerPolicy;
 import com.project.service.AgentService;
 @RestController
@@ -81,16 +84,21 @@ public class AgentController {
     	return ser.getAgentPolyCombo(aid);
 	}
     
-    @GetMapping("/getCustomerForAgent/{aid}")
-	public AgentCustomer getCustomerForAgent(@PathVariable("aid") Integer aid) {
+    @GetMapping("/getCustomerForAgent/{cid}")
+	public CustomerDTO getCustomerForAgent(@PathVariable("cid") Integer cid) {
 		
-    	return ser.getCustomerForAgent(aid);
+    	return ser.getCustomerForAgent(cid);
 	}
     
 //    @GetMapping("/getAgentCustomerDetails/{aid}")
 //    public AgentCustomer custo(@PathVariable("aid") Integer aid) {
 //    	return ser.getAgentCustCombo(aid);
 //    }
+    
+    @GetMapping("/claims/all")
+	public ResponseEntity<AgentClaim> getAllClaims(){
+    	return ResponseEntity.ok(ser.getAllClaims());
+    }
      
 
 	

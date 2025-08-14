@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
 import com.project.model.Agent;
+import com.project.model.AgentClaim;
 import com.project.model.AgentCustomer;
 import com.project.model.AgentPolicy;
+import com.project.model.CustomerDTO;
 
 public interface AgentService {
 	
@@ -40,7 +42,15 @@ public interface AgentService {
 
 
 
-	AgentCustomer getCustomerForAgent(Integer aid);
+	CustomerDTO getCustomerForAgent(Integer aid);
+
+
+
+	AgentClaim getAllClaims();
+
+
+
+//	Object getAllClaims();
 
 
 

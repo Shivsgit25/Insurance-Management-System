@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.project.client.CustomerClient;
 import com.project.client.PolicyClient;
 import com.project.model.Agent;
+import com.project.model.AgentClaim;
 import com.project.model.AgentCustomer;
 import com.project.model.AgentPolicy;
 import com.project.model.CustomerDTO;
@@ -101,15 +102,17 @@ public class AgentServiceImpl implements AgentService {
 	}
 
 	@Override
-	public AgentCustomer getCustomerForAgent(Integer aid) {
+	public CustomerDTO getCustomerForAgent(Integer cid) {
 	
-		List<CustomerDTO> custdto = customerclient.getCustomerForAgent(aid);
-		Optional<Agent> opt = repo.findByCustomerId(aid);
-		Agent agent = opt.get();
-		AgentCustomer agentcustomer = new AgentCustomer();
-		agentcustomer.setAgent(agent);
-		agentcustomer.setCust(custdto);
-		return agentcustomer;
+		CustomerDTO custdto = customerclient.getCustomerForAgent(cid);
+		
+		return custdto;
+	}
+
+	@Override
+	public AgentClaim getAllClaims() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //	@Override
