@@ -82,7 +82,7 @@ public class AgentServiceImpl implements AgentService {
 
 	@Override
 	public AgentPolicy getAgentPolyCombo(Integer aid) {
-	  List<PolicyDTO> policydto = policyclient.getCollection(aid);
+	  List<PolicyDTO> policydto = policyclient.getPolicies(aid);
 	  Optional<Agent> opt = repo.findById(aid);
 	  Agent agent = opt.get();
 	  AgentPolicy agentpolicy = new AgentPolicy();

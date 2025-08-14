@@ -12,7 +12,7 @@ import com.project.model.PolicyDTO;
 public interface PolicyClient {
 	@GetMapping("/testing/{agentId}")
 
-	public List<PolicyDTO> getCollection(@PathVariable("agentId") Integer agentId);
+	public List<PolicyDTO> getPolicies(@PathVariable("agentId") Integer agentId);
 
 	
 	
