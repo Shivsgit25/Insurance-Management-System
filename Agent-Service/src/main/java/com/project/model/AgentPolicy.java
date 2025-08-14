@@ -6,6 +6,7 @@ public class AgentPolicy {
 	
 	private Agent agent;
 	private List<PolicyDTO> policy;
+	
 	public Agent getAgent() {
 		return agent;
 	}
