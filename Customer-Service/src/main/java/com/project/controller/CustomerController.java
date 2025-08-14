@@ -58,4 +58,8 @@ public class CustomerController {
         service.fileClaim(claim);
         return "CLAIM FILLED";
     }
+	@GetMapping("/getCustomerForAgent/{id}")
+	public Customer getCustomerForAgent(@PathVariable("id") Integer id) {
+		return service.getCustomerForAgent(id);
+	}
 }

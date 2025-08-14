@@ -85,4 +85,14 @@ public class CusotmerServiceImpl implements CustomerService {
 	  claimclient.fileClaim(claim);
 	}
 
+	public Customer getCustomerForAgent(Integer id) {
+		// TODO Auto-generated method stub
+		Customer customer=repo.findByCustomerId(id);
+		return customer;
+	}
+
+	
+
+	
+
 }
