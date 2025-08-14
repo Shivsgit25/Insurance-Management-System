@@ -1,12 +1,14 @@
 package com.project.service;
 
-import com.project.exception.ClaimNotFoundException;
-import com.project.model.Claim;
-import com.project.repository.ClaimRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.project.exception.ClaimNotFoundException;
+import com.project.model.Claim;
+import com.project.model.Claim.Status;
+import com.project.repository.ClaimRepository;
 
 /**
  * Implementation of ClaimService. Handles business logic for filing, reviewing,
@@ -50,7 +52,7 @@ public class ClaimServiceImpl implements ClaimService {
 	 * @throws ClaimNotFoundException if the claim ID does not exist
 	 */
 	@Override
-	public Claim reviewClaim(Long claimId, Claim.Status status) throws ClaimNotFoundException {
+	public Claim reviewClaim(Integer claimId, Claim.Status status) throws ClaimNotFoundException {
 		Claim claim = claimRepository.findById(claimId)
 				.orElseThrow(() -> new ClaimNotFoundException("Claim not found with ID: " + claimId));
 		claim.setStatus(status); // Update status
@@ -66,7 +68,7 @@ public class ClaimServiceImpl implements ClaimService {
 	 * @throws ClaimNotFoundException if the claim ID does not exist
 	 */
 	@Override
-	public Claim getClaimById(Long claimId) throws ClaimNotFoundException {
+	public Claim getClaimById(Integer claimId) throws ClaimNotFoundException {
 		return claimRepository.findById(claimId)
 				.orElseThrow(() -> new ClaimNotFoundException("Claim not found with ID: " + claimId));
 	}
@@ -79,7 +81,8 @@ public class ClaimServiceImpl implements ClaimService {
 	 * @return a list of Claim entities associated with the customer
 	 */
 	@Override
-	public List<Claim> getClaimsByCustomer(Long customerId) {
+	public List<Claim> getClaimsByCustomer(Integer customerId) {
 		return claimRepository.findByCustomerId(customerId);
 	}
+
 }
