@@ -19,6 +19,9 @@ public interface ClaimRepository extends JpaRepository<Claim, Integer> {
 	 */
 	
 	List<Claim> findByCustomerId(Integer customerId);
+	
+	List<Claim> findByStatus(Claim.Status status);
+
 
 	// -------------------- Inherited Methods from JpaRepository
 	// --------------------

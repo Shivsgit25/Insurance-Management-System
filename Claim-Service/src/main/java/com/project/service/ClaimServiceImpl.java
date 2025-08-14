@@ -2,87 +2,82 @@ package com.project.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.exception.ClaimNotFoundException;
 import com.project.model.Claim;
-import com.project.model.Claim.Status;
 import com.project.repository.ClaimRepository;
 
-/**
- * Implementation of ClaimService. Handles business logic for filing, reviewing,
- * and retrieving claims.
- */
 @Service
 public class ClaimServiceImpl implements ClaimService {
 
-	private final ClaimRepository claimRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ClaimServiceImpl.class);
 
-	/**
-	 * Constructor-based injection of ClaimRepository.
-	 * 
-	 * @param claimRepository repository for accessing claim data
-	 */
-	@Autowired
-	public ClaimServiceImpl(ClaimRepository claimRepository) {
-		this.claimRepository = claimRepository;
-	}
+    private final ClaimRepository claimRepository;
 
-	/**
-	 * Files a new insurance claim. Sets the initial status to FILED and saves the
-	 * claim to the database.
-	 *
-	 * @param claim the claim object containing policy, customer, and amount details
-	 * @return the persisted Claim entity with generated ID and status
-	 */
-	@Override
-	public Claim fileClaim(Claim claim) {
-		claim.setStatus(Claim.Status.FILED); // Set default status
-		return claimRepository.save(claim); // Save to database
-	}
+    @Autowired
+    public ClaimServiceImpl(ClaimRepository claimRepository) {
+        this.claimRepository = claimRepository;
+        logger.info("ClaimServiceImpl initialized");
+    }
 
-	/**
-	 * Updates the status of an existing claim. Retrieves the claim by ID, throws
-	 * exception if not found, and updates its status.
-	 *
-	 * @param claimId the ID of the claim to be reviewed
-	 * @param status  the new status to assign (e.g., APPROVED, REJECTED)
-	 * @return the updated Claim entity
-	 * @throws ClaimNotFoundException if the claim ID does not exist
-	 */
-	@Override
-	public Claim reviewClaim(Integer claimId, Claim.Status status) throws ClaimNotFoundException {
-		Claim claim = claimRepository.findById(claimId)
-				.orElseThrow(() -> new ClaimNotFoundException("Claim not found with ID: " + claimId));
-		claim.setStatus(status); // Update status
-		return claimRepository.save(claim); // Save changes
-	}
+    @Override
+    public Claim fileClaim(Claim claim) {
+        logger.info("Filing new claim for policyId: {}", claim.getPolicyId());
+        claim.setStatus(Claim.Status.FILED);
+        Claim saved = claimRepository.save(claim);
+        logger.info("Claim filed with ID: {}", saved.getClaimId());
+        return saved;
+    }
 
-	/**
-	 * Retrieves a claim by its unique ID. Throws an exception if the claim is not
-	 * found.
-	 *
-	 * @param claimId the ID of the claim to retrieve
-	 * @return the Claim entity
-	 * @throws ClaimNotFoundException if the claim ID does not exist
-	 */
-	@Override
-	public Claim getClaimById(Integer claimId) throws ClaimNotFoundException {
-		return claimRepository.findById(claimId)
-				.orElseThrow(() -> new ClaimNotFoundException("Claim not found with ID: " + claimId));
-	}
+    @Override
+    public Claim reviewClaim(Integer claimId, Claim.Status status) throws ClaimNotFoundException {
+        logger.info("Reviewing claim ID: {} with new status: {}", claimId, status);
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(() -> {
+                    logger.warn("Claim not found with ID: {}", claimId);
+                    return new ClaimNotFoundException("Claim not found with ID: " + claimId);
+                });
+        claim.setStatus(status);
+        Claim updated = claimRepository.save(claim);
+        logger.info("Claim ID: {} updated to status: {}", claimId, status);
+        return updated;
+    }
 
-	/**
-	 * Retrieves all claims filed by a specific customer. Uses a custom repository
-	 * method to filter by customer ID.
-	 *
-	 * @param customerId the ID of the customer
-	 * @return a list of Claim entities associated with the customer
-	 */
-	@Override
-	public List<Claim> getClaimsByCustomer(Integer customerId) {
-		return claimRepository.findByCustomerId(customerId);
-	}
+    @Override
+    public Claim getClaimById(Integer claimId) throws ClaimNotFoundException {
+        logger.info("Fetching claim with ID: {}", claimId);
+        return claimRepository.findById(claimId)
+                .orElseThrow(() -> {
+                    logger.warn("Claim not found with ID: {}", claimId);
+                    return new ClaimNotFoundException("Claim not found with ID: " + claimId);
+                });
+    }
 
+    @Override
+    public List<Claim> getClaimsByCustomer(Integer customerId) {
+        logger.info("Fetching claims for customer ID: {}", customerId);
+        List<Claim> claims = claimRepository.findByCustomerId(customerId);
+        logger.info("Found {} claims for customer ID: {}", claims.size(), customerId);
+        return claims;
+    }
+
+    @Override
+    public List<Claim> getAllClaims() {
+        logger.info("Fetching all claims");
+     List<Claim> claims = claimRepository.findAll();
+        logger.info("Total claims found: {}", claims.size());
+        return claims;
+    }
+
+    @Override
+    public List<Claim> getClaimsByStatus(Claim.Status status) {
+        logger.info("Fetching claims with status: {}", status);
+        List<Claim> claims = claimRepository.findByStatus(status);
+        logger.info("Found {} claims with status: {}", claims.size(), status);
+        return claims;
+    }
 }
