@@ -9,6 +9,6 @@ import com.project.model.PolicyDTO;
  
 @FeignClient(name = "POLICY-SERVICE",path ="/api/policies")
 public interface PolicyClient {
-  @GetMapping("/test/{customerId}") // Corrected path to match PolicyController
+  @GetMapping("/getCustomerPolicyDetails/{customerId}") // Corrected path to match PolicyController
   public List<PolicyDTO> getCollection(@PathVariable("customerId") Integer customerId);
 }
