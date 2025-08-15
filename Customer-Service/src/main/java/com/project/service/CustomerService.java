@@ -2,8 +2,6 @@ package com.project.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;

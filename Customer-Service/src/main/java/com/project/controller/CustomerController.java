@@ -2,14 +2,10 @@ package com.project.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
@@ -19,47 +15,58 @@ import com.project.service.CustomerService;
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
-	
-	@Autowired
-	CustomerService service;
-	
-	@PostMapping("/add")
-	public String AddCustomer(@RequestBody Customer customer) {
-		return service.AddCustomer(customer);
-	}
-	
-	@PostMapping("/Update")
-	public String UpdateCustomer(@RequestBody Customer customer) {
-		return service.UpdateCustomer(customer);
-	}
-	@GetMapping("/getCustomer/{id}")
-	public Customer getCustomerById(@PathVariable("id") int id) {
-		return service.getCustomerById(id);
-	}
-	@PostMapping("/deleteCustomer/{id}")
-	public String deleteCustomerById(@PathVariable("id") int id) {
-		return service.deleteByCustomerId(id);
-	}
-	@GetMapping("/getAllCustomer")
-		public List<Customer> getAllCustomer() {
-			return service.getAllCustomer();
-		}
-	
-	@GetMapping("/getCustomerPolicyDetails/{cid}")
-	public CustomerPolicy getPolicyDetailsOnCustomer(@PathVariable("cid") Integer cid) {
-		return service.getCustPolyCombo(cid);
-	}
-//	@PostMapping("/getCustomerInformationForClaim/{cid}")
-//	public List<Customer> getCustomerInformationForClaim(@PathVariable("cid") Integer cid) {
-//		return service.getCustomerInfoForClaim(cid);
-//	}
-	@PostMapping("/file")
-    public String fileClaim(@RequestBody ClaimDTO claim) {
-        service.fileClaim(claim);
-        return "CLAIM FILLED";
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+
+    @Autowired
+    CustomerService service;
+
+    @PostMapping("/add")
+    public String AddCustomer(@RequestBody Customer customer) {
+        logger.info("Adding customer: {}", customer);
+        return service.AddCustomer(customer);
     }
-	@GetMapping("/getCustomerForAgent/{id}")
-	public Customer getCustomerForAgent(@PathVariable("id") Integer id) {
-		return service.getCustomerForAgent(id);
-	}
+
+    @PostMapping("/Update")
+    public String UpdateCustomer(@RequestBody Customer customer) {
+        logger.info("Updating customer: {}", customer);
+        return service.UpdateCustomer(customer);
+    }
+
+    @GetMapping("/getCustomer/{id}")
+    public Customer getCustomerById(@PathVariable("id") int id) {
+        logger.info("Fetching customer by ID: {}", id);
+        return service.getCustomerById(id);
+    }
+
+    @PostMapping("/deleteCustomer/{id}")
+    public String deleteCustomerById(@PathVariable("id") int id) {
+        logger.info("Deleting customer by ID: {}", id);
+        return service.deleteByCustomerId(id);
+    }
+
+    @GetMapping("/getAllCustomer")
+    public List<Customer> getAllCustomer() {
+        logger.info("Fetching all customers");
+        return service.getAllCustomer();
+    }
+
+    @GetMapping("/getCustomerPolicyDetails/{cid}")
+    public CustomerPolicy getPolicyDetailsOnCustomer(@PathVariable("cid") Integer cid) {
+        logger.info("Fetching policy details for customer ID: {}", cid);
+        return service.getCustPolyCombo(cid);
+    }
+
+    @PostMapping("/file")
+    public String fileClaim(@RequestBody ClaimDTO claim) {
+        logger.info("Filing claim: {}", claim);
+        service.fileClaim(claim);
+        return "CLAIM FILED";
+    }
+
+    @GetMapping("/getCustomerForAgent/{id}")
+    public Customer getCustomerForAgent(@PathVariable("id") Integer id) {
+        logger.info("Fetching customer for agent ID: {}", id);
+        return service.getCustomerForAgent(id);
+    }
 }
