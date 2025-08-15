@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.DTO.ClaimDTO;
 import com.project.DTO.CustomerDTO;
 import com.project.DTO.EmailDTO;
 import com.project.DTO.PolicyDTO;
@@ -18,9 +19,7 @@ public class NotificationController {
 	
 	@Autowired
 	NotificationService service;
-	
-//	EMailS##################################################
-	
+
 	@PostMapping("/actemail")
 	public String sendEmailNotification(@RequestBody EmailDTO emailRequest) {
 	    return service.sendActualEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getBody());
@@ -40,14 +39,23 @@ public class NotificationController {
 		return "Success";
 	}
 	
-//	SMS######################################################
+	//Claim FILLED
+	@PostMapping("/claimfiled")
+	public String claimFilled(@RequestBody ClaimDTO claim ) {
+		return service.claimFilledEmail(claim);
+	}
 	
+	//ClaimUpdationMail
+	@PostMapping("/claimUpdated")
+	public String claimUpdated(@RequestBody Integer claimId,@RequestBody ClaimDTO.Status status) {
+		return service.sendMailClaimUpdated(claimId,status);
+	}
+
+
 	 @PostMapping("/actsms")
 	    public String sendSmsNotification(@RequestBody SmsDTO smsRequest) {
 	       return service.sendActualSms(smsRequest.getTo(), smsRequest.getBody());
 	 }
-	 
-//	 INAPP###################################################
-	 
+
 	 
 }
