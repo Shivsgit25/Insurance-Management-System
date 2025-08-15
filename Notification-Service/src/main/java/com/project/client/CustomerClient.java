@@ -11,6 +11,6 @@ import com.project.DTO.CustomerDTO;
 public interface CustomerClient {
 	
 	@GetMapping("/getCustomer/{id}")
-	public CustomerDTO getCustomerById(@PathVariable("id") int id);
+	public CustomerDTO getCustomerById(@PathVariable int id);
 
 }
