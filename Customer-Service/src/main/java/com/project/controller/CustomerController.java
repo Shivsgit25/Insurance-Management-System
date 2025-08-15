@@ -23,42 +23,49 @@ public class CustomerController {
 
     @PostMapping("/add")
     public String AddCustomer(@RequestBody Customer customer) {
+    	logger.info("############################# Running AddCustomer function in line number 26 ######################################");
         logger.info("Adding customer: {}", customer);
         return service.AddCustomer(customer);
     }
 
     @PostMapping("/Update")
     public String UpdateCustomer(@RequestBody Customer customer) {
+    	logger.info("############################# Running UpdateCustomer function in line number 33 ######################################");
         logger.info("Updating customer: {}", customer);
         return service.UpdateCustomer(customer);
     }
 
     @GetMapping("/getCustomer/{id}")
     public Customer getCustomerById(@PathVariable("id") int id) {
+    	logger.info("############################# Running getCustomer function in line number 40 ######################################");
         logger.info("Fetching customer by ID: {}", id);
         return service.getCustomerById(id);
     }
 
     @PostMapping("/deleteCustomer/{id}")
     public String deleteCustomerById(@PathVariable("id") int id) {
+    	logger.info("############################# Running deleteCustomer function in line number 45 ######################################");
         logger.info("Deleting customer by ID: {}", id);
         return service.deleteByCustomerId(id);
     }
 
     @GetMapping("/getAllCustomer")
     public List<Customer> getAllCustomer() {
+    	logger.info("############################# Running getAllCustomer function in line number 52 ######################################");
         logger.info("Fetching all customers");
         return service.getAllCustomer();
     }
 
     @GetMapping("/getCustomerPolicyDetails/{cid}")
     public CustomerPolicy getPolicyDetailsOnCustomer(@PathVariable("cid") Integer cid) {
+    	logger.info("############################# Running getCustomerPolicyDetails function in line number 59 ######################################");
         logger.info("Fetching policy details for customer ID: {}", cid);
         return service.getCustPolyCombo(cid);
     }
 
     @PostMapping("/file")
     public String fileClaim(@RequestBody ClaimDTO claim) {
+    	logger.info("############################# Running file function for getting claim data in line number 66 ######################################");
         logger.info("Filing claim: {}", claim);
         service.fileClaim(claim);
         return "CLAIM FILED";
@@ -66,6 +73,7 @@ public class CustomerController {
 
     @GetMapping("/getCustomerForAgent/{id}")
     public Customer getCustomerForAgent(@PathVariable("id") Integer id) {
+    	logger.info("############################# Running getCustomerForAgent function in line number 74 ######################################");
         logger.info("Fetching customer for agent ID: {}", id);
         return service.getCustomerForAgent(id);
     }
