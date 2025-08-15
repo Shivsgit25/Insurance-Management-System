@@ -13,7 +13,7 @@ public class CustomerServiceApplication {
     private static final Logger logger = LoggerFactory.getLogger(CustomerServiceApplication.class);
 
     public static void main(String[] args) {
-        logger.info("Starting CustomerServiceApplication...");
+        logger.info("############# Starting CustomerServiceApplication...##################");
         SpringApplication.run(CustomerServiceApplication.class, args);
     }
 }
