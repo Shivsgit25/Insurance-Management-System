@@ -1,19 +1,21 @@
 package com.project.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.project.client.ClaimClient;
 import com.project.client.PolicyClient;
+import com.project.exception.CustomerNotFoundException;
+import com.project.exception.ExternalServiceException;
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;
 import com.project.model.PolicyDTO;
 import com.project.repository.CustomerRepository;
+
+import feign.FeignException;
 
 @Service
 public class CusotmerServiceImpl implements CustomerService {
@@ -35,15 +37,16 @@ public class CusotmerServiceImpl implements CustomerService {
 
 	@Override
 	public String UpdateCustomer(Customer customer) {
+        repo.findById(customer.getCustomerId())
+            .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + customer.getCustomerId() + " not found for update."));
 		repo.save(customer);
-		int id = customer.getCustomerId();
-		return "Customer Updated Successfully on ID : " + id;
+		return "Customer Updated Successfully on ID : " + customer.getCustomerId();
 	}
 
 	@Override
 	public Customer getCustomerById(int id) {
-		Customer customer = repo.findByCustomerId(id);
-		return customer;
+		return repo.findById(id)
+                   .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found."));
 	}
 
 	@Override
@@ -54,45 +57,45 @@ public class CusotmerServiceImpl implements CustomerService {
 
 	@Override
 	public String deleteByCustomerId(int id) {
-		Customer customer = repo.findByCustomerId(id);
-		int customerid = customer.getCustomerId();
-		String customername = customer.getName();
+        Customer customer = repo.findById(id)
+                                .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for deletion."));
 		repo.delete(customer);
-		return "The Data for the Customer id : " + customerid + "\nCustomer Name :" + customername
+		return "The Data for the Customer id : " + customer.getCustomerId() + "\nCustomer Name :" + customer.getName()
 				+ "\n Deleted Successfully !!!";
 	}
 
 	@Override
 	public CustomerPolicy getCustPolyCombo(Integer cid) {
-		List<PolicyDTO> policydto = policyclient.getCollection(cid);
-		Optional<Customer> opt = repo.findById(cid);
-		Customer customer = opt.get();
-		CustomerPolicy customerpolicy = new CustomerPolicy();
-		customerpolicy.setCust(customer);
-		customerpolicy.setPoly(policydto);
-		return customerpolicy;
-
+        Customer customer = repo.findById(cid)
+                                .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + cid + " not found to get policy details."));
+        
+        try {
+            List<PolicyDTO> policydto = policyclient.getCollection(cid);
+            CustomerPolicy customerpolicy = new CustomerPolicy();
+            customerpolicy.setCust(customer);
+            customerpolicy.setPoly(policydto);
+            return customerpolicy;
+        } catch (FeignException ex) {
+            throw new ExternalServiceException("Failed to retrieve policy details.", ex);
+        }
 	}
 
 	@Override
 	public List<Customer> getCustomerInfoForClaim(Integer cid) {
-//		List<Customer> customer=repo.find(cid);
 		return null;
 	}
 
 	@Override
 	public void fileClaim(ClaimDTO claim) {
-	  claimclient.fileClaim(claim);
+        try {
+            claimclient.fileClaim(claim);
+        } catch (FeignException ex) {
+            throw new ExternalServiceException("Failed to file a claim.", ex);
+        }
 	}
 
 	public Customer getCustomerForAgent(Integer id) {
-		// TODO Auto-generated method stub
-		Customer customer=repo.findByCustomerId(id);
-		return customer;
+		return repo.findById(id)
+                   .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for agent."));
 	}
-
-	
-
-	
-
 }
