@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.client.ClaimClient;
+import com.project.client.NotificationClient;
 import com.project.client.PolicyClient;
 import com.project.exception.CustomerNotFoundException;
 import com.project.exception.ExternalServiceException;
@@ -28,18 +29,21 @@ public class CusotmerServiceImpl implements CustomerService {
 	@Autowired
 	ClaimClient claimclient;
 
+	@Autowired
+	NotificationClient notificationclient;
+
 	@Override
 	public String AddCustomer(Customer customer) {
 		repo.save(customer);
-		
+		notificationclient.customerRegisteredMail(customer);
 		return "Customer Saved Successfully";
 
 	}
 
 	@Override
 	public String UpdateCustomer(Customer customer) {
-        repo.findById(customer.getCustomerId())
-            .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + customer.getCustomerId() + " not found for update."));
+		repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
+				"Customer with ID " + customer.getCustomerId() + " not found for update."));
 		repo.save(customer);
 		return "Customer Updated Successfully on ID : " + customer.getCustomerId();
 	}
@@ -47,7 +51,7 @@ public class CusotmerServiceImpl implements CustomerService {
 	@Override
 	public Customer getCustomerById(int id) {
 		return repo.findById(id)
-                   .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found."));
+				.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found."));
 	}
 
 	@Override
@@ -58,8 +62,8 @@ public class CusotmerServiceImpl implements CustomerService {
 
 	@Override
 	public String deleteByCustomerId(int id) {
-        Customer customer = repo.findById(id)
-                                .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for deletion."));
+		Customer customer = repo.findById(id).orElseThrow(
+				() -> new CustomerNotFoundException("Customer with ID " + id + " not found for deletion."));
 		repo.delete(customer);
 		return "The Data for the Customer id : " + customer.getCustomerId() + "\nCustomer Name :" + customer.getName()
 				+ "\n Deleted Successfully !!!";
@@ -67,18 +71,18 @@ public class CusotmerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerPolicy getCustPolyCombo(Integer cid) {
-        Customer customer = repo.findById(cid)
-                                .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + cid + " not found to get policy details."));
-        
-        try {
-            List<PolicyDTO> policydto = policyclient.getCollection(cid);
-            CustomerPolicy customerpolicy = new CustomerPolicy();
-            customerpolicy.setCust(customer);
-            customerpolicy.setPoly(policydto);
-            return customerpolicy;
-        } catch (FeignException ex) {
-            throw new ExternalServiceException("Failed to retrieve policy details.", ex);
-        }
+		Customer customer = repo.findById(cid).orElseThrow(
+				() -> new CustomerNotFoundException("Customer with ID " + cid + " not found to get policy details."));
+
+		try {
+			List<PolicyDTO> policydto = policyclient.getCollection(cid);
+			CustomerPolicy customerpolicy = new CustomerPolicy();
+			customerpolicy.setCust(customer);
+			customerpolicy.setPoly(policydto);
+			return customerpolicy;
+		} catch (FeignException ex) {
+			throw new ExternalServiceException("Failed to retrieve policy details.", ex);
+		}
 	}
 
 	@Override
@@ -88,15 +92,15 @@ public class CusotmerServiceImpl implements CustomerService {
 
 	@Override
 	public void fileClaim(ClaimDTO claim) {
-        try {
-            claimclient.fileClaim(claim);
-        } catch (FeignException ex) {
-            throw new ExternalServiceException("Failed to file a claim.", ex);
-        }
+		try {
+			claimclient.fileClaim(claim);
+		} catch (FeignException ex) {
+			throw new ExternalServiceException("Failed to file a claim.", ex);
+		}
 	}
 
 	public Customer getCustomerForAgent(Integer id) {
 		return repo.findById(id)
-                   .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for agent."));
+				.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for agent."));
 	}
 }
