@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.project.DTO.AgentDTO;
 
-@FeignClient(name = "AGENTSERVICE", path = "/agent")
+@FeignClient(name = "AGENTSERVICE", path = "/agents")
 public interface AgentClient {
 	
 	@GetMapping("get/{agentId}")

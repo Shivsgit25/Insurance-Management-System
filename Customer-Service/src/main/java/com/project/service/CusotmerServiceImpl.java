@@ -31,6 +31,7 @@ public class CusotmerServiceImpl implements CustomerService {
 	@Override
 	public String AddCustomer(Customer customer) {
 		repo.save(customer);
+		
 		return "Customer Saved Successfully";
 
 	}
