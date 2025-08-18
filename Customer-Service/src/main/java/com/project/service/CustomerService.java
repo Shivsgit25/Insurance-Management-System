@@ -8,11 +8,11 @@ import com.project.model.CustomerPolicy;
 
 public interface CustomerService {
 
-	public String AddCustomer(Customer cust);
+	public String addCustomer(Customer cust);
 	
 	public String loginCustomer(String email, String password);
 
-	public String UpdateCustomer(Customer customer);
+	public String updateCustomer(Customer customer);
 
 	public Customer getCustomerById(int id);
 
