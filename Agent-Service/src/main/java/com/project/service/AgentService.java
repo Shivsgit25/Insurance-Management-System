@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
 import com.project.model.AgentCustomer;
+import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
@@ -52,6 +53,10 @@ public interface AgentService {
 
 
 	ClaimDTO approveClaim(Integer claimId);
+
+
+
+	AgentFullDetails getAgentFullDetails(Integer agentId);
 
 
 

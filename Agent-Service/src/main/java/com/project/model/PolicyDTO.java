@@ -8,6 +8,24 @@ public class PolicyDTO {
     private Double premiumAmount;
     private String coverageDetails;
     private Integer validityPeriod;
+    private CustomerDTO customer;
+    
+	public PolicyDTO(Integer policyId, String name, Double premiumAmount, String coverageDetails,
+			Integer validityPeriod, CustomerDTO customer) {
+		super();
+		this.policyId = policyId;
+		this.name = name;
+		this.premiumAmount = premiumAmount;
+		this.coverageDetails = coverageDetails;
+		this.validityPeriod = validityPeriod;
+		this.customer = customer;
+	}
+	public CustomerDTO getCustomer() {
+		return customer;
+	}
+	public void setCustomer(CustomerDTO customer) {
+		this.customer = customer;
+	}
 	public Integer getPolicyId() {
 		return policyId;
 	}
@@ -38,14 +56,7 @@ public class PolicyDTO {
 	public void setValidityPeriod(Integer validityPeriod) {
 		this.validityPeriod = validityPeriod;
 	}
-	public PolicyDTO(Integer policyId, String name, Double premiumAmount, String coverageDetails, Integer validityPeriod) {
-		super();
-		this.policyId = policyId;
-		this.name = name;
-		this.premiumAmount = premiumAmount;
-		this.coverageDetails = coverageDetails;
-		this.validityPeriod = validityPeriod;
-	}
+	
 	public PolicyDTO() {
 		super();
 	}
