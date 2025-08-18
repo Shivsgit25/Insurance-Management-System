@@ -10,6 +10,7 @@ import com.project.client.NotificationClient;
 import com.project.client.PolicyClient;
 import com.project.exception.CustomerNotFoundException;
 import com.project.exception.ExternalServiceException;
+import com.project.exception.InvalidCredentialsException;
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;
@@ -102,5 +103,16 @@ public class CusotmerServiceImpl implements CustomerService {
 	public Customer getCustomerForAgent(Integer id) {
 		return repo.findById(id)
 				.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for agent."));
+	}
+
+	@Override
+	public String loginCustomer(String email, String password) {
+		Customer customer = repo.findByEmail(email);
+	    
+	    if (customer == null || !customer.getPassword().equals(password)) {
+	        throw new InvalidCredentialsException("Invalid email or password.");
+	    }
+	    
+	    return "Welcome Home, " + customer.getName() + "!";
 	}
 }
