@@ -19,9 +19,9 @@ public interface NotificationService {
 
 	void sendMailPolicyOpted(PolicyDTO policy) throws EmailSendingException;
 
-	String claimFilledEmail(ClaimDTO claim) throws PolicyNotFoundException, AgentNotFoundException, EmailSendingException;
+	void claimFilledEmail(ClaimDTO claim) throws PolicyNotFoundException, AgentNotFoundException, EmailSendingException;
 
-	String sendMailClaimUpdated(Integer claimId, Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException;
+	void sendMailClaimUpdated(Integer claimId, Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException;
 
 	void sendPolicyRenewalReminders();
 

@@ -174,7 +174,7 @@ public class NotificationServiceImpl implements NotificationService {
      * @throws EmailSendingException if there's an issue sending the email.
      */
     @Override
-    public String claimFilledEmail(ClaimDTO claim) throws PolicyNotFoundException, AgentNotFoundException, EmailSendingException {
+    public void claimFilledEmail(ClaimDTO claim) throws PolicyNotFoundException, AgentNotFoundException, EmailSendingException {
         if (claim == null) {
             logger.error("Claim object cannot be null for claim filled email.");
             throw new IllegalArgumentException("Claim object cannot be null.");
@@ -208,7 +208,7 @@ public class NotificationServiceImpl implements NotificationService {
             sendNewClaimAssignmentEmailToAgent(claim, customer, policy, assignedAgent);
             
             logger.info("Claim Filled Emails sent successfully for Claim ID {}", claim.getClaimId());
-            return "Mail Sent to Customer and Agent Successfully";
+            
         } catch (MailException e) {
             logger.error("Failed to send claim filed email for claim ID {}.", claim.getClaimId(), e);
             throw new EmailSendingException("Failed to send claim filed email for claim ID " + claim.getClaimId(), e);
@@ -290,7 +290,8 @@ public class NotificationServiceImpl implements NotificationService {
      * @throws PolicyNotFoundException if the policy is not found.
      * @throws EmailSendingException if there's an issue sending the email.
      */
-    public String sendMailClaimUpdated(Integer claimId, ClaimDTO.Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException {
+    @Async
+    public void sendMailClaimUpdated(Integer claimId, ClaimDTO.Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException {
         ResponseEntity<ClaimDTO> claimEntity = claimclient.getClaimById(claimId);
         if (!claimEntity.hasBody() || claimEntity.getBody() == null) {
             logger.error("Claim with ID {} not found for claim update email.", claimId);
@@ -356,8 +357,6 @@ public class NotificationServiceImpl implements NotificationService {
             message.setText(body);
             javaMailSender.send(message);
             logger.info("Claim Update Mail Sent to Customer {} for Claim ID {} with status {}", customer.getEmail(), claimId, status);
-
-            return "Mail Sent to Customer For Claim Updation";
         } catch (MailException e) {
             logger.error("Failed to send claim updated email for claim ID {} with status {}.", claimId, status, e);
             throw new EmailSendingException("Failed to send claim updated email for claim ID " + claimId, e);

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.DTO.ClaimDTO;
@@ -31,26 +32,36 @@ public class NotificationController {
 	
 	//registered
 	@PostMapping("/customerRegistered")
-	public void customerRegisteredMail(@RequestBody CustomerDTO customer) throws EmailSendingException {
+	public String customerRegisteredMail(@RequestBody CustomerDTO customer) throws EmailSendingException {
 		service.sendRegisteredEmail(customer);
+		return "Welcome Mail/SMS Sent!!";
 	}
 	
 	//policies opted
 	@PostMapping("/policieopted")
-	public void mailPoliciesOpted(@RequestBody PolicyDTO policy) throws EmailSendingException {
+	public String mailPoliciesOpted(@RequestBody PolicyDTO policy) throws EmailSendingException {
 		service.sendMailPolicyOpted(policy);
+		return "Mail Sent For Opted Policy!!";
 	}
 	
 	//Claim FILLED
 	@PostMapping("/claimfiled")
 	public String claimFilled(@RequestBody ClaimDTO claim ) throws PolicyNotFoundException, AgentNotFoundException, EmailSendingException {
-		return service.claimFilledEmail(claim);
+		service.claimFilledEmail(claim);
+		return "Mail Sent for Fileing Claim!!";
 	}
 	
 	//ClaimUpdationMail
 	@PostMapping("/claimUpdated")
-	public String claimUpdated(@RequestBody Integer claimId,@RequestBody ClaimDTO.Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException {
-		return service.sendMailClaimUpdated(claimId,status);
+	public String claimUpdated(@RequestParam("claimId") Integer claimId,@RequestParam("status") ClaimDTO.Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException {
+		 service.sendMailClaimUpdated(claimId,status);
+		 return "Mail Sent for Updation Of the claim!!";
+	}
+	
+	@PostMapping("/reminder")
+	public String sendPolicyRenewal() {
+		service.sendPolicyRenewalReminders();
+		return "Mail sent to Customers Whose Expiry is With-in 10 days!!";
 	}
 
 
