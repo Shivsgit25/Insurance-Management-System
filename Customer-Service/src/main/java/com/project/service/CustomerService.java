@@ -9,6 +9,8 @@ import com.project.model.CustomerPolicy;
 public interface CustomerService {
 
 	public String AddCustomer(Customer cust);
+	
+	public String loginCustomer(String email, String password);
 
 	public String UpdateCustomer(Customer customer);
 

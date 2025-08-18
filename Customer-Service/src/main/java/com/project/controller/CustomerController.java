@@ -2,10 +2,16 @@ package com.project.controller;
 
 import java.util.List;
 
+import org.apache.http.auth.InvalidCredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
@@ -27,7 +33,11 @@ public class CustomerController {
         logger.info("Adding customer: {}", customer);
         return service.AddCustomer(customer);
     }
-
+    @PostMapping("/login")
+    public String login(@RequestBody Customer loginCustomer) throws InvalidCredentialsException {
+        logger.info("Attempting to login user with email: {}", loginCustomer.getEmail());
+        return service.loginCustomer(loginCustomer.getEmail(), loginCustomer.getPassword());
+    }
     @PostMapping("/Update")
     public String UpdateCustomer(@RequestBody Customer customer) {
     	logger.info("############################# Running UpdateCustomer function in line number 33 ######################################");
