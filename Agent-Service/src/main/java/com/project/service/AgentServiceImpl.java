@@ -152,7 +152,36 @@ public class AgentServiceImpl implements AgentService {
 	@Override
     public ClaimDTO approveClaim(Integer claimId) {
 		logger.info("Approving claim with ID: {}", claimId);
-        return claimclient.updateClaimStatus(claimId, ClaimDTO.ClaimStatus.APPROVED).getBody();
+     
+		// Step 1: Get the claim
+	    ClaimDTO claim = claimclient.getClaimById(claimId).getBody(); 
+	    if (claim == null) {
+	        throw new ResourceNotFoundException("Claim not found with ID: " + claimId);
+	    }
+
+	    // Step 2: Get the related policy
+	    PolicyDTO policy = policyclient.getPolicyById(claim.getPolicyId()); // You may need to add this method in PolicyClient
+	    if (policy == null) {
+	        throw new ResourceNotFoundException("Policy not found with ID: " + claim.getPolicyId());
+	    }
+
+	    // Step 3: Calculate threshold
+	    double threshold = policy.getPremiumAmount() * policy.getValidityPeriod();
+	    logger.debug("Threshold amount: {}", threshold);
+	    logger.debug("Claim amount: {}", claim.getClaimAmount());
+
+	    // Step 4: Compare and decide
+	    ClaimDTO.ClaimStatus status;
+	    if (threshold < claim.getClaimAmount()) {
+	        status = ClaimDTO.ClaimStatus.REJECTED;
+	        logger.info("Claim rejected due to exceeding threshold.");
+	    } else {
+	        status = ClaimDTO.ClaimStatus.APPROVED;
+	        logger.info("Claim approved.");
+	    }
+
+	    // Step 5: Update claim status
+	    return claimclient.updateClaimStatus(claimId, status).getBody();
     }
 
 
