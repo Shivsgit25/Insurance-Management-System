@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.PolicyClient;
+import com.project.exception.ResourceNotFoundException;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
 import com.project.model.AgentCustomer;
+import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
@@ -143,6 +145,26 @@ public class AgentServiceImpl implements AgentService {
 //		
 //		return agentcustomer;
 //	}
+	
+	public AgentFullDetails getAgentFullDetails(Integer agentId) {
+		
+		Optional<Agent> optAgent = repo.findById(agentId);
+		
+	    if (optAgent.isEmpty()) {
+	        throw new ResourceNotFoundException("Agent not found with ID: " + agentId);
+	    }
+
+	    Agent agent = optAgent.get();
+	    List<PolicyDTO> agentPolicies = policyclient.getPolicies(agentId);
+	    List<PolicyDTO> customerPolicies = policyclient.getPolicies(agent.getCustomerId());
+
+	    AgentFullDetails details = new AgentFullDetails();
+	    details.setAgent(agent);
+	    details.setAgentPolicies(agentPolicies);
+	    details.setCustomerPolicies(customerPolicies);
+
+	    return details;
+	}
 
 
 

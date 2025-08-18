@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
 import com.project.model.AgentCustomer;
+import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
@@ -90,6 +91,8 @@ public class AgentController {
     	return ser.getCustomerForAgent(cid);
 	}
     
+   
+    
 //    @GetMapping("/getAgentCustomerDetails/{aid}")
 //    public AgentCustomer custo(@PathVariable("aid") Integer aid) {
 //    	return ser.getAgentCustCombo(aid);
@@ -106,6 +109,13 @@ public class AgentController {
         return ResponseEntity.ok(updatedClaim);
     }
      
+    //full details
+    @GetMapping("/fullDetails/{agentId}")
+    public ResponseEntity<AgentFullDetails> getAgentFullDetails(@PathVariable Integer agentId) {
+        AgentFullDetails details = ser.getAgentFullDetails(agentId);
+        return ResponseEntity.ok(details);
+    }
+
 
 	
 	
