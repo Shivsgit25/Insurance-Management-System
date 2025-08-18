@@ -14,14 +14,14 @@ import com.project.client.PolicyClient;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
-import com.project.model.AgentCustomer;
+
 import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
 import com.project.model.PolicyDTO;
 import com.project.repository.AgentRepository;
-//import com.project.repository.AgentRepository;
+
 
 
 @Service
@@ -125,11 +125,7 @@ public class AgentServiceImpl implements AgentService {
 	 return agentpolicy;
 	}
 
-//	@Override
-//	public AgentCustomer getAgentCustCombo(Integer aid) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+
 
 	@Override
 	public CustomerDTO getCustomerForAgent(Integer cid) {
@@ -159,18 +155,7 @@ public class AgentServiceImpl implements AgentService {
         return claimclient.updateClaimStatus(claimId, ClaimDTO.ClaimStatus.APPROVED).getBody();
     }
 
-//	@Override
-//	public AgentCustomer getAgentCustCombo(Integer aid) {
-//		
-//		List<CustomerDTO> custdto = customerclient.getCustomers(aid);
-//		Optional<Agent> opt = repo.findByCustomerId(aid);
-//		Agent agent = opt.get();
-//		AgentCustomer agentcustomer = new AgentCustomer();
-//		agentcustomer.setAgent(agent);
-//		agentcustomer.setCust(custdto);
-//		
-//		return agentcustomer;
-//	}
+
 	
 	public AgentFullDetails getAgentFullDetails(Integer agentId) {
 		logger.info("Fetching full details for agent ID: {}", agentId);

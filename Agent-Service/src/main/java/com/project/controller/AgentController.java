@@ -9,19 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
-import com.project.model.AgentCustomer;
+
 import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
-//import com.project.model.CustomerPolicy;
 import com.project.service.AgentService;
 @RestController
 @RequestMapping("/agents")
@@ -65,12 +64,6 @@ public class AgentController {
     	return "Agent Deleted";
     }
 	
-    //get agent by customerId
-//    @GetMapping("/customer/{customerId}")
-//    public ResponseEntity<List<Agent>> getAgentByCustomer(@PathVariable Integer customerId){
-//    	List<Agent> agents = ser.getAgentByCustomer(customerId);
-//    	return ResponseEntity.ok(agents);
-//    }
     
     //get agent by policyId
     @GetMapping("/policy/{policyId}")
@@ -93,10 +86,7 @@ public class AgentController {
     
    
     
-//    @GetMapping("/getAgentCustomerDetails/{aid}")
-//    public AgentCustomer custo(@PathVariable("aid") Integer aid) {
-//    	return ser.getAgentCustCombo(aid);
-//    }
+
     
     @GetMapping("/claims/all")
 	public ResponseEntity<AgentClaim> getAllClaims(){
