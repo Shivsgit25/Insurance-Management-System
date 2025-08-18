@@ -108,6 +108,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendWelcomeSms(Long to ,String customerName) {
     		
     		String num = "+91"+to.toString();
+    		System.out.println(num+"################################################################################################");
     		String body = "Thank you so much "+customerName+" for Chossing Us.";
     		Twilio.init(accountSid, authToken);
     		Message message = Message.creator(new PhoneNumber(num),new PhoneNumber(trialNumber),body).create();
@@ -355,6 +356,7 @@ public class NotificationServiceImpl implements NotificationService {
             message.setSubject(subject);
             message.setText(body);
             javaMailSender.send(message);
+            sendSmsForClaimUpdateToCustomer(customer.getPhone(),subject);
             logger.info("Claim Update Mail Sent to Customer {} for Claim ID {} with status {}", customer.getEmail(), claimId, status);
 
             return "Mail Sent to Customer For Claim Updation";
@@ -364,7 +366,14 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
+    private void sendSmsForClaimUpdateToCustomer(Long phone, String subject) {
+
+    	Twilio.init(accountSid, authToken);
+    	Message message = Message.creator(new PhoneNumber("91"+phone.toString()) , new PhoneNumber(trialNumber), subject).create();
+    	logger.info("Sms sent to the Customer for updation of the claim as msg :"+message);
+	}
+
+	/**
      * Sends policy renewal reminders to customers whose policies are expiring soon.
      * This method runs asynchronously.
      */
