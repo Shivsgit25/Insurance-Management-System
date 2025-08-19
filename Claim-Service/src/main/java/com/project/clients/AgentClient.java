@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "AGENTSERVICE", path = "/agent")
 public interface AgentClient {
-    @GetMapping("/agent/{id}")
-    Agent getAgentById(@PathVariable("agent_id") Integer agentId);
+	@GetMapping("/agent/{id}")
+	Agent getAgentById(@PathVariable("agent_id") Integer agentId);
 }

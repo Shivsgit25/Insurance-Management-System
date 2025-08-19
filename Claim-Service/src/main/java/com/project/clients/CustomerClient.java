@@ -8,7 +8,6 @@ import com.project.model.CustomerDTO;
 
 @FeignClient(name = "CUSTOMER-SERVICE", path = "/customer")
 public interface CustomerClient {
-    @GetMapping("/customer/{id}")
-    CustomerDTO getCustomerById(@PathVariable("customer_id") Integer customerId);
+	@GetMapping("/customer/{id}")
+	CustomerDTO getCustomerById(@PathVariable("customer_id") Integer customerId);
 }
-

@@ -45,7 +45,7 @@ public interface ClaimService {
 	 * @return a list of Claim entities associated with the customer
 	 */
 	List<Claim> getClaimsByCustomer(Integer customerId);
-	
+
 	List<Claim> getAllClaims();
 
 	List<Claim> getClaimsByStatus(Claim.Status status);
