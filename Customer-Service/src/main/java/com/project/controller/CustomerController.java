@@ -2,6 +2,7 @@ package com.project.controller;
 
 import java.util.List;
 
+import org.apache.http.auth.InvalidCredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,7 @@ public class CustomerController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Customer loginCustomer) {
+    public String login(@RequestBody Customer loginCustomer) throws InvalidCredentialsException {
         logger.info("Attempting to login user with email: {}", loginCustomer.getEmail());
         return service.loginCustomer(loginCustomer.getEmail(), loginCustomer.getPassword());
     }
@@ -97,4 +98,4 @@ public class CustomerController {
         return service.getCustomerByEmail(email);
     }
 }
-}
+

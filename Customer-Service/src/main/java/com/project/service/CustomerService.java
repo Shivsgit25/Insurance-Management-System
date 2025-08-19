@@ -2,6 +2,8 @@ package com.project.service;
 
 import java.util.List;
 
+import org.apache.http.auth.InvalidCredentialsException;
+
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;
@@ -10,7 +12,7 @@ public interface CustomerService {
 
 	public String addCustomer(Customer cust);
 	
-	public String loginCustomer(String email, String password);
+	public String loginCustomer(String email, String password) throws InvalidCredentialsException;
 
 	public String updateCustomer(Customer customer);
 
