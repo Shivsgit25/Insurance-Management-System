@@ -14,7 +14,7 @@ public interface PolicyClient {
     @GetMapping("/testing/{agentId}")
     public List<PolicyDTO> getPolicies(@PathVariable("agentId") Integer agentId);
 
-    @GetMapping("/policies/{policyId}")
+    @GetMapping("/{policyId}")
     PolicyDTO getPolicyById(@PathVariable Integer policyId);
 
 }

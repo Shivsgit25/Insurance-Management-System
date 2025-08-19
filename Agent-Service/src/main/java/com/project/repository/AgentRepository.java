@@ -21,4 +21,8 @@ public interface AgentRepository extends JpaRepository<Agent, Integer> {
 
 	Agent findByContactInfo(String contactInfo);
 
+
+
+	List<Agent> findAllByPolicyId(Integer policyId);
+
 }
