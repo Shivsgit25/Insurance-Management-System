@@ -38,7 +38,7 @@ class AgentControllerTest {
 
 	    @Test
 	    void testCreateAgent() throws Exception {
-	        Agent agent = new Agent(1, "contact", "John", 101, 201, 301,"pass123");
+	        Agent agent = new Agent(1, "contact", "John", "pass123", 201, 301,101);
 	        when(agentService.createAgent(any(Agent.class))).thenReturn("Agent saved");
 
 	        String jsonPayload = """
@@ -65,8 +65,8 @@ class AgentControllerTest {
 	    @Test
 	    void testGetAllAgents() throws Exception {
 	        List<Agent> agents = List.of(
-	            new Agent(1, "contact1", "John", 101, 201, 301,"pass1"),
-	            new Agent(2, "contact2", "Jane", 102, 202, 302,"pass2")
+	            new Agent(1, "contact1", "pass1", "John", 201, 301,101),
+	            new Agent(2, "contact2", "pass2", "Jane", 202, 302,102)
 	        );
 	        when(agentService.getAllAgents()).thenReturn(agents);
 
@@ -81,7 +81,7 @@ class AgentControllerTest {
 	    
 	    @Test
 	    void testGetAgentById_Success() throws Exception {
-	    	Agent agent = new Agent(1,"contact","John",101,102,103,"pass1");
+	    	Agent agent = new Agent(1,"contact","pass1","John",102,103,101);
 	    	when(agentService.getAgentById(1)).thenReturn(Optional.of(agent));
 	    	mockMvc.perform(get("/agents/get/1"))
 	    	       .andExpect(status().isOk())
@@ -104,7 +104,7 @@ class AgentControllerTest {
 	    @Test
 	    void testUpdateAgent_Success() throws Exception {
 	    	
-	    	Agent updated = new Agent(1, "updatedContact","UpdatedName",111,211,311,"pass1");
+	    	Agent updated = new Agent(1, "updatedContact","pass1","UpdatedName",211,311,111);
 	    	when(agentService.updateAgent(eq(1), any(Agent.class))).thenReturn(updated);
 	    	
 	    	String jsonPayload = """
@@ -177,7 +177,7 @@ class AgentControllerTest {
 	    @Test
 	    void testGetAgentByPolicy() throws Exception {
 	        List<Agent> agents = List.of(
-	            new Agent(1, "contact", "John", 101, 201, 301,"pass1")
+	            new Agent(1, "contact", "John", "pass1", 101, 301,201)
 	        );
 	        when(agentService.getAgentByPolicy(101)).thenReturn(agents);
 
