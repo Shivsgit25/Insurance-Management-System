@@ -7,18 +7,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Entity representing a Claim in the insurance system. Maps to a database table
  * storing claim details.
  */
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "claim_info")
 public class Claim {
 
@@ -65,6 +59,67 @@ public class Claim {
 		REJECTED // Claim has been rejected
 	}
 
+	public Integer getClaimId() {
+		return claimId;
+	}
 
-	
+	public void setClaimId(Integer claimId) {
+		this.claimId = claimId;
+	}
+
+	public Integer getPolicyId() {
+		return policyId;
+	}
+
+	public void setPolicyId(Integer policyId) {
+		this.policyId = policyId;
+	}
+
+	public Integer getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
+	}
+
+	public Double getClaimAmount() {
+		return claimAmount;
+	}
+
+	public void setClaimAmount(Double claimAmount) {
+		this.claimAmount = claimAmount;
+	}
+
+	public Integer getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Integer agentId) {
+		this.agentId = agentId;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public Claim(Integer claimId, Integer policyId, Integer customerId, Double claimAmount, Integer agentId,
+			Status status) {
+		super();
+		this.claimId = claimId;
+		this.policyId = policyId;
+		this.customerId = customerId;
+		this.claimAmount = claimAmount;
+		this.agentId = agentId;
+		this.status = status;
+	}
+
+	public Claim() {
+		super();
+	}
+
 }

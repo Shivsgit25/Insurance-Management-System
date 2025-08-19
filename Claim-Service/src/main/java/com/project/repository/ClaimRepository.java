@@ -17,11 +17,10 @@ public interface ClaimRepository extends JpaRepository<Claim, Integer> {
 	 * @param customerId the ID of the customer whose claims are to be fetched
 	 * @return a list of Claim entities filed by the given customer
 	 */
-	
-	List<Claim> findByCustomerId(Integer customerId);
-	
-	List<Claim> findByStatus(Claim.Status status);
 
+	List<Claim> findByCustomerId(Integer customerId);
+
+	List<Claim> findByStatus(Claim.Status status);
 
 	// -------------------- Inherited Methods from JpaRepository
 	// --------------------

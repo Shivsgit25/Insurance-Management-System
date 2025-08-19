@@ -4,8 +4,12 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
@@ -18,54 +22,63 @@ public class CustomerController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
-    @Autowired
-    CustomerService service;
+    private final CustomerService service;
+
+    public CustomerController(CustomerService service) {
+        this.service = service;
+    }
 
     @PostMapping("/add")
-    public String AddCustomer(@RequestBody Customer customer) {
-    	logger.info("############################# Running AddCustomer function in line number 26 ######################################");
+    public String addCustomer(@RequestBody Customer customer) {
+        logger.info("############################# Running AddCustomer function ######################################");
         logger.info("Adding customer: {}", customer);
-        return service.AddCustomer(customer);
+        return service.addCustomer(customer);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody Customer loginCustomer) {
+        logger.info("Attempting to login user with email: {}", loginCustomer.getEmail());
+        return service.loginCustomer(loginCustomer.getEmail(), loginCustomer.getPassword());
     }
 
     @PostMapping("/Update")
-    public String UpdateCustomer(@RequestBody Customer customer) {
-    	logger.info("############################# Running UpdateCustomer function in line number 33 ######################################");
+    public String updateCustomer(@RequestBody Customer customer) {
+        logger.info("############################# Running UpdateCustomer function ######################################");
         logger.info("Updating customer: {}", customer);
-        return service.UpdateCustomer(customer);
+        return service.updateCustomer(customer);
     }
 
     @GetMapping("/getCustomer/{id}")
     public Customer getCustomerById(@PathVariable("id") int id) {
-    	logger.info("############################# Running getCustomer function in line number 40 ######################################");
+        logger.info("############################# Running getCustomer function ######################################");
         logger.info("Fetching customer by ID: {}", id);
         return service.getCustomerById(id);
     }
 
     @PostMapping("/deleteCustomer/{id}")
     public String deleteCustomerById(@PathVariable("id") int id) {
-    	logger.info("############################# Running deleteCustomer function in line number 45 ######################################");
+        logger.info("############################# Running deleteCustomer function ######################################");
         logger.info("Deleting customer by ID: {}", id);
         return service.deleteByCustomerId(id);
     }
 
     @GetMapping("/getAllCustomer")
     public List<Customer> getAllCustomer() {
-    	logger.info("############################# Running getAllCustomer function in line number 52 ######################################");
+        logger.info("############################# Running getAllCustomer function ######################################");
         logger.info("Fetching all customers");
         return service.getAllCustomer();
     }
 
     @GetMapping("/getCustomerPolicyDetails/{cid}")
     public CustomerPolicy getPolicyDetailsOnCustomer(@PathVariable("cid") Integer cid) {
-    	logger.info("############################# Running getCustomerPolicyDetails function in line number 59 ######################################");
+        logger.info("############################# Running getCustomerPolicyDetails function ######################################");
         logger.info("Fetching policy details for customer ID: {}", cid);
         return service.getCustPolyCombo(cid);
     }
 
     @PostMapping("/file")
     public String fileClaim(@RequestBody ClaimDTO claim) {
-    	logger.info("############################# Running file function for getting claim data in line number 66 ######################################");
+        logger.info("############################# Running file function for getting claim data ######################################");
         logger.info("Filing claim: {}", claim);
         service.fileClaim(claim);
         return "CLAIM FILED";
@@ -73,7 +86,7 @@ public class CustomerController {
 
     @GetMapping("/getCustomerForAgent/{id}")
     public Customer getCustomerForAgent(@PathVariable("id") Integer id) {
-    	logger.info("############################# Running getCustomerForAgent function in line number 74 ######################################");
+        logger.info("############################# Running getCustomerForAgent function ######################################");
         logger.info("Fetching customer for agent ID: {}", id);
         return service.getCustomerForAgent(id);
     }
@@ -83,4 +96,5 @@ public class CustomerController {
         logger.info("Fetching customer for agent ID: {}", email);
         return service.getCustomerByEmail(email);
     }
+}
 }
