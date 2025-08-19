@@ -198,11 +198,14 @@ public class AgentServiceImpl implements AgentService {
 	    Agent agent = optAgent.get();
 	    List<PolicyDTO> agentPolicies = policyclient.getPolicies(agentId);
 	    List<PolicyDTO> customerPolicies = policyclient.getPolicies(agent.getCustomerId());
-
+        
+	    CustomerDTO customer =customerclient.getCustomerForAgent(agent.getCustomerId());
+	    
 	    AgentFullDetails details = new AgentFullDetails();
 	    details.setAgent(agent);
 	    details.setAgentPolicies(agentPolicies);
-	    details.setCustomerPolicies(customerPolicies);
+//	    details.setCustomerPolicies(customerPolicies);
+	    details.setCustomer(customer);
 
 	    return details;
 	}

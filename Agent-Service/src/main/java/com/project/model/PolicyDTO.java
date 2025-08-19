@@ -1,5 +1,7 @@
 package com.project.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class PolicyDTO {
 	
 	private Integer policyId;
@@ -8,6 +10,7 @@ public class PolicyDTO {
     private Double premiumAmount;
     private String coverageDetails;
     private Integer validityPeriod;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private CustomerDTO customer;
     
 	public PolicyDTO(Integer policyId, String name, Double premiumAmount, String coverageDetails,
