@@ -1,19 +1,13 @@
-package com.project.model;
+package com.project.DTO;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "customer_info_service")
-public class Customer {
-	@Id
+@NoArgsConstructor
+public class CustomerDTO {
 	private Integer customerId;
 	private String name;
 	private String email;
@@ -21,4 +15,5 @@ public class Customer {
 	private Long phone;
 	private String address;
 	private String role;
+
 }

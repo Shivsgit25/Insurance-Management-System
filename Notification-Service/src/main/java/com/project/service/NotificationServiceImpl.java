@@ -2,11 +2,10 @@ package com.project.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
@@ -35,21 +34,20 @@ import com.twilio.type.PhoneNumber;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-    // Initialize logger for this class
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
-    @Autowired
-    private JavaMailSender javaMailSender;
-    @Autowired
-    private CustomerClient customerclient;
-    @Autowired
-    private PolicyClient policyclient;
-    @Autowired
-    private AgentClient agentclient;
-    @Autowired
-    private ClaimClient claimclient;
-    
-    // SMS 
+    private static final String APP_NAME = "Insurance Management System";
+    private static final String LOGIN_URL = "InsruanceManagement.com";
+    private static final String DEFAULT_CUSTOMER_NAME = "Valued Customer";
+    private static final String CONTACT_SUPPORT_TEXT = "If you have any questions or need assistance, please do not hesitate to contact our support team.";
+    private static final String SINCERELY_TEXT = "Sincerely,\n" + "The " + APP_NAME + " Team";
+
+    private final JavaMailSender javaMailSender;
+    private final CustomerClient customerclient;
+    private final PolicyClient policyclient;
+    private final AgentClient agentclient;
+    private final ClaimClient claimclient;
+
     @Value("${twilio.account.sid}")
     private String accountSid;
     @Value("${twilio.auth.token}")
@@ -58,61 +56,82 @@ public class NotificationServiceImpl implements NotificationService {
     private String trialNumber;
 
     @Value("${spring.mail.username}")
-    String senderEmail;
-    String appName = "Insurance Management System";
-    String loginUrl = "InsruanceManagement.com";
+    private String senderEmail;
 
+    public NotificationServiceImpl(JavaMailSender javaMailSender, CustomerClient customerclient, PolicyClient policyclient, AgentClient agentclient, ClaimClient claimclient) {
+        this.javaMailSender = javaMailSender;
+        this.customerclient = customerclient;
+        this.policyclient = policyclient;
+        this.agentclient = agentclient;
+        this.claimclient = claimclient;
+    }
+
+    /**
+     * Helper method to create and send a SimpleMailMessage to reduce code duplication.
+     */
+    private void sendEmail(String to, String subject, String body) throws MailException {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(senderEmail);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        javaMailSender.send(message);
+    }
+    
+    //-----------------------------------------------------------------------------------
+    
     /**
      * Sends a registration confirmation email to a new customer.
      * @param customer The CustomerDTO containing customer details.
      * @throws EmailSendingException if there's an issue sending the email.
      */
     @Async
+    @Override
     public void sendRegisteredEmail(CustomerDTO customer) throws EmailSendingException {
         if (customer == null || customer.getEmail() == null) {
-            // Using logger.error instead of System.err.println
             logger.error("Cannot send registered email: Customer object or email is null.");
             return;
         }
+        
+        String customerName = Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME);
+        String subject = "Welcome to " + APP_NAME + "! Your Registration is Complete 🎉";
+        String body = String.format(
+            "Dear %s,\n\n"
+            + "Welcome to %s! We are thrilled to have you as a new member.\n\n"
+            + "Your registration was successful, and your account is now active.\n\n"
+            + "You can now log in to your dashboard to manage your policies, view claims, and access exclusive features:\n"
+            + "%s\n\n"
+            + "%s\n\n"
+            + "Thank you for choosing %s.\n\n"
+            + SINCERELY_TEXT,
+            customerName, APP_NAME, LOGIN_URL, CONTACT_SUPPORT_TEXT, APP_NAME
+        );
 
         try {
-            String to = customer.getEmail();
-            String customerName = customer.getName() != null ? customer.getName() : "Valued Customer";
-            String subject = "Welcome to " + appName + "! Your Registration is Complete 🎉";
-            String body = "Dear " + customerName + ",\n\n"
-                    + "Welcome to " + appName + "! We are thrilled to have you as a new member.\n\n"
-                    + "Your registration was successful, and your account is now active.\n\n"
-                    + "You can now log in to your dashboard to manage your policies, view claims, and access exclusive features:\n"
-                    + loginUrl + "\n\n"
-                    + "If you have any questions or need assistance, please do not hesitate to contact our support team.\n\n"
-                    + "Thank you for choosing " + appName + ".\n\n"
-                    + "Sincerely,\n"
-                    + "The " + appName + " Team";
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(senderEmail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
-            javaMailSender.send(message);
-            sendWelcomeSms(customer.getPhone() , customer.getName());
-            // Using logger.info instead of System.out.println
-            logger.info("Registered Mail Sent Successfully to {}", to);
+            sendEmail(customer.getEmail(), subject, body);
+            if (customer.getPhone() != null && customer.getPhone() != 0) {
+                 sendWelcomeSms(customer.getPhone(), customer.getName());
+            }
+            logger.info("Registered Mail Sent Successfully to {}", customer.getEmail());
         } catch (MailException e) {
-            // Using logger.error with the exception object for stack trace
             logger.error("Failed to send registered email to {}.", customer.getEmail(), e);
             throw new EmailSendingException("Failed to send registered email to " + customer.getEmail(), e);
         }
     }
-    
-    public void sendWelcomeSms(Long to ,String customerName) {
-    		
-    		String num = "+91"+to.toString();
-    		String body = "Thank you so much "+customerName+" for Chossing Us.";
-    		Twilio.init(accountSid, authToken);
-    		Message message = Message.creator(new PhoneNumber(num),new PhoneNumber(trialNumber),body).create();
-    		logger.info("Welcome Sms Sent to the User", message.getSid(), to);    	
+
+    public void sendWelcomeSms(Long to, String customerName) {
+        try {
+            String num = "+91" + to.toString();
+            String body = String.format("Thank you so much %s for Choosing Us.", customerName);
+            Twilio.init(accountSid, authToken);
+            Message message = Message.creator(new PhoneNumber(num), new PhoneNumber(trialNumber), body).create();
+            logger.info("Welcome SMS Sent with SID: {} to user: {}", message.getSid(), to);
+        } catch(Exception e) {
+            logger.error("Failed to send welcome SMS to user {}: {}", to, e.getMessage());
+        }
     }
+
+    //-----------------------------------------------------------------------------------
 
     /**
      * Sends a policy opted confirmation email to a customer.
@@ -120,53 +139,44 @@ public class NotificationServiceImpl implements NotificationService {
      * @throws CustomerNotFoundException if the customer is not found.
      * @throws EmailSendingException if there's an issue sending the email.
      */
-    @Override
     @Async
+    @Override
     public void sendMailPolicyOpted(PolicyDTO policy) throws EmailSendingException {
-        CustomerDTO customer = customerclient.getCustomerById(policy.getCustomerId());
-        if (customer == null) {
-            logger.error("Customer with ID {} not found for policy {} opted email.", policy.getCustomerId(), policy.getPolicyId());
-            throw new CustomerNotFoundException("Customer with ID " + policy.getCustomerId() + " not found.");
-        }
+        CustomerDTO customer = getCustomerOrThrow(policy.getCustomerId());
+
+        String customerName = Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME);
+        String policyDetails = Objects.toString(policy.getCoverageDetails(), "Please log in for full details.");
+        String subject = String.format("Congratulations! Your %s is Active with %s! 🎉", policy.getName(), APP_NAME);
+        String body = String.format(
+            "Dear %s,\n\n"
+            + "We're excited to confirm that your application for the **%s** policy has been successfully processed. "
+            + "Your new policy is now active and ready to provide you with peace of mind!\n\n"
+            + "Here’s a summary of your new policy:\n"
+            + "  - **Policy Name:** %s\n"
+            + "  - **Key Details:** %s\n\n"
+            + "You can access all the specifics, download your policy documents, and manage your coverage anytime by logging into your "
+            + "%s account here:\n"
+            + "%s\n\n"
+            + "We are committed to providing you with excellent service and comprehensive coverage. %s\n\n"
+            + "Thank you for choosing %s.\n\n"
+            + SINCERELY_TEXT,
+            customerName, policy.getName(), policy.getName(), policyDetails, APP_NAME, LOGIN_URL, APP_NAME
+        );
 
         try {
-            String to = customer.getEmail();
-            String customerName = customer.getName();
-            String policyName = policy.getName();
-            String policyDetails = policy.getCoverageDetails();
-
-            String subject = "Congratulations! Your " + policyName + " is Active with " + appName + "! 🎉";
-            String body = "Dear " + customerName + ",\n\n"
-                    + "We're excited to confirm that your application for the **" + policyName
-                    + "** policy has been successfully processed. Your new policy is now active and ready to provide you with peace of mind!\n\n"
-                    + "Here’s a summary of your new policy:\n"
-                    + "  - **Policy Name:** " + policyName + "\n"
-                    + "  - **Key Details:** " + (policyDetails != null && !policyDetails.isEmpty() ? policyDetails : "Please log in for full details.") + "\n\n"
-                    + "You can access all the specifics, download your policy documents, and manage your coverage anytime by logging into your "
-                    + appName + " account here:\n"
-                    + loginUrl + "\n\n"
-                    + "We are committed to providing you with excellent service and comprehensive coverage. If you have any questions or need further assistance, please don't hesitate to reach out to our dedicated support team.\n\n"
-                    + "Thank you for choosing " + appName + ".\n\n"
-                    + "Sincerely,\n"
-                    + "The " + appName + " Team";
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(senderEmail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
-            javaMailSender.send(message);
-            logger.info("Policy Opted Mail Sent Successfully to {} for policy {}", to, policy.getPolicyId());
+            sendEmail(customer.getEmail(), subject, body);
+            logger.info("Policy Opted Mail Sent Successfully to {} for policy {}", customer.getEmail(), policy.getPolicyId());
         } catch (MailException e) {
             logger.error("Failed to send policy opted email to {} for policy {}.", customer.getEmail(), policy.getPolicyId(), e);
             throw new EmailSendingException("Failed to send policy opted email to " + customer.getEmail(), e);
         }
     }
 
+    //-----------------------------------------------------------------------------------
+
     /**
      * Sends claim filing confirmation email to customer and claim assignment email to agent.
      * @param claim The ClaimDTO containing claim details.
-     * @return A confirmation message.
      * @throws IllegalArgumentException if the claim object is null.
      * @throws PolicyNotFoundException if the policy associated with the claim is not found.
      * @throws AgentNotFoundException if the agent associated with the claim is not found.
@@ -176,115 +186,128 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void claimFilledEmail(ClaimDTO claim) throws PolicyNotFoundException, AgentNotFoundException, EmailSendingException {
         if (claim == null) {
-            logger.error("Claim object cannot be null for claim filled email.");
             throw new IllegalArgumentException("Claim object cannot be null.");
         }
-
-        // Fetching required data
-        ResponseEntity<PolicyDTO> policyEntity = policyclient.getPolicyById(claim.getPolicyId());
-        if (!policyEntity.hasBody() || policyEntity.getBody() == null) {
-            logger.error("Policy with ID {} not found for claim filled email.", claim.getPolicyId());
-            throw new PolicyNotFoundException("Policy with ID " + claim.getPolicyId() + " not found.");
-        }
-        PolicyDTO policy = policyEntity.getBody();
-
-        ResponseEntity<AgentDTO> agentEntity = agentclient.getAgentById(claim.getAgentId());
-        if (!agentEntity.hasBody() || agentEntity.getBody() == null) {
-            logger.error("Agent with ID {} not found for claim filled email.", claim.getAgentId());
-            throw new AgentNotFoundException("Agent with ID " + claim.getAgentId() + " not found.");
-        }
-        AgentDTO assignedAgent = agentEntity.getBody();
-
-        CustomerDTO customer = customerclient.getCustomerById(claim.getCustomerId());
-        if (customer == null) {
-            logger.error("Customer with ID {} not found for claim filled email.", claim.getCustomerId());
-            throw new CustomerNotFoundException("Customer with ID " + claim.getCustomerId() + " not found.");
-        }
+        
+        PolicyDTO policy = getPolicyOrThrow(claim.getPolicyId());
+        AgentDTO assignedAgent = getAgentOrThrow(claim.getAgentId());
+        CustomerDTO customer = getCustomerOrThrow(claim.getCustomerId());
 
         try {
-            // Send email to customer
             sendClaimConfirmationEmailToCustomer(claim, customer, policy, assignedAgent);
-            // Send email to agent
             sendNewClaimAssignmentEmailToAgent(claim, customer, policy, assignedAgent);
-            
             logger.info("Claim Filled Emails sent successfully for Claim ID {}", claim.getClaimId());
-            
         } catch (MailException e) {
             logger.error("Failed to send claim filed email for claim ID {}.", claim.getClaimId(), e);
             throw new EmailSendingException("Failed to send claim filed email for claim ID " + claim.getClaimId(), e);
         }
+    }
+    
+    private PolicyDTO getPolicyOrThrow(Integer policyId) throws PolicyNotFoundException {
+        ResponseEntity<PolicyDTO> policyEntity = policyclient.getPolicyById(policyId);
+        if (!policyEntity.hasBody() || policyEntity.getBody() == null) {
+            throw new PolicyNotFoundException("Policy with ID " + policyId + " not found.");
+        }
+        return policyEntity.getBody();
+    }
+    
+    private AgentDTO getAgentOrThrow(Integer agentId) throws AgentNotFoundException {
+        ResponseEntity<AgentDTO> agentEntity = agentclient.getAgentById(agentId);
+        if (!agentEntity.hasBody() || agentEntity.getBody() == null) {
+            throw new AgentNotFoundException("Agent with ID " + agentId + " not found.");
+        }
+        return agentEntity.getBody();
+    }
+
+    private CustomerDTO getCustomerOrThrow(Integer customerId) {
+        CustomerDTO customer = customerclient.getCustomerById(customerId);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found.");
+        }
+        return customer;
     }
 
     /**
      * Helper method to send claim confirmation email to the customer.
      */
     private void sendClaimConfirmationEmailToCustomer(ClaimDTO claim, CustomerDTO customer, PolicyDTO policy, AgentDTO assignedAgent) {
-        String subject = "Confirmation: Your Claim #" + claim.getClaimId() + " Has Been Filed with " + appName + " 🎉";
-        String body = "Dear " + customer.getName() + ",\n\n"
-                + "We confirm that your claim (Claim ID: **" + claim.getClaimId() + "**) related to policy **" + policy.getPolicyId() + "** has been successfully filed with " + appName + ".\n\n"
-                + "**Claim Details Submitted:**\n"
-                + "  - Claim ID: " + claim.getClaimId() + "\n"
-                + "  - Associated Policy: " + policy.getPolicyId() + "\n"
-                + "  - Claimed Amount: ₹" + (claim.getClaimAmount() != null ? String.format("%,.2f", claim.getClaimAmount()) : "N/A") + "\n\n"
-                + "Our team is now reviewing your claim. You can track the real-time status of your claim and find all related documents by logging into your account here:\n"
-                + loginUrl + "\n\n";
+        String subject = String.format("Confirmation: Your Claim #%d Has Been Filed with %s 🎉", claim.getClaimId(), APP_NAME);
+        
+        String agentInfo = (assignedAgent != null && assignedAgent.getName() != null && assignedAgent.getContactInfo() != null)
+            ? String.format("Your dedicated agent, %s, will be assisting you with this claim.\nYou can reach them at: %s\n", assignedAgent.getName(), assignedAgent.getContactInfo())
+            : "Our support team will be in touch with any updates.\n\n";
 
-        if (assignedAgent != null && assignedAgent.getName() != null) {
-            body += "Your dedicated agent, " + assignedAgent.getName() + ", will be assisting you with this claim.\n";
-            if (assignedAgent.getContactInfo() != null) {
-                body += "You can reach them at: " + assignedAgent.getContactInfo() + "\n";
-            }
-        } else {
-            body += "Our support team will be in touch with any updates.\n\n";
-        }
+        String claimedAmount = (claim.getClaimAmount() != null) ? String.format("%,.2f", claim.getClaimAmount()) : "N/A";
 
-        body += "If you have any questions, please contact our support team.\n\n"
-                + "Thank you for choosing " + appName + ".\n\n"
-                + "Sincerely,\n"
-                + "The " + appName + " Team";
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(senderEmail);
-        message.setTo(customer.getEmail());
-        message.setSubject(subject);
-        message.setText(body);
-        javaMailSender.send(message);
-        logger.info("Claim Filled Mail Sent to Customer {} for Claim ID {}", customer.getEmail(), claim.getClaimId());
+        String body = String.format(
+            "Dear %s,\n\n"
+            + "We confirm that your claim (Claim ID: **%d**) related to policy **%s** has been successfully filed with %s.\n\n"
+            + "**Claim Details Submitted:**\n"
+            + "  - Claim ID: %d\n"
+            + "  - Associated Policy: %s\n"
+            + "  - Claimed Amount: ₹%s\n\n"
+            + "Our team is now reviewing your claim. You can track the real-time status of your claim and find all related documents by logging into your account here:\n"
+            + "%s\n\n"
+            + "%s"
+            + "If you have any questions, please contact our support team.\n\n"
+            + "Thank you for choosing %s.\n\n"
+            + SINCERELY_TEXT,
+            Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME),
+            claim.getClaimId(),
+            Objects.toString(policy.getPolicyId(), "N/A"),
+            APP_NAME,
+            claim.getClaimId(),
+            Objects.toString(policy.getPolicyId(), "N/A"),
+            claimedAmount,
+            LOGIN_URL,
+            agentInfo,
+            APP_NAME
+        );
+        sendEmail(customer.getEmail(), subject, body);
+        logger.info("Claim Filed Mail Sent to Customer {} for Claim ID {}", customer.getEmail(), claim.getClaimId());
     }
 
     /**
      * Helper method to send new claim assignment email to the agent.
      */
     private void sendNewClaimAssignmentEmailToAgent(ClaimDTO claim, CustomerDTO customer, PolicyDTO policy, AgentDTO assignedAgent) {
-        String subject = "New Claim Assigned: Claim #" + claim.getClaimId() + " for Policy " + policy.getPolicyId();
-        String body = "Dear " + assignedAgent.getName() + ",\n\n"
-                + "A new claim has been filed and assigned to you for review and processing.\n\n"
-                + "**Claim Details:**\n"
-                + "  - Claim ID: " + claim.getClaimId() + "\n"
-                + "  - Associated Policy: " + policy.getName() + " (Policy No: " + policy.getPolicyId() + ")\n"
-                + "  - Claimed Amount: ₹" + (claim.getClaimAmount() != null ? String.format("%,.2f", claim.getClaimAmount()) : "N/A") + "\n\n"
-                + "**Customer Details:**\n"
-                + "  - Customer Name: " + customer.getName() + "\n"
-                + "  - Customer Email: " + customer.getEmail() + "\n\n"
-                + "Please log in to your agent dashboard at " + loginUrl
-                + " to review the full claim details and take necessary action.\n\n"
-                + "Thank you,\n"
-                + "The " + appName + " Team";
+        String subject = String.format("New Claim Assigned: Claim #%d for Policy %s", claim.getClaimId(), policy.getPolicyId());
+        
+        String claimedAmount = (claim.getClaimAmount() != null) ? String.format("%,.2f", claim.getClaimAmount()) : "N/A";
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(senderEmail);
-        message.setTo(assignedAgent.getContactInfo());
-        message.setSubject(subject);
-        message.setText(body);
-        javaMailSender.send(message);
+        String body = String.format(
+            "Dear %s,\n\n"
+            + "A new claim has been filed and assigned to you for review and processing.\n\n"
+            + "**Claim Details:**\n"
+            + "  - Claim ID: %d\n"
+            + "  - Associated Policy: %s (Policy No: %s)\n"
+            + "  - Claimed Amount: ₹%s\n\n"
+            + "**Customer Details:**\n"
+            + "  - Customer Name: %s\n"
+            + "  - Customer Email: %s\n\n"
+            + "Please log in to your agent dashboard at %s to review the full claim details and take necessary action.\n\n"
+            + "Thank you,\n"
+            + "The %s Team",
+            Objects.toString(assignedAgent.getName(), "Agent"),
+            claim.getClaimId(),
+            Objects.toString(policy.getName(), "N/A"),
+            Objects.toString(policy.getPolicyId(), "N/A"),
+            claimedAmount,
+            Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME),
+            Objects.toString(customer.getEmail(), "N/A"),
+            LOGIN_URL,
+            APP_NAME
+        );
+        sendEmail(assignedAgent.getContactInfo(), subject, body);
         logger.info("Claim Filed Mail Sent to Agent {} for Claim ID {}", assignedAgent.getContactInfo(), claim.getClaimId());
     }
+
+    //-----------------------------------------------------------------------------------
 
     /**
      * Sends an email to the customer about their claim status update (Approved/Rejected).
      * @param claimId The ID of the claim.
      * @param status The updated status of the claim.
-     * @return A confirmation message.
      * @throws ClaimNotFoundException if the claim is not found.
      * @throws CustomerNotFoundException if the customer is not found.
      * @throws PolicyNotFoundException if the policy is not found.
@@ -292,76 +315,86 @@ public class NotificationServiceImpl implements NotificationService {
      */
     @Async
     public void sendMailClaimUpdated(Integer claimId, ClaimDTO.Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException {
-        ResponseEntity<ClaimDTO> claimEntity = claimclient.getClaimById(claimId);
-        if (!claimEntity.hasBody() || claimEntity.getBody() == null) {
-            logger.error("Claim with ID {} not found for claim update email.", claimId);
-            throw new ClaimNotFoundException("Claim with ID " + claimId + " not found.");
-        }
-        ClaimDTO claim = claimEntity.getBody();
+        ClaimDTO claim = getClaimOrThrow(claimId);
+        CustomerDTO customer = getCustomerOrThrow(claim.getCustomerId());
+        PolicyDTO policy = getPolicyOrThrow(claim.getPolicyId());
 
-        CustomerDTO customer = customerclient.getCustomerById(claim.getCustomerId());
-        if (customer == null) {
-            logger.error("Customer with ID {} not found for claim update email for claim {}.", claim.getCustomerId(), claimId);
-            throw new CustomerNotFoundException("Customer with ID " + claim.getCustomerId() + " not found.");
-        }
+        String subject;
+        String body;
         
-        ResponseEntity<PolicyDTO> policyEntity = policyclient.getPolicyById(claim.getPolicyId());
-        if (!policyEntity.hasBody() || policyEntity.getBody() == null) {
-            logger.error("Policy with ID {} not found for claim update email for claim {}.", claim.getPolicyId(), claimId);
-            throw new PolicyNotFoundException("Policy with ID " + claim.getPolicyId() + " not found.");
+        if (status == ClaimDTO.Status.APPROVED) {
+            subject = String.format("Great News! Your Claim #%d Has Been Approved! 🎉", claimId);
+            body = createApprovedEmailBody(customer, claimId, policy);
+        } else {
+            subject = String.format("Important Update: Your Claim #%d Status - Rejected", claimId);
+            body = createRejectedEmailBody(customer, claimId, policy);
         }
-        PolicyDTO policy = policyEntity.getBody();
 
         try {
-            String subject = "", body = "";
-            if (status == ClaimDTO.Status.APPROVED) {
-                subject = "Great News! Your Claim #" + claimId + " Has Been Approved! 🎉";
-                body = "Dear " + customer.getName() + ",\n\n"
-                        + "We are delighted to inform you that your claim (Claim ID: **" + claimId + "**) "
-                        + "related to policy **" + policy.getName() + " (No: " + policy.getPolicyId() + ")** has been **APPROVED**.\n\n"
-                        + "**Claim Summary:**\n"
-                        + "  - Claim ID: " + claimId + "\n"
-                        + "  - Policy: " + policy.getName() + " (No: " + policy.getPolicyId() + ")\n"
-                        + "  - Status: APPROVED\n"
-                        + "\n"
-                        + "The approved amount will be processed and disbursed according to your chosen method.\n\n"
-                        + "You can view the full details and disbursement status by logging into your account here:\n"
-                        + loginUrl + "\n\n"
-                        + "If you have any questions, please contact our support team.\n\n"
-                        + "Thank you for choosing " + appName + ".\n\n"
-                        + "Sincerely,\n"
-                        + "The " + appName + " Team";
-
-            } else {
-                subject = "Important Update: Your Claim #" + claimId + " Status - Rejected";
-                body = "Dear " + customer.getName() + ",\n\n"
-                        + "We regret to inform you that your claim (Claim ID: **" + claimId + "**) "
-                        + "related to policy **" + policy.getName() + " (No: " + policy.getPolicyId() + ")** has been **REJECTED**.\n\n"
-                        + "**Claim Summary:**\n"
-                        + "  - Claim ID: " + claimId + "\n"
-                        + "  - Policy: " + policy.getName() + " (No: " + policy.getPolicyId() + ")\n"
-                        + "  - Status: REJECTED\n"
-                        + "\n"
-                        + "We understand this news may be disappointing. You can view the full details of the decision and appeal options by logging into your account here:\n"
-                        + loginUrl + "\n\n"
-                        + "If you have any further questions or wish to appeal, please contact our support team.\n\n"
-                        + "Thank you for your understanding.\n\n"
-                        + "Sincerely,\n"
-                        + "The " + appName + " Team";
-            }
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(senderEmail);
-            message.setTo(customer.getEmail());
-            message.setSubject(subject);
-            message.setText(body);
-            javaMailSender.send(message);
+            sendEmail(customer.getEmail(), subject, body);
             logger.info("Claim Update Mail Sent to Customer {} for Claim ID {} with status {}", customer.getEmail(), claimId, status);
         } catch (MailException e) {
             logger.error("Failed to send claim updated email for claim ID {} with status {}.", claimId, status, e);
             throw new EmailSendingException("Failed to send claim updated email for claim ID " + claimId, e);
         }
     }
+    
+    private String createApprovedEmailBody(CustomerDTO customer, Integer claimId, PolicyDTO policy) {
+        return String.format(
+            "Dear %s,\n\n"
+            + "We are delighted to inform you that your claim (Claim ID: **%d**) "
+            + "related to policy **%s (No: %s)** has been **APPROVED**.\n\n"
+            + "**Claim Summary:**\n"
+            + "  - Claim ID: %d\n"
+            + "  - Policy: %s (No: %s)\n"
+            + "  - Status: APPROVED\n"
+            + "\n"
+            + "The approved amount will be processed and disbursed according to your chosen method.\n\n"
+            + "You can view the full details and disbursement status by logging into your account here:\n"
+            + "%s\n\n"
+            + "If you have any questions, please contact our support team.\n\n"
+            + "Thank you for choosing %s.\n\n"
+            + SINCERELY_TEXT,
+            Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME),
+            claimId,
+            Objects.toString(policy.getName(), "N/A"),
+            Objects.toString(policy.getPolicyId(), "N/A"),
+            claimId,
+            Objects.toString(policy.getName(), "N/A"),
+            Objects.toString(policy.getPolicyId(), "N/A"),
+            LOGIN_URL,
+            APP_NAME
+        );
+    }
+    
+    private String createRejectedEmailBody(CustomerDTO customer, Integer claimId, PolicyDTO policy) {
+        return String.format(
+            "Dear %s,\n\n"
+            + "We regret to inform you that your claim (Claim ID: **%d**) "
+            + "related to policy **%s (No: %s)** has been **REJECTED**.\n\n"
+            + "**Claim Summary:**\n"
+            + "  - Claim ID: %d\n"
+            + "  - Policy: %s (No: %s)\n"
+            + "  - Status: REJECTED\n"
+            + "\n"
+            + "We understand this news may be disappointing. You can view the full details of the decision and appeal options by logging into your account here:\n"
+            + "%s\n\n"
+            + "If you have any further questions or wish to appeal, please contact our support team.\n\n"
+            + "Thank you for your understanding.\n\n"
+            + SINCERELY_TEXT,
+            Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME),
+            claimId,
+            Objects.toString(policy.getName(), "N/A"),
+            Objects.toString(policy.getPolicyId(), "N/A"),
+            claimId,
+            Objects.toString(policy.getName(), "N/A"),
+            Objects.toString(policy.getPolicyId(), "N/A"),
+            LOGIN_URL,
+            APP_NAME
+        );
+    }
+
+    //-----------------------------------------------------------------------------------
 
     /**
      * Sends policy renewal reminders to customers whose policies are expiring soon.
@@ -384,9 +417,9 @@ public class NotificationServiceImpl implements NotificationService {
             LocalDate oneWeekFromNow = today.plusWeeks(1);
 
             List<PolicyDTO> expiringPolicies = allPolicies.stream()
-                    .filter(policy -> policy.getExpiryDate() != null && !policy.getExpiryDate().isBefore(today)
-                            && !policy.getExpiryDate().isAfter(oneWeekFromNow))
-                    .collect(Collectors.toList());
+                .filter(policy -> policy.getExpiryDate() != null && !policy.getExpiryDate().isBefore(today)
+                        && !policy.getExpiryDate().isAfter(oneWeekFromNow))
+                .toList();
 
             if (expiringPolicies.isEmpty()) {
                 logger.info("No policies are expiring in the next week.");
@@ -396,56 +429,53 @@ public class NotificationServiceImpl implements NotificationService {
 
             for (PolicyDTO policy : expiringPolicies) {
                 try {
-                    CustomerDTO customer = customerclient.getCustomerById(policy.getCustomerId());
-                    if (customer == null) {
-                        logger.warn("Skipping reminder for policy {}: Customer with ID {} not found.", policy.getPolicyId(), policy.getCustomerId());
-                        continue;
-                    }
+                    CustomerDTO customer = getCustomerOrThrow(policy.getCustomerId());
 
-                    String customerName = customer.getName() != null ? customer.getName() : "Valued Customer";
-                    String policyNumber = policy.getPolicyId() != null ? policy.getPolicyId().toString() : "N/A";
-                    String policyName = policy.getName() != null ? policy.getName() : "Your Policy";
+                    String customerName = Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME);
+                    String policyNumber = Objects.toString(policy.getPolicyId(), "N/A");
+                    String policyName = Objects.toString(policy.getName(), "Your Policy");
                     LocalDate expirationDate = policy.getExpiryDate();
 
-                    String subject = "Action Required: Your " + policyName + " Policy (" + policyNumber + ") is Expiring Soon! ⏰";
-                    String body = "Dear " + customerName + ",\n\n"
-                            + "This is a friendly reminder that your **" + policyName + "** policy (Policy Number: **" + policyNumber + "**) is set to expire on **" + expirationDate + "**.\n\n"
-                            + "To ensure continuous coverage and peace of mind, please renew your policy at your earliest convenience.\n\n"
-                            + "You can easily renew your policy by logging into your " + appName + " account here:\n" + loginUrl + "\n\n"
-                            + "If you have already renewed or if you have any questions, please disregard this email or contact our support team for assistance.\n\n"
-                            + "Thank you for choosing " + appName + ".\n\n"
-                            + "Sincerely,\n"
-                            + "The " + appName + " Team";
+                    String subject = String.format("Action Required: Your %s Policy (%s) is Expiring Soon! ⏰", policyName, policyNumber);
+                    String body = String.format(
+                        "Dear %s,\n\n"
+                        + "This is a friendly reminder that your **%s** policy (Policy Number: **%s**) is set to expire on **%s**.\n\n"
+                        + "To ensure continuous coverage and peace of mind, please renew your policy at your earliest convenience.\n\n"
+                        + "You can easily renew your policy by logging into your %s account here:\n%s\n\n"
+                        + "If you have already renewed or if you have any questions, please disregard this email or contact our support team for assistance.\n\n"
+                        + "Thank you for choosing %s.\n\n"
+                        + SINCERELY_TEXT,
+                        customerName, policyName, policyNumber, expirationDate,
+                        APP_NAME, LOGIN_URL, APP_NAME
+                    );
 
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(senderEmail);
-                    message.setTo(customer.getEmail());
-                    message.setSubject(subject);
-                    message.setText(body);
-                    javaMailSender.send(message);
-                    sendSmsRenewalReminder(subject ,"+91"+customer.getPhone());
+                    sendEmail(customer.getEmail(), subject, body);
+                    if (customer.getPhone() != null && customer.getPhone() != 0) {
+                         sendSmsRenewalReminder(subject, "+91" + customer.getPhone());
+                    }
                     logger.info("Renewal reminder sent for policy {} to customer {}.", policyNumber, customer.getEmail());
-                } catch (MailException e) {
-                    logger.error("Failed to send renewal reminder for policy {} to customer {}.", policy.getPolicyId(), customerclient.getCustomerById(policy.getCustomerId()).getEmail(), e);
-                } catch (Exception e) {
-                    logger.error("An unexpected error occurred while processing reminder for policy {}.", policy.getPolicyId(), e);
+                } catch (MailException | CustomerNotFoundException e) {
+                    logger.error("Failed to send renewal reminder for policy {}.", policy.getPolicyId(), e);
                 }
             }
         } catch (Exception e) {
             logger.error("An error occurred while fetching policies for renewal reminders.", e);
-            // Re-throw if you want this to propagate up as a general application error
-            throw new RuntimeException("An error occurred while fetching policies for renewal reminders.", e);
         }
     }
  
     private void sendSmsRenewalReminder(String subject, String to) {
-		Twilio.init(accountSid, authToken);
-		Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(trialNumber),subject).create();
-		logger.info("Reminder Sms Sent : {} to {}" + message.getSid(), to);
-		
-	}
+        try {
+            Twilio.init(accountSid, authToken);
+            Message message = Message.creator(new PhoneNumber(to), new PhoneNumber(trialNumber), subject).create();
+            logger.info("Reminder SMS Sent: {} to {}", message.getSid(), to);
+        } catch(Exception e) {
+            logger.error("Failed to send renewal SMS to {}: {}", to, e.getMessage());
+        }
+    }
 
-	/**
+    //-----------------------------------------------------------------------------------
+
+    /**
      * Sends an SMS message using Twilio.
      * @param to The recipient's phone number.
      * @param body The message body.
@@ -462,6 +492,8 @@ public class NotificationServiceImpl implements NotificationService {
             return "Failed to send SMS: " + e.getMessage();
         }
     }
+    
+    //-----------------------------------------------------------------------------------
 
     /**
      * Sends an email using JavaMailSender.
@@ -473,17 +505,19 @@ public class NotificationServiceImpl implements NotificationService {
      */
     public String sendActualEmail(String to, String subject, String body) throws EmailSendingException {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(senderEmail);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
-            javaMailSender.send(message);
+            sendEmail(to, subject, body);
             logger.info("Mail Sent Successfully to {}.", to);
             return "True";
         } catch (MailException e) {
             logger.error("Failed to send email to {}.", to, e);
             throw new EmailSendingException("Failed to send email to " + to, e);
         }
+    }
+    private ClaimDTO getClaimOrThrow(Integer claimId) throws ClaimNotFoundException {
+        ResponseEntity<ClaimDTO> claimEntity = claimclient.getClaimById(claimId);
+        if (!claimEntity.hasBody() || claimEntity.getBody() == null) {
+            throw new ClaimNotFoundException("Claim with ID " + claimId + " not found.");
+        }
+        return claimEntity.getBody();
     }
 }

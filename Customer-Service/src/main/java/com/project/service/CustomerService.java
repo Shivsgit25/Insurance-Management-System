@@ -27,4 +27,6 @@ public interface CustomerService {
 	public void fileClaim(ClaimDTO claim);
 
 	public Customer getCustomerForAgent(Integer id);
+
+	public Customer getCustomerByEmail(String email);
 }
