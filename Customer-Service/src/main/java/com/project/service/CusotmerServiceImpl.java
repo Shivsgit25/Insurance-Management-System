@@ -103,4 +103,9 @@ public class CusotmerServiceImpl implements CustomerService {
 		return repo.findById(id)
 				.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for agent."));
 	}
+
+	@Override
+	public Customer getCustomerByEmail(String email) {
+		return repo.findByEmail(email);
+	}
 }

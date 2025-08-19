@@ -77,4 +77,10 @@ public class CustomerController {
         logger.info("Fetching customer for agent ID: {}", id);
         return service.getCustomerForAgent(id);
     }
+    @GetMapping("/getCustomerByEmail/{email}")
+    public Customer getCustomerByEmail(@PathVariable("email") String email) {
+    	logger.info("############################# Running getCustomerByEmail function in line number 74 ######################################");
+        logger.info("Fetching customer for agent ID: {}", email);
+        return service.getCustomerByEmail(email);
+    }
 }

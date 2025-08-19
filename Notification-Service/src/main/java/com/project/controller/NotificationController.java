@@ -22,9 +22,13 @@ import com.project.service.NotificationService;
 @RequestMapping("/notify")
 public class NotificationController {
 	
-	@Autowired
-	NotificationService service;
-
+	private final NotificationService service;
+	
+	public NotificationController(NotificationService service) {
+		this.service = service;
+	}
+	
+	
 	@PostMapping("/actemail")
 	public String sendEmailNotification(@RequestBody EmailDTO emailRequest) throws EmailSendingException {
 	    return service.sendActualEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getBody());
