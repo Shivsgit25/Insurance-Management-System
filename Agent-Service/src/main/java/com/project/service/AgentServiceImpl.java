@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.PolicyClient;
+import com.project.exception.InvalidCredentialsException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
-
 import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
@@ -205,6 +205,17 @@ public class AgentServiceImpl implements AgentService {
 	    details.setCustomerPolicies(customerPolicies);
 
 	    return details;
+	}
+
+	@Override
+	public String loginAgent(String contactInfo, String password) {
+		Agent agent = repo.findByContactInfo(contactInfo);
+		 
+        if (agent == null || !agent.getPassword().equals(password)) {
+            throw new InvalidCredentialsException("Invalid email or password.");
+        }
+ 
+        return "Welcome Home, " + agent.getName() + "!";
 	}
 
 

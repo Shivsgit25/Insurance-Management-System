@@ -10,17 +10,25 @@ public class Agent {
 	@Id
 	private Integer agentId;
 	private String contactInfo;
-    private String name;
+	private String password;
+
+	private String name;
     private Integer policyId;
     private Integer claimId;
     
 
+    public String getPassword() {
+    	return password;
+    }
+    public void setPassword(String password) {
+    	this.password = password;
+    }
     
     public Agent() {
 		super();
 	}
 	public Agent(Integer agentId, String contactInfo, String name, Integer policyId, Integer claimId,
-			Integer customerId) {
+			Integer customerId,String password) {
 		super();
 		this.agentId = agentId;
 		this.contactInfo = contactInfo;
@@ -28,6 +36,7 @@ public class Agent {
 		this.policyId = policyId;
 		this.claimId = claimId;
 		this.customerId = customerId;
+		this.password=password;
 	}
 	private Integer customerId;
 	public Integer getAgentId() {
