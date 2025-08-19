@@ -67,6 +67,12 @@ public interface AgentService {
 
 
 
+	List<Agent> getallagentsbypolicyId(Integer policyId);
+
+
+
+
+
 
 
 	

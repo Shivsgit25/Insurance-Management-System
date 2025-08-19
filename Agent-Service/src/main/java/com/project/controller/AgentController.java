@@ -110,6 +110,15 @@ public class AgentController {
 //        Logger.info("Attempting to login user with email: {}", loginAgent.getContactInfo());
         return ser.loginAgent(loginAgent.getContactInfo(), loginAgent.getPassword());
     }
+    
+    @GetMapping("/getAgentDetails/{policyId}")
+    public List<Agent> getAgent(@PathVariable("policyId") Integer policyId){
+    	List<Agent> agents = ser.getallagentsbypolicyId(policyId);
+    	return agents;
+    }
+    
+    	
+    
 
 
 	

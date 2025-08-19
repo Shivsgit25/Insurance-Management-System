@@ -218,6 +218,12 @@ public class AgentServiceImpl implements AgentService {
         return "Welcome Home, " + agent.getName() + "!";
 	}
 
+	@Override
+	public List<Agent> getallagentsbypolicyId(Integer policyId) {
+		
+		return repo.findAllByPolicyId(policyId);
+	}
+
 
 
 	
