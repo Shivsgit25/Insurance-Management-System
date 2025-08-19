@@ -7,18 +7,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Entity representing a Claim in the insurance system. Maps to a database table
  * storing claim details.
  */
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "claim_info")
 public class Claim {
 
