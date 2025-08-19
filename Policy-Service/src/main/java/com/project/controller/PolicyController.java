@@ -106,7 +106,11 @@ public class PolicyController {
         return policies;
     }
     @GetMapping("/getAgentDetails/{policyId}")
-	  public PolicyAgent getAgents(@PathVariable("policyId") Integer policyId){
-      return policyService.getPolyAgentCombo(policyId);
+    public PolicyAgent getAgents(@PathVariable("policyId") Integer policyId) {
+        logger.info("Fetching agent details for policyId={}", policyId);
+        PolicyAgent agentDetails = policyService.getPolyAgentCombo(policyId);
+        logger.debug("Fetched agent details: {}", agentDetails);
+        return agentDetails;
     }
+
 }

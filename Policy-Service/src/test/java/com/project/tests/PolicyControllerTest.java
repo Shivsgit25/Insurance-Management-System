@@ -1,10 +1,7 @@
 package com.project.tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 
@@ -68,6 +65,7 @@ class PolicyControllerTest {
     void testGetPoliciesByCustomer_Found() {
         when(policyService.getPoliciesByCustomer(101)).thenReturn(List.of(samplePolicy));
         ResponseEntity<List<Policy>> response = policyController.getPoliciesByCustomer(101);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
     }
@@ -82,6 +80,7 @@ class PolicyControllerTest {
     void testGetPoliciesByAgent_Found() {
         when(policyService.getPoliciesByAgent(201)).thenReturn(List.of(samplePolicy));
         ResponseEntity<List<Policy>> response = policyController.getPoliciesByAgent(201);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
     }
@@ -96,6 +95,7 @@ class PolicyControllerTest {
     void testGetAllPolicies_Found() {
         when(policyService.getAllPolicies()).thenReturn(List.of(samplePolicy));
         ResponseEntity<List<Policy>> response = policyController.getAllPolicies();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertFalse(response.getBody().isEmpty());
     }
