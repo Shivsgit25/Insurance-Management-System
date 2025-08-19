@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,15 +30,15 @@ import com.project.service.AgentService;
 
 @WebMvcTest(AgentController.class)
 class AgentControllerTest {
-	 @Autowired
+	    @Autowired
 	    private MockMvc mockMvc;
 
-	    @Mock
+	    @MockBean
 	    private AgentService agentService;
 
 	    @Test
 	    void testCreateAgent() throws Exception {
-	        Agent agent = new Agent(1, "contact", "John", 101, 201, 301);
+	        Agent agent = new Agent(1, "contact", "John", 101, 201, 301,"pass123");
 	        when(agentService.createAgent(any(Agent.class))).thenReturn("Agent saved");
 
 	        String jsonPayload = """
@@ -48,7 +48,8 @@ class AgentControllerTest {
 	                "name": "John",
 	                "policyId": 101,
 	                "claimId": 201,
-	                "customerId": 301
+	                "customerId": 301,
+	                "password":"pass123"
 	            }
 	        """;
 
@@ -64,8 +65,8 @@ class AgentControllerTest {
 	    @Test
 	    void testGetAllAgents() throws Exception {
 	        List<Agent> agents = List.of(
-	            new Agent(1, "contact1", "John", 101, 201, 301),
-	            new Agent(2, "contact2", "Jane", 102, 202, 302)
+	            new Agent(1, "contact1", "John", 101, 201, 301,"pass1"),
+	            new Agent(2, "contact2", "Jane", 102, 202, 302,"pass2")
 	        );
 	        when(agentService.getAllAgents()).thenReturn(agents);
 
@@ -80,7 +81,7 @@ class AgentControllerTest {
 	    
 	    @Test
 	    void testGetAgentById_Success() throws Exception {
-	    	Agent agent = new Agent(1,"contact","John",101,102,103);
+	    	Agent agent = new Agent(1,"contact","John",101,102,103,"pass1");
 	    	when(agentService.getAgentById(1)).thenReturn(Optional.of(agent));
 	    	mockMvc.perform(get("/agents/get/1"))
 	    	       .andExpect(status().isOk())
@@ -103,7 +104,7 @@ class AgentControllerTest {
 	    @Test
 	    void testUpdateAgent_Success() throws Exception {
 	    	
-	    	Agent updated = new Agent(1, "updatedContact","UpdatedName",111,211,311);
+	    	Agent updated = new Agent(1, "updatedContact","UpdatedName",111,211,311,"pass1");
 	    	when(agentService.updateAgent(eq(1), any(Agent.class))).thenReturn(updated);
 	    	
 	    	String jsonPayload = """
@@ -113,7 +114,8 @@ class AgentControllerTest {
 	    	            "name": "UpdatedName",
 	    	            "policyId": 111,
 	    	            "claimId": 211,
-	    	            "customerId": 311
+	    	            "customerId": 311,
+	    	            "password":"pass1"
 	    	        }
 	    	    """;
 	    	
@@ -146,7 +148,8 @@ class AgentControllerTest {
 	                "name": "Ghost",
 	                "policyId": 101,
 	                "claimId": 201,
-	                "customerId": 301
+	                "customerId": 301,
+	                "password":"Passghost"
 	            }
 	        """;
 	      
@@ -174,7 +177,7 @@ class AgentControllerTest {
 	    @Test
 	    void testGetAgentByPolicy() throws Exception {
 	        List<Agent> agents = List.of(
-	            new Agent(1, "contact", "John", 101, 201, 301)
+	            new Agent(1, "contact", "John", 101, 201, 301,"pass1")
 	        );
 	        when(agentService.getAgentByPolicy(101)).thenReturn(agents);
 

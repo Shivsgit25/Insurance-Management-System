@@ -61,6 +61,12 @@ public interface AgentService {
 
 
 
+	String loginAgent(String contactInfo, String password);
+
+
+
+
+
 
 
 	
