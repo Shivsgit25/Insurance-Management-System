@@ -44,13 +44,5 @@ public class Policy {
         }
     }
 
-
-//    @ManyToOne
-//    @JoinColumn(name = "customer_id")
-//    private Customer customer;
-    
-//    @ManyToOne
-//    @JoinColumn(name = "agent_id")
-//    private Agent agent;
     
 }

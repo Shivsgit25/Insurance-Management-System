@@ -3,6 +3,7 @@ package com.project.service;
 import java.util.List;
 
 import com.project.model.Policy;
+import com.project.model.PolicyAgent;
 
 public interface PolicyService {
     Policy createPolicy(Policy policy, Integer customerId, Integer agentId);
@@ -14,4 +15,5 @@ public interface PolicyService {
     List<Policy> getPoliciesByAgent(Integer agentId);
 	List<Policy> getallpoliciesbycustomerId(Integer customerId);
 	List<Policy> getallpoliciesbyagentId(Integer agentId);
+    PolicyAgent getPolyAgentCombo(Integer policyId);
 }
