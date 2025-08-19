@@ -1,12 +1,16 @@
 package com.project.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.client.AgentClient;
 import com.project.exception.ResourceNotFoundException;
+import com.project.model.AgentDTO;
 import com.project.model.Policy;
+import com.project.model.PolicyAgent;
 import com.project.repository.PolicyRepository;
 
 @Service
@@ -14,6 +18,8 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Autowired
     private PolicyRepository policyRepository;
+    @Autowired
+    private AgentClient agentclient;
 
     @Override
     public Policy createPolicy(Policy policy, Integer customerId, Integer agentId) {
@@ -74,4 +80,16 @@ public class PolicyServiceImpl implements PolicyService {
     public List<Policy> getallpoliciesbyagentId(Integer agentId) {
         return policyRepository.findAllByAgentId(agentId);
     }
+
+	@Override
+	public PolicyAgent getPolyAgentCombo(Integer policyId) {
+	        List<AgentDTO> agentdto = agentclient.getAgents(policyId);
+	        Optional<Policy> opt = policyRepository.findById(policyId);
+	        PolicyAgent policyagent = new PolicyAgent();
+	        Policy policy = opt.get();
+	        policyagent.setPolicy(policy);
+	        policyagent.setAgent(agentdto);
+	        return policyagent;
+	}
+
 }

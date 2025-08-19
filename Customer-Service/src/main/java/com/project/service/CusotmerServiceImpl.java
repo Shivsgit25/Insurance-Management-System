@@ -1,7 +1,8 @@
 package com.project.service;
-
+ 
 import java.util.List;
 
+import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,49 +18,49 @@ import com.project.model.PolicyDTO;
 import com.project.repository.CustomerRepository;
 
 import feign.FeignException;
-
+ 
 @Service
 public class CusotmerServiceImpl implements CustomerService {
-
+ 
 	@Autowired
 	CustomerRepository repo;
-
+ 
 	@Autowired
 	PolicyClient policyclient;
 	@Autowired
 	ClaimClient claimclient;
-
+ 
 	@Autowired
 	NotificationClient notificationclient;
-
+ 
 	@Override
-	public String AddCustomer(Customer customer) {
+	public String addCustomer(Customer customer) {
 		repo.save(customer);
 		notificationclient.customerRegisteredMail(customer);
 		return "Customer Saved Successfully";
-
+ 
 	}
-
+ 
 	@Override
-	public String UpdateCustomer(Customer customer) {
+	public String updateCustomer(Customer customer) {
 		repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
 				"Customer with ID " + customer.getCustomerId() + " not found for update."));
 		repo.save(customer);
 		return "Customer Updated Successfully on ID : " + customer.getCustomerId();
 	}
-
+ 
 	@Override
 	public Customer getCustomerById(int id) {
 		return repo.findById(id)
 				.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found."));
 	}
-
+ 
 	@Override
 	public List<Customer> getAllCustomer() {
 		List<Customer> customer = repo.findAll();
 		return customer;
 	}
-
+ 
 	@Override
 	public String deleteByCustomerId(int id) {
 		Customer customer = repo.findById(id).orElseThrow(
@@ -68,12 +69,12 @@ public class CusotmerServiceImpl implements CustomerService {
 		return "The Data for the Customer id : " + customer.getCustomerId() + "\nCustomer Name :" + customer.getName()
 				+ "\n Deleted Successfully !!!";
 	}
-
+ 
 	@Override
 	public CustomerPolicy getCustPolyCombo(Integer cid) {
 		Customer customer = repo.findById(cid).orElseThrow(
 				() -> new CustomerNotFoundException("Customer with ID " + cid + " not found to get policy details."));
-
+ 
 		try {
 			List<PolicyDTO> policydto = policyclient.getCollection(cid);
 			CustomerPolicy customerpolicy = new CustomerPolicy();
@@ -84,12 +85,12 @@ public class CusotmerServiceImpl implements CustomerService {
 			throw new ExternalServiceException("Failed to retrieve policy details.", ex);
 		}
 	}
-
+ 
 	@Override
 	public List<Customer> getCustomerInfoForClaim(Integer cid) {
 		return null;
 	}
-
+ 
 	@Override
 	public void fileClaim(ClaimDTO claim) {
 		try {
@@ -98,14 +99,26 @@ public class CusotmerServiceImpl implements CustomerService {
 			throw new ExternalServiceException("Failed to file a claim.", ex);
 		}
 	}
-
+ 
 	public Customer getCustomerForAgent(Integer id) {
 		return repo.findById(id)
 				.orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + id + " not found for agent."));
 	}
-
+ 
 	@Override
 	public Customer getCustomerByEmail(String email) {
 		return repo.findByEmail(email);
 	}
+
+	 @Override
+	    public String loginCustomer(String email, String password) throws InvalidCredentialsException {
+	        Customer customer = repo.findByEmail(email);
+
+	        if (customer == null || !customer.getPassword().equals(password)) {
+	            throw new InvalidCredentialsException("Invalid email or password.");
+	        }
+
+	        return "Welcome Home, " + customer.getName() + "!";
+	    }
 }
+ 

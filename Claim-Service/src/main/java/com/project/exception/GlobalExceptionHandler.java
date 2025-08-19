@@ -14,38 +14,34 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    /**
-     * Handles ClaimNotFoundException.
-     */
-    @ExceptionHandler(ClaimNotFoundException.class)
-    public ResponseEntity<String> handleClaimNotFound(ClaimNotFoundException ex) {
-        logger.warn("Claim not found: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
+	/**
+	 * Handles ClaimNotFoundException.
+	 */
+	@ExceptionHandler(ClaimNotFoundException.class)
+	public ResponseEntity<String> handleClaimNotFound(ClaimNotFoundException ex) {
+		logger.warn("Claim not found: {}", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+	}
 
-    /**
-     * Handles validation errors from @Valid annotated inputs.
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException ex) {
-        String errors = ex.getBindingResult()
-                          .getFieldErrors()
-                          .stream()
-                          .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                          .collect(Collectors.joining(", "));
-        logger.warn("Validation failed: {}", errors);
-        return ResponseEntity.badRequest().body("Validation failed: " + errors);
-    }
+	/**
+	 * Handles validation errors from @Valid annotated inputs.
+	 */
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException ex) {
+		String errors = ex.getBindingResult().getFieldErrors().stream()
+				.map(error -> error.getField() + ": " + error.getDefaultMessage()).collect(Collectors.joining(", "));
+		logger.warn("Validation failed: {}", errors);
+		return ResponseEntity.badRequest().body("Validation failed: " + errors);
+	}
 
-    /**
-     * Handles all other uncaught exceptions.
-     */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        logger.error("Unhandled exception occurred", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                             .body("Internal Server Error");
-    }
+	/**
+	 * Handles all other uncaught exceptions.
+	 */
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<String> handleGeneralException(Exception ex) {
+		logger.error("Unhandled exception occurred", ex);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+	}
 }

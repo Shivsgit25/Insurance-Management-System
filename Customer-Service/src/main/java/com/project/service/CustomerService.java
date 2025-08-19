@@ -2,15 +2,19 @@ package com.project.service;
 
 import java.util.List;
 
+import org.apache.http.auth.InvalidCredentialsException;
+
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;
 
 public interface CustomerService {
 
-	public String AddCustomer(Customer cust);
+	public String addCustomer(Customer cust);
+	
+	public String loginCustomer(String email, String password) throws InvalidCredentialsException;
 
-	public String UpdateCustomer(Customer customer);
+	public String updateCustomer(Customer customer);
 
 	public Customer getCustomerById(int id);
 

@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
  * storing claim details.
  */
 @Entity
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Table(name = "claim_info")
 public class Claim {
 
@@ -65,6 +65,4 @@ public class Claim {
 		REJECTED // Claim has been rejected
 	}
 
-
-	
 }

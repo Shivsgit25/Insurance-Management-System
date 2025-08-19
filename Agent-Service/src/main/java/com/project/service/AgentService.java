@@ -3,11 +3,11 @@ package com.project.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
+
 
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
-import com.project.model.AgentCustomer;
+
 import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
@@ -19,8 +19,7 @@ public interface AgentService {
 	
 	
 
-//	
-//	String deleteAgent(Long agentId);
+
 
 	List<Agent> getAllAgents();
 	
@@ -40,7 +39,7 @@ public interface AgentService {
 
 
 
-//	AgentCustomer getAgentCustCombo(Integer aid);
+
 
 
 
@@ -60,7 +59,19 @@ public interface AgentService {
 
 
 
-//	Object getAllClaims();
+
+
+	String loginAgent(String contactInfo, String password);
+
+
+
+
+
+	List<Agent> getallagentsbypolicyId(Integer policyId);
+
+
+
+
 
 
 
