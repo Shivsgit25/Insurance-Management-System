@@ -11,8 +11,6 @@ public interface PolicyService {
     void deletePolicy(Integer policyId);
     Policy getPolicyById(Integer policyId);
     List<Policy> getAllPolicies();
-    List<Policy> getPoliciesByCustomer(Integer customerId);
-    List<Policy> getPoliciesByAgent(Integer agentId);
 	List<Policy> getallpoliciesbycustomerId(Integer customerId);
 	List<Policy> getallpoliciesbyagentId(Integer agentId);
     PolicyAgent getPolyAgentCombo(Integer policyId);
