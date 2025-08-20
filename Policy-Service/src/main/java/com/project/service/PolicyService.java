@@ -6,7 +6,7 @@ import com.project.model.Policy;
 import com.project.model.PolicyAgent;
 
 public interface PolicyService {
-    Policy createPolicy(Policy policy, Integer customerId, Integer agentId);
+    Policy createPolicy(Policy policy);
     Policy updatePolicy(Integer policyId, Policy updatedPolicy);
     void deletePolicy(Integer policyId);
     Policy getPolicyById(Integer policyId);

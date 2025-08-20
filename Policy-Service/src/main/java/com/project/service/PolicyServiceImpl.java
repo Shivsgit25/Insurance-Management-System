@@ -1,9 +1,7 @@
 package com.project.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.client.AgentClient;
@@ -16,22 +14,26 @@ import com.project.repository.PolicyRepository;
 @Service
 public class PolicyServiceImpl implements PolicyService {
 
-    @Autowired
-    private PolicyRepository policyRepository;
-    @Autowired
-    private AgentClient agentclient;
+    private static final String POLICY_ID_PREFIX = "Policy with ID ";
+    private static final String NOT_FOUND_MESSAGE = " not found.";
+
+    private final PolicyRepository policyRepository;
+    private final AgentClient agentclient;
+
+    public PolicyServiceImpl(PolicyRepository policyRepository, AgentClient agentclient) {
+        this.policyRepository = policyRepository;
+        this.agentclient = agentclient;
+    }
 
     @Override
-    public Policy createPolicy(Policy policy, Integer customerId, Integer agentId) {
-        policy.setCustomerId(customerId);
-        policy.setAgentId(agentId);
-        return policyRepository.save(policy);
-    }
+	public Policy createPolicy(Policy policy) {
+		return policyRepository.save(policy);
+	}
 
     @Override
     public Policy updatePolicy(Integer policyId, Policy updatedPolicy) {
         Policy existingPolicy = policyRepository.findById(policyId)
-            .orElseThrow(() -> new ResourceNotFoundException("Policy with ID " + policyId + " not found."));
+            .orElseThrow(() -> new ResourceNotFoundException(POLICY_ID_PREFIX + policyId + NOT_FOUND_MESSAGE));
 
         existingPolicy.setName(updatedPolicy.getName());
         existingPolicy.setPremiumAmount(updatedPolicy.getPremiumAmount());
@@ -46,7 +48,7 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public void deletePolicy(Integer policyId) {
         Policy policy = policyRepository.findById(policyId)
-            .orElseThrow(() -> new ResourceNotFoundException("Policy with ID " + policyId + " not found."));
+            .orElseThrow(() -> new ResourceNotFoundException(POLICY_ID_PREFIX + policyId + NOT_FOUND_MESSAGE));
         policyRepository.delete(policy);
     }
 
@@ -58,7 +60,7 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public Policy getPolicyById(Integer policyId) {
         return policyRepository.findById(policyId)
-            .orElseThrow(() -> new ResourceNotFoundException("Policy with ID " + policyId + " not found."));
+            .orElseThrow(() -> new ResourceNotFoundException(POLICY_ID_PREFIX + policyId + NOT_FOUND_MESSAGE));
     }
 
     @Override
@@ -81,15 +83,16 @@ public class PolicyServiceImpl implements PolicyService {
         return policyRepository.findAllByAgentId(agentId);
     }
 
-	@Override
-	public PolicyAgent getPolyAgentCombo(Integer policyId) {
-	        List<AgentDTO> agentdto = agentclient.getAgents(policyId);
-	        Optional<Policy> opt = policyRepository.findById(policyId);
-	        PolicyAgent policyagent = new PolicyAgent();
-	        Policy policy = opt.get();
-	        policyagent.setPolicy(policy);
-	        policyagent.setAgent(agentdto);
-	        return policyagent;
-	}
+    @Override
+    public PolicyAgent getPolyAgentCombo(Integer policyId) {
+        List<AgentDTO> agentdto = agentclient.getAgents(policyId);
+        Policy policy = policyRepository.findById(policyId)
+            .orElseThrow(() -> new ResourceNotFoundException(POLICY_ID_PREFIX + policyId + NOT_FOUND_MESSAGE));
+        PolicyAgent policyagent = new PolicyAgent();
+        policyagent.setPolicy(policy);
+        policyagent.setAgent(agentdto);
+        return policyagent;
+    }
 
+	
 }
