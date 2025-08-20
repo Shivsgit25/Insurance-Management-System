@@ -25,7 +25,7 @@ public class PolicyController {
 
     @PostMapping("/create")
     public ResponseEntity<Policy> createPolicy(@RequestBody Policy request) {
-        logger.info("Creating policy for customerId={} and agentId={}");
+        logger.info("Creating policy ");
 
         // Simplified service call
         Policy createdPolicy = policyService.createPolicy(request);
@@ -76,7 +76,7 @@ public class PolicyController {
         return policies;
     }
 
-    @GetMapping("/agent/all/{agentId}")
+    @GetMapping("/agentAll/{agentId}")
     public List<Policy> getPolicies(@PathVariable("agentId") Integer agentId){
         logger.info("Fetching all policies by agentId={}", agentId);
         List<Policy> policies = policyService.getallpoliciesbyagentId(agentId);
