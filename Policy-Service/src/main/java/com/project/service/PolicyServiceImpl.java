@@ -64,16 +64,6 @@ public class PolicyServiceImpl implements PolicyService {
     }
 
     @Override
-    public List<Policy> getPoliciesByCustomer(Integer customerId) {
-        return policyRepository.findByCustomerId(customerId);
-    }
-
-    @Override
-    public List<Policy> getPoliciesByAgent(Integer agentId) {
-        return policyRepository.findByAgentId(agentId);
-    }
-
-    @Override
     public List<Policy> getallpoliciesbycustomerId(Integer customerId) {
         return policyRepository.findAllByCustomerId(customerId);
     }

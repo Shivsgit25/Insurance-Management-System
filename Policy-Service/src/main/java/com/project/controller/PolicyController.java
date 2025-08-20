@@ -68,22 +68,6 @@ public class PolicyController {
         return ResponseEntity.ok(policies);
     }
 
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Policy>> getPoliciesByCustomer(@PathVariable Integer customerId) {
-        logger.info("Fetching policies for customerId={}", customerId);
-        List<Policy> policies = policyService.getPoliciesByCustomer(customerId);
-        logger.debug("Policies fetched for customerId={}: {}", customerId, policies.size());
-        return ResponseEntity.ok(policies);
-    }
-
-    @GetMapping("/agent/{agentId}")
-    public ResponseEntity<List<Policy>> getPoliciesByAgent(@PathVariable Integer agentId) {
-        logger.info("Fetching policies for agentId={}", agentId);
-        List<Policy> policies = policyService.getPoliciesByAgent(agentId);
-        logger.debug("Policies fetched for agentId={}: {}", agentId, policies.size());
-        return ResponseEntity.ok(policies);
-    }
-
     @GetMapping("/getCustomerPolicyDetails/{customerId}")
     public List<Policy> getCollection(@PathVariable("customerId") Integer customerId){
         logger.info("Fetching all policies by customerId={}", customerId);
