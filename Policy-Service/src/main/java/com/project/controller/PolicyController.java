@@ -4,16 +4,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.model.Policy;
 import com.project.model.PolicyAgent;
@@ -25,17 +17,19 @@ public class PolicyController {
 
     private static final Logger logger = LoggerFactory.getLogger(PolicyController.class);
 
-    @Autowired
-    private PolicyService policyService;
+    private final PolicyService policyService;
+
+    public PolicyController(PolicyService policyService) {
+        this.policyService = policyService;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Policy> createPolicy(@RequestBody Policy request) {
-        logger.info("Creating policy for customerId={} and agentId={}", request.getCustomerId(), request.getAgentId());
-        Policy createdPolicy = policyService.createPolicy(
-            request,
-            request.getCustomerId(),
-            request.getAgentId()
-        );
+        logger.info("Creating policy for customerId={} and agentId={}");
+
+        // Simplified service call
+        Policy createdPolicy = policyService.createPolicy(request);
+
         logger.debug("Created policy: {}", createdPolicy);
         return ResponseEntity.ok(createdPolicy);
     }
@@ -74,22 +68,6 @@ public class PolicyController {
         return ResponseEntity.ok(policies);
     }
 
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Policy>> getPoliciesByCustomer(@PathVariable Integer customerId) {
-        logger.info("Fetching policies for customerId={}", customerId);
-        List<Policy> policies = policyService.getPoliciesByCustomer(customerId);
-        logger.debug("Policies fetched for customerId={}: {}", customerId, policies.size());
-        return ResponseEntity.ok(policies);
-    }
-
-    @GetMapping("/agent/{agentId}")
-    public ResponseEntity<List<Policy>> getPoliciesByAgent(@PathVariable Integer agentId) {
-        logger.info("Fetching policies for agentId={}", agentId);
-        List<Policy> policies = policyService.getPoliciesByAgent(agentId);
-        logger.debug("Policies fetched for agentId={}: {}", agentId, policies.size());
-        return ResponseEntity.ok(policies);
-    }
-
     @GetMapping("/getCustomerPolicyDetails/{customerId}")
     public List<Policy> getCollection(@PathVariable("customerId") Integer customerId){
         logger.info("Fetching all policies by customerId={}", customerId);
@@ -98,13 +76,14 @@ public class PolicyController {
         return policies;
     }
 
-    @GetMapping("/testing/{agentId}")
+    @GetMapping("/agent/all/{agentId}")
     public List<Policy> getPolicies(@PathVariable("agentId") Integer agentId){
         logger.info("Fetching all policies by agentId={}", agentId);
         List<Policy> policies = policyService.getallpoliciesbyagentId(agentId);
         logger.debug("Policies fetched: {}", policies.size());
         return policies;
     }
+
     @GetMapping("/getAgentDetails/{policyId}")
     public PolicyAgent getAgents(@PathVariable("policyId") Integer policyId) {
         logger.info("Fetching agent details for policyId={}", policyId);
@@ -112,5 +91,4 @@ public class PolicyController {
         logger.debug("Fetched agent details: {}", agentDetails);
         return agentDetails;
     }
-
 }

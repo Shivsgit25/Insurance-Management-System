@@ -9,7 +9,7 @@
 		<version>3.5.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.interim</groupId>
+	<groupId>com.example.demo</groupId>
 	<artifactId>Service-Registry</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Service-Registry</name>
