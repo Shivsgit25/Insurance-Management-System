@@ -1,13 +1,13 @@
 package com.project.service;
-
+ 
 import java.util.List;
 import java.util.Optional;
-
+ 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+ 
 import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.PolicyClient;
@@ -21,9 +21,9 @@ import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
 import com.project.model.PolicyDTO;
 import com.project.repository.AgentRepository;
-
-
-
+ 
+ 
+ 
 @Service
 public class AgentServiceImpl implements AgentService {
 	
@@ -40,7 +40,13 @@ public class AgentServiceImpl implements AgentService {
 	ClaimClient claimclient;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
-
+    
+	/**
+	 * Creates a new agent and saves it to the database.
+	 *
+	 * @param agent The Agent object containing details to be persisted.
+	 * @return A confirmation message indicating successful creation.
+	 */
 	@Override
 	public String createAgent(Agent agent) {
 		logger.info("Creating agent with ID: {}", agent.getAgentId());
@@ -49,7 +55,12 @@ public class AgentServiceImpl implements AgentService {
 	    return "Agent saved";
 	    
 	}
-
+	/**
+	 * Retrieves all agents from the repository.
+	 *
+	 * @return A list of all Agent objects.
+	 */
+ 
 	@Override
 	public List<Agent> getAllAgents() {
 		logger.info("Fetching all agents");
@@ -59,13 +70,29 @@ public class AgentServiceImpl implements AgentService {
 	
 	}
 	
+	/**
+	 * Fetches an agent by their unique ID.
+	 *
+	 * @param agentId The ID of the agent to retrieve.
+	 * @return An Optional containing the Agent if found, or empty if not.
+	 */
+	
     @Override
     public Optional<Agent> getAgentById(Integer agentId){
     	logger.info("Fetching agent by ID: {}",agentId);
     	return repo.findById(agentId);
     	
     }
-
+    
+    /**
+     * Updates an existing agent's details.
+     *
+     * @param agentId The ID of the agent to update.
+     * @param updateAgent The Agent object containing updated data.
+     * @return The updated Agent object.
+     * @throws RuntimeException if the agent is not found.
+     */
+ 
 	@Override
 	public Agent updateAgent(Integer agentId, Agent updateAgent) {
 		logger.info("Updating agent with ID: {}",agentId);
@@ -89,7 +116,13 @@ public class AgentServiceImpl implements AgentService {
 				});
 	
 	}
-
+	/**
+	 * Deletes an agent by their ID.
+	 *
+	 * @param agentId The ID of the agent to delete.
+	 * @return A confirmation message indicating successful deletion.
+	 */
+ 
 	@Override
 	public String deleteAgent(Integer agentId) {
 		  logger.info("Deleting agent with ID:{}", agentId);
@@ -98,16 +131,27 @@ public class AgentServiceImpl implements AgentService {
 	      return "Agent Deleted";
 	}
 	
-	
+	/**
+	 * Retrieves all agents associated with a specific policy ID.
+	 *
+	 * @param policyId The ID of the policy to filter agents by.
+	 * @return A list of Agent objects linked to the given policy.
+	 */
 	
 	
 	public List<Agent> getAgentByPolicy(Integer policyId){
 		logger.info("Fetching agents by policy ID: {}");
 		return repo.findByPolicyId(policyId);
 	}
-
 	
-
+ 
+	/**
+	 * Combines agent details with their associated policies.
+	 *
+	 * @param aid The ID of the agent.
+	 * @return An AgentPolicy object containing agent and policy data.
+	 */
+ 
 	@Override
 	public AgentPolicy getAgentPolyCombo(Integer aid) {
 	  logger.info("Fetching policy combination for agent ID: {}", aid);
@@ -124,9 +168,15 @@ public class AgentServiceImpl implements AgentService {
 	  
 	 return agentpolicy;
 	}
-
-
-
+    
+	/**
+	 * Fetches customer details linked to a specific agent.
+	 *
+	 * @param cid The customer ID associated with the agent.
+	 * @return A CustomerDTO object containing customer information.
+	 */
+ 
+ 
 	@Override
 	public CustomerDTO getCustomerForAgent(Integer cid) {
 		logger.info("Fetching customer for agent with customer ID: {}", cid);
@@ -134,7 +184,12 @@ public class AgentServiceImpl implements AgentService {
 		logger.debug("Customer data retrieved: {}", custdto);
 		return custdto;
 	}
-
+	/**
+	 * Retrieves all claims and links them to the first available agent.
+	 *
+	 * @return An AgentClaim object containing agent and claim data.
+	 */
+ 
 	@Override
 	public AgentClaim getAllClaims() {
 		logger.info("Fetching all claims from Claimclient");
@@ -148,28 +203,35 @@ public class AgentServiceImpl implements AgentService {
 	    agentClaim.setClaim(claims);
 	    return agentClaim;
 	}
+	/**
+	 * Approves or rejects a claim based on policy threshold logic.
+	 *
+	 * @param claimId The ID of the claim to evaluate.
+	 * @return A ClaimDTO object with updated claim status.
+	 * @throws ResourceNotFoundException if the claim or policy is not found.
+	 */
 	
 	@Override
     public ClaimDTO approveClaim(Integer claimId) {
 		logger.info("Approving claim with ID: {}", claimId);
      
 		// Step 1: Get the claim
-	    ClaimDTO claim = claimclient.getClaimById(claimId).getBody(); 
+	    ClaimDTO claim = claimclient.getClaimById(claimId).getBody();
 	    if (claim == null) {
 	        throw new ResourceNotFoundException("Claim not found with ID: " + claimId);
 	    }
-
+ 
 	    // Step 2: Get the related policy
 	    PolicyDTO policy = policyclient.getPolicyById(claim.getPolicyId()); // You may need to add this method in PolicyClient
 	    if (policy == null) {
 	        throw new ResourceNotFoundException("Policy not found with ID: " + claim.getPolicyId());
 	    }
-
+ 
 	    // Step 3: Calculate threshold
 	    double threshold = policy.getPremiumAmount() * policy.getValidityPeriod();
 	    logger.debug("Threshold amount: {}", threshold);
 	    logger.debug("Claim amount: {}", claim.getClaimAmount());
-
+ 
 	    // Step 4: Compare and decide
 	    ClaimDTO.ClaimStatus status;
 	    if (threshold < claim.getClaimAmount()) {
@@ -179,12 +241,18 @@ public class AgentServiceImpl implements AgentService {
 	        status = ClaimDTO.ClaimStatus.APPROVED;
 	        logger.info("Claim approved.");
 	    }
-
+ 
 	    // Step 5: Update claim status
 	    return claimclient.updateClaimStatus(claimId, status).getBody();
     }
-
-
+ 
+	/**
+	 * Retrieves full details of an agent including their policies and customer info.
+	 *
+	 * @param agentId The ID of the agent to fetch details for.
+	 * @return An AgentFullDetails object containing agent, policy, and customer data.
+	 * @throws ResourceNotFoundException if the agent is not found.
+	 */
 	
 	public AgentFullDetails getAgentFullDetails(Integer agentId) {
 		logger.info("Fetching full details for agent ID: {}", agentId);
@@ -194,7 +262,7 @@ public class AgentServiceImpl implements AgentService {
 	    	
 	        throw new ResourceNotFoundException("Agent not found with ID: " + agentId);
 	    }
-
+ 
 	    Agent agent = optAgent.get();
 	    List<PolicyDTO> agentPolicies = policyclient.getPolicies(agentId);
 	    List<PolicyDTO> customerPolicies = policyclient.getPolicies(agent.getCustomerId());
@@ -206,33 +274,49 @@ public class AgentServiceImpl implements AgentService {
 	    details.setAgentPolicies(agentPolicies);
 //	    details.setCustomerPolicies(customerPolicies);
 	    details.setCustomer(customer);
-
+ 
 	    return details;
 	}
-
+	/**
+	 * Authenticates an agent using contact info and password.
+	 *
+	 * @param contactInfo The contact information used for login.
+	 * @param password The password provided by the agent.
+	 * @return A welcome message if credentials are valid.
+	 * @throws InvalidCredentialsException if authentication fails.
+	 */
+ 
 	@Override
 	public String loginAgent(String contactInfo, String password) {
 		Agent agent = repo.findByContactInfo(contactInfo);
-		 
+		
         if (agent == null || !agent.getPassword().equals(password)) {
             throw new InvalidCredentialsException("Invalid email or password.");
         }
  
         return "Welcome Home, " + agent.getName() + "!";
 	}
-
+	
+	/**
+	 * Retrieves all agents linked to a specific policy ID.
+	 *
+	 * @param policyId The ID of the policy to search agents by.
+	 * @return A list of Agent objects associated with the given policy.
+	 */
+ 
 	@Override
 	public List<Agent> getallagentsbypolicyId(Integer policyId) {
 		
 		return repo.findAllByPolicyId(policyId);
 	}
-
-
-
+ 
+ 
+ 
 	
-
+ 
 	
 	
-
-
+ 
+ 
 }
+ 
