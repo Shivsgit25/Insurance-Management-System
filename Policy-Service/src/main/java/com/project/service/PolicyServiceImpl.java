@@ -25,11 +25,25 @@ public class PolicyServiceImpl implements PolicyService {
         this.agentclient = agentclient;
     }
 
+    /**
+     * Creates a new policy and saves it to the database.
+     *
+     * @param policy the Policy object to be created
+     * @return the saved Policy object
+     */
     @Override
-	public Policy createPolicy(Policy policy) {
-		return policyRepository.save(policy);
-	}
+    public Policy createPolicy(Policy policy) {
+        return policyRepository.save(policy);
+    }
 
+    /**
+     * Updates an existing policy with new details.
+     *
+     * @param policyId the ID of the policy to update
+     * @param updatedPolicy the Policy object containing updated values
+     * @return the updated Policy object
+     * @throws ResourceNotFoundException if the policy with the given ID does not exist
+     */
     @Override
     public Policy updatePolicy(Integer policyId, Policy updatedPolicy) {
         Policy existingPolicy = policyRepository.findById(policyId)
@@ -45,6 +59,12 @@ public class PolicyServiceImpl implements PolicyService {
         return policyRepository.save(existingPolicy);
     }
 
+    /**
+     * Deletes a policy by its ID.
+     *
+     * @param policyId the ID of the policy to delete
+     * @throws ResourceNotFoundException if the policy with the given ID does not exist
+     */
     @Override
     public void deletePolicy(Integer policyId) {
         Policy policy = policyRepository.findById(policyId)
@@ -52,27 +72,58 @@ public class PolicyServiceImpl implements PolicyService {
         policyRepository.delete(policy);
     }
 
+    /**
+     * Retrieves all policies from the database.
+     *
+     * @return a list of all Policy objects
+     */
     @Override
     public List<Policy> getAllPolicies() {
         return policyRepository.findAll();
     }
 
+    /**
+     * Retrieves a policy by its ID.
+     *
+     * @param policyId the ID of the policy to retrieve
+     * @return the Policy object with the specified ID
+     * @throws ResourceNotFoundException if the policy with the given ID does not exist
+     */
     @Override
     public Policy getPolicyById(Integer policyId) {
         return policyRepository.findById(policyId)
             .orElseThrow(() -> new ResourceNotFoundException(POLICY_ID_PREFIX + policyId + NOT_FOUND_MESSAGE));
     }
 
+    /**
+     * Retrieves all policies associated with a specific customer.
+     *
+     * @param customerId the ID of the customer
+     * @return a list of Policy objects linked to the customer
+     */
     @Override
     public List<Policy> getallpoliciesbycustomerId(Integer customerId) {
         return policyRepository.findAllByCustomerId(customerId);
     }
 
+    /**
+     * Retrieves all policies associated with a specific agent.
+     *
+     * @param agentId the ID of the agent
+     * @return a list of Policy objects linked to the agent
+     */
     @Override
     public List<Policy> getallpoliciesbyagentId(Integer agentId) {
         return policyRepository.findAllByAgentId(agentId);
     }
 
+    /**
+     * Retrieves a combined object containing policy and its associated agent details.
+     *
+     * @param policyId the ID of the policy
+     * @return a PolicyAgent object containing both policy and agent information
+     * @throws ResourceNotFoundException if the policy with the given ID does not exist
+     */
     @Override
     public PolicyAgent getPolyAgentCombo(Integer policyId) {
         List<AgentDTO> agentdto = agentclient.getAgents(policyId);
@@ -83,6 +134,4 @@ public class PolicyServiceImpl implements PolicyService {
         policyagent.setAgent(agentdto);
         return policyagent;
     }
-
-	
 }

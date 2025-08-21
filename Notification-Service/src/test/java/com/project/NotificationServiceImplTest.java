@@ -25,7 +25,7 @@ import com.project.service.NotificationServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Notification Service SMS Tests")
-public class NotificationServiceImplTest {
+class NotificationServiceImplTest {
 
 	 @InjectMocks
 	    private NotificationServiceImpl notificationService;
@@ -41,9 +41,6 @@ public class NotificationServiceImplTest {
 	        ReflectionTestUtils.setField(notificationService, "accountSid", "test_sid");
 	        ReflectionTestUtils.setField(notificationService, "authToken", "test_token");
 	        ReflectionTestUtils.setField(notificationService, "trialNumber", "+15017122661");
-
-	        // Common setup: Ensure mail sender does nothing by default when `send` is called
-//	        doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
 	    }
 
 	    // --- Test Cases for sendActualEmail ---
@@ -73,7 +70,8 @@ public class NotificationServiceImplTest {
 	        String body = "Test Body";
 
 	        // Configure javaMailSender to throw a MailException when send is called
-	        doThrow(new MailException("Mock Mail Failure") {}).when(javaMailSender).send(any(SimpleMailMessage.class));
+	        doThrow(new MailException("Mock Mail Failure") {
+				private static final long serialVersionUID = -5582883301773005167L;}).when(javaMailSender).send(any(SimpleMailMessage.class));
 
 	        // Assert that EmailSendingException is thrown
 	        EmailSendingException thrown = assertThrows(EmailSendingException.class, () ->

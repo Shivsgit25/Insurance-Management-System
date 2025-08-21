@@ -78,8 +78,7 @@ public class NotificationServiceImpl implements NotificationService {
         javaMailSender.send(message);
     }
     
-    //-----------------------------------------------------------------------------------
-    
+
     /**
      * Sends a registration confirmation email to a new customer.
      * @param customer The CustomerDTO containing customer details.
@@ -131,8 +130,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    //-----------------------------------------------------------------------------------
-
+ 
     /**
      * Sends a policy opted confirmation email to a customer.
      * @param policy The PolicyDTO containing policy details.
@@ -172,7 +170,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    //-----------------------------------------------------------------------------------
 
     /**
      * Sends claim filing confirmation email to customer and claim assignment email to agent.
