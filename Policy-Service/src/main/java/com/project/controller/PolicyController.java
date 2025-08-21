@@ -27,7 +27,6 @@ public class PolicyController {
     public ResponseEntity<Policy> createPolicy(@RequestBody Policy request) {
         logger.info("Creating policy ");
 
-        // Simplified service call
         Policy createdPolicy = policyService.createPolicy(request);
 
         logger.debug("Created policy: {}", createdPolicy);
