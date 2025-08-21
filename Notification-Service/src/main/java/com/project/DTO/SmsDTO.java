@@ -4,11 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// Optional: If you use Lombok, you can uncomment these and remove manual getters/setters.
-// import lombok.AllArgsConstructor;
-// import lombok.Data;
-// import lombok.NoArgsConstructor;
-
  @Data // Generates getters, setters, toString, equals, hashCode
  @NoArgsConstructor // Generates a no-argument constructor
  @AllArgsConstructor // Generates a constructor with all fields

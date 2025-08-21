@@ -5,6 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.Async;
 
+
+/**
+ * This class handles user notifications.
+ * 
+ * @author Shiv Gupta
+ */
+
 @SpringBootApplication
 @EnableFeignClients
 @Async
