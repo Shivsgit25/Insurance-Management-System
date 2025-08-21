@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import com.project.controller.PolicyController;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.Policy;
+import com.project.model.PolicyAgent;
 import com.project.service.PolicyService;
 
 class PolicyControllerTest {
@@ -102,5 +103,65 @@ class PolicyControllerTest {
     void testGetPoliciesTesting_NotFound() {
         when(policyService.getallpoliciesbyagentId(999)).thenThrow(new ResourceNotFoundException("No policies found"));
         assertThrows(ResourceNotFoundException.class, () -> policyController.getPolicies(999));
+    }
+
+    @Test
+    void testCreatePolicy_Found() {
+        when(policyService.createPolicy(any(Policy.class))).thenReturn(samplePolicy);
+        ResponseEntity<Policy> response = policyController.createPolicy(samplePolicy);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Health Cover", response.getBody().getName());
+    }
+
+    @Test
+    void testCreatePolicy_Failure() {
+        when(policyService.createPolicy(any(Policy.class))).thenThrow(new RuntimeException("Creation failed"));
+        assertThrows(RuntimeException.class, () -> policyController.createPolicy(samplePolicy));
+    }
+
+    @Test
+    void testUpdatePolicy_Found() {
+        when(policyService.updatePolicy(eq(1), any(Policy.class))).thenReturn(samplePolicy);
+        ResponseEntity<Policy> response = policyController.updatePolicy(1, samplePolicy);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Health Cover", response.getBody().getName());
+    }
+
+    @Test
+    void testUpdatePolicy_NotFound() {
+        when(policyService.updatePolicy(eq(99), any(Policy.class))).thenThrow(new ResourceNotFoundException("Policy not found"));
+        assertThrows(ResourceNotFoundException.class, () -> policyController.updatePolicy(99, samplePolicy));
+    }
+
+    @Test
+    void testDeletePolicy_Found() {
+        doNothing().when(policyService).deletePolicy(1);
+        ResponseEntity<String> response = policyController.deletePolicy(1);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody().contains("deleted successfully"));
+    }
+
+    @Test
+    void testDeletePolicy_NotFound() {
+        doThrow(new ResourceNotFoundException("Policy not found")).when(policyService).deletePolicy(99);
+        assertThrows(ResourceNotFoundException.class, () -> policyController.deletePolicy(99));
+    }
+
+    @Test
+    void testGetAgentDetails_Found() {
+        PolicyAgent mockAgent = new PolicyAgent();
+        mockAgent.setPolicy(samplePolicy);
+        mockAgent.setAgent(List.of());
+
+        when(policyService.getPolyAgentCombo(1)).thenReturn(mockAgent);
+        PolicyAgent response = policyController.getAgents(1);
+        assertNotNull(response);
+        assertEquals(samplePolicy, response.getPolicy());
+    }
+
+    @Test
+    void testGetAgentDetails_NotFound() {
+        when(policyService.getPolyAgentCombo(999)).thenThrow(new ResourceNotFoundException("Agent details not found"));
+        assertThrows(ResourceNotFoundException.class, () -> policyController.getAgents(999));
     }
 }
