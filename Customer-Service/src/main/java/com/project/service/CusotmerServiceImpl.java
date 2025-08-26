@@ -4,7 +4,6 @@ package com.project.service;
  
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.project.client.ClaimClient;
 import com.project.client.NotificationClient;
 import com.project.client.PolicyClient;
+import com.project.exception.CustomerAlreadyExistsException;
 import com.project.exception.CustomerNotFoundException;
 import com.project.exception.ExternalServiceException;
 import com.project.model.ClaimDTO;
@@ -29,6 +29,8 @@ import feign.FeignException;
 public class CusotmerServiceImpl implements CustomerService {
     
     private static final String CUSTOMER_NOT_FOUND_MESSAGE = "Customer with ID %s not found.";
+    private static final String CUSTOMER_ALREADY_EXISTS_MESSAGE = "Customer with email %s already exists.";
+
 
     private final CustomerRepository repo;
     private final PolicyClient policyclient;
@@ -57,10 +59,14 @@ public class CusotmerServiceImpl implements CustomerService {
      */
     @Override
     public String addCustomer(Customer customer) {
+        // Validation check for existing customer by email
+        if (repo.findByEmail(customer.getEmail()) != null) {
+            throw new CustomerAlreadyExistsException(String.format(CUSTOMER_ALREADY_EXISTS_MESSAGE, customer.getEmail()));
+        }
+        
         repo.save(customer);
         notificationclient.customerRegisteredMail(customer);
         return "Customer Saved Successfully";
- 
     }
  
     /**
