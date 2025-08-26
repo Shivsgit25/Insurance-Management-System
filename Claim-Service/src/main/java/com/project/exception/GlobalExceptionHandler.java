@@ -8,26 +8,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
-/**
- * Global exception handler for REST APIs.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-	/**
-	 * Handles ClaimNotFoundException.
-	 */
 	@ExceptionHandler(ClaimNotFoundException.class)
 	public ResponseEntity<String> handleClaimNotFound(ClaimNotFoundException ex) {
 		logger.warn("Claim not found: {}", ex.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
 
-	/**
-	 * Handles validation errors from @Valid annotated inputs.
-	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException ex) {
 		String errors = ex.getBindingResult().getFieldErrors().stream()
@@ -36,9 +27,6 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body("Validation failed: " + errors);
 	}
 
-	/**
-	 * Handles all other uncaught exceptions.
-	 */
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleGeneralException(Exception ex) {
 		logger.error("Unhandled exception occurred", ex);
