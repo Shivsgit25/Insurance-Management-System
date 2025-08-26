@@ -17,6 +17,12 @@ public class GlobalExceptionHandler {
 		logger.error("Customer not found: {}", ex.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
+    
+    @ExceptionHandler(CustomerAlreadyExistsException.class)
+    public ResponseEntity<String> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
+        logger.error("Customer already exists: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 
 	@ExceptionHandler(ExternalServiceException.class)
 	public ResponseEntity<String> handleExternalServiceException(ExternalServiceException ex) {
