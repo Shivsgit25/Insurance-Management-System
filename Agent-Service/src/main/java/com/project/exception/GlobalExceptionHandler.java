@@ -20,8 +20,13 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleGenericError(Exception ex){
-		return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Something went wrong");
+		return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body("Something went wrong but try again");
 	}
+	
+	@ExceptionHandler(AgentAlreadyExistsException.class)
+	public ResponseEntity<String> handleAgentAlreadyExists(AgentAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("Same agent registered again"); // 409 Conflict
+    }
 	
 	
 	

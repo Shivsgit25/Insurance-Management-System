@@ -2,15 +2,16 @@ package com.project.service;
  
 import java.util.List;
 import java.util.Optional;
- 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
- 
+
 import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.PolicyClient;
+import com.project.exception.AgentAlreadyExistsException;
 import com.project.exception.InvalidCredentialsException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.Agent;
@@ -40,6 +41,8 @@ public class AgentServiceImpl implements AgentService {
 	ClaimClient claimclient;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
+
+	private static final String AGENT_ALREADY_EXISTS_MESSAGE = "Agent already exist with this email";
     
 	/**
 	 * Creates a new agent and saves it to the database.
@@ -50,6 +53,10 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public String createAgent(Agent agent) {
 		logger.info("Creating agent with ID: {}", agent.getAgentId());
+		if(repo.findByContactInfo(agent.getContactInfo()) != null) {
+			throw new AgentAlreadyExistsException(String.format(AGENT_ALREADY_EXISTS_MESSAGE, agent.getContactInfo()));
+			
+		}
 	    repo.save(agent);
 	    logger.debug("Agent Saved: {}",agent);
 	    return "Agent saved";
