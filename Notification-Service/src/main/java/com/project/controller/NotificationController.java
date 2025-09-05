@@ -1,10 +1,11 @@
 package com.project.controller;
-
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.project.DTO.ClaimDTO;
 import com.project.DTO.CustomerDTO;
 import com.project.DTO.EmailDTO;
@@ -17,22 +18,19 @@ import com.project.exceptions.PolicyNotFoundException;
 import com.project.service.NotificationService;
 
 /**
- * Controller for handling various notification-related endpoints such as email and SMS alerts
+ * Controller for handling various notification-related end-points such as email and SMS alerts
  * for customer registration, policy updates, claim status, and reminders.
  * 
- * @author Shiv Gupta
+ * @author Shiv_Gupta
  */
 @RestController
 @RequestMapping("/notify")
 public class NotificationController {
-
     private final NotificationService service;
-
     public NotificationController(NotificationService service) {
         this.service = service;
     }
-
-
+    
     /**
      * Sends a welcome email and SMS to a newly registered customer.
      * 
@@ -96,7 +94,7 @@ public class NotificationController {
      * 
      * @return confirmation message after sending reminders
      */
-    @PostMapping("/reminder")
+    @GetMapping("/reminder")
     public String sendPolicyRenewal() {
         service.sendPolicyRenewalReminders();
         return "Mail sent to Customers Whose Expiry is Within 10 days!!";

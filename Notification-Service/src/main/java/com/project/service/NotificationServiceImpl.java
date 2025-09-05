@@ -1,9 +1,7 @@
 package com.project.service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +11,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import com.project.DTO.AgentDTO;
 import com.project.DTO.ClaimDTO;
 import com.project.DTO.CustomerDTO;
@@ -67,7 +64,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * Helper method to create and send a SimpleMailMessage to reduce code duplication.
+     * Helper method to create and send a SimpleMailMessage So that we dont need to rewrite again.
      */
     private void sendEmail(String to, String subject, String body) throws MailException {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -78,11 +75,8 @@ public class NotificationServiceImpl implements NotificationService {
         javaMailSender.send(message);
     }
     
-
     /**
      * Sends a registration confirmation email to a new customer.
-     * @param customer The CustomerDTO containing customer details.
-     * @throws EmailSendingException if there's an issue sending the email.
      */
     @Async
     @Override
@@ -144,7 +138,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         String customerName = Objects.toString(customer.getName(), DEFAULT_CUSTOMER_NAME);
         String policyDetails = Objects.toString(policy.getCoverageDetails(), "Please log in for full details.");
-        String subject = String.format("Congratulations! Your %s is Active with %s! 🎉", policy.getName(), APP_NAME);
+        String subject = String.format("Congratulations! Your %s is Active with %s!", policy.getName(), APP_NAME);
         String body = String.format(
             "Dear %s,\n\n"
             + "We're excited to confirm that your application for the **%s** policy has been successfully processed. "
@@ -158,7 +152,7 @@ public class NotificationServiceImpl implements NotificationService {
             + "We are committed to providing you with excellent service and comprehensive coverage. %s\n\n"
             + "Thank you for choosing %s.\n\n"
             + SINCERELY_TEXT,
-            customerName, policy.getName(), policy.getName(), policyDetails, APP_NAME, LOGIN_URL, APP_NAME
+            customerName, policy.getName(), policy.getName(), policyDetails, APP_NAME, LOGIN_URL, APP_NAME ,APP_NAME
         );
 
         try {
@@ -180,6 +174,7 @@ public class NotificationServiceImpl implements NotificationService {
      * @throws CustomerNotFoundException if the customer associated with the claim is not found.
      * @throws EmailSendingException if there's an issue sending the email.
      */
+    @Async
     @Override
     public void claimFilledEmail(ClaimDTO claim) throws PolicyNotFoundException, AgentNotFoundException, EmailSendingException {
         if (claim == null) {
@@ -200,29 +195,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
     
-    private PolicyDTO getPolicyOrThrow(Integer policyId) throws PolicyNotFoundException {
-        ResponseEntity<PolicyDTO> policyEntity = policyclient.getPolicyById(policyId);
-        if (!policyEntity.hasBody() || policyEntity.getBody() == null) {
-            throw new PolicyNotFoundException("Policy with ID " + policyId + " not found.");
-        }
-        return policyEntity.getBody();
-    }
-    
-    private AgentDTO getAgentOrThrow(Integer agentId) throws AgentNotFoundException {
-        ResponseEntity<AgentDTO> agentEntity = agentclient.getAgentById(agentId);
-        if (!agentEntity.hasBody() || agentEntity.getBody() == null) {
-            throw new AgentNotFoundException("Agent with ID " + agentId + " not found.");
-        }
-        return agentEntity.getBody();
-    }
-
-    private CustomerDTO getCustomerOrThrow(Integer customerId) {
-        CustomerDTO customer = customerclient.getCustomerById(customerId);
-        if (customer == null) {
-            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found.");
-        }
-        return customer;
-    }
+   
 
     /**
      * Helper method to send claim confirmation email to the customer.
@@ -267,6 +240,7 @@ public class NotificationServiceImpl implements NotificationService {
     /**
      * Helper method to send new claim assignment email to the agent.
      */
+    
     private void sendNewClaimAssignmentEmailToAgent(ClaimDTO claim, CustomerDTO customer, PolicyDTO policy, AgentDTO assignedAgent) {
         String subject = String.format("New Claim Assigned: Claim #%d for Policy %s", claim.getClaimId(), policy.getPolicyId());
         
@@ -420,7 +394,7 @@ public class NotificationServiceImpl implements NotificationService {
 
             if (expiringPolicies.isEmpty()) {
                 logger.info("No policies are expiring in the next week.");
-                return;
+                return; 
             }
             logger.info("Found {} policies expiring in the next week.", expiringPolicies.size());
 
@@ -433,7 +407,7 @@ public class NotificationServiceImpl implements NotificationService {
                     String policyName = Objects.toString(policy.getName(), "Your Policy");
                     LocalDate expirationDate = policy.getExpiryDate();
 
-                    String subject = String.format("Action Required: Your %s Policy (%s) is Expiring Soon! ⏰", policyName, policyNumber);
+                    String subject = String.format("Action Required: Your %s Policy (%s) is Expiring Soon!", policyName, policyNumber);
                     String body = String.format(
                         "Dear %s,\n\n"
                         + "This is a friendly reminder that your **%s** policy (Policy Number: **%s**) is set to expire on **%s**.\n\n"
@@ -450,6 +424,7 @@ public class NotificationServiceImpl implements NotificationService {
                     if (customer.getPhone() != null && customer.getPhone() != 0) {
                          sendSmsRenewalReminder(subject, "+91" + customer.getPhone());
                     }
+                 
                     logger.info("Renewal reminder sent for policy {} to customer {}.", policyNumber, customer.getEmail());
                 } catch (MailException | CustomerNotFoundException e) {
                     logger.error("Failed to send renewal reminder for policy {}.", policy.getPolicyId(), e);
@@ -516,5 +491,28 @@ public class NotificationServiceImpl implements NotificationService {
             throw new ClaimNotFoundException("Claim with ID " + claimId + " not found.");
         }
         return claimEntity.getBody();
+    }
+    private PolicyDTO getPolicyOrThrow(Integer policyId) throws PolicyNotFoundException {
+        ResponseEntity<PolicyDTO> policyEntity = policyclient.getPolicyById(policyId);
+        if (!policyEntity.hasBody() || policyEntity.getBody() == null) {
+            throw new PolicyNotFoundException("Policy with ID " + policyId + " not found.");
+        }
+        return policyEntity.getBody();
+    }
+    
+    private AgentDTO getAgentOrThrow(Integer agentId) throws AgentNotFoundException {
+        ResponseEntity<AgentDTO> agentEntity = agentclient.getAgentById(agentId);
+        if (!agentEntity.hasBody() || agentEntity.getBody() == null) {
+            throw new AgentNotFoundException("Agent with ID " + agentId + " not found.");
+        }
+        return agentEntity.getBody();
+    }
+
+    private CustomerDTO getCustomerOrThrow(Integer customerId) {
+        CustomerDTO customer = customerclient.getCustomerById(customerId);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found.");
+        }
+        return customer;
     }
 }

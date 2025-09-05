@@ -1,12 +1,9 @@
-
 package com.project.exceptions;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +47,7 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(EmailSendingException.class)
     public ResponseEntity<Map<String,String>> handleEmailSendingException(EmailSendingException ex){
-    	return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Error Occured While Sending Email"+ ex.getMessage());
+    	return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Error Occured While Sending Email"+ ex.getMessage()+" Check for the Correctness of the Email.");
     }
 
     private ResponseEntity<Map<String, String>> createErrorResponse(HttpStatus status, String message) {
