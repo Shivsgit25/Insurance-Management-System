@@ -24,7 +24,6 @@ import com.project.exceptions.EmailSendingException;
 import com.project.service.NotificationServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Notification Service SMS Tests")
 class NotificationServiceImplTest {
 
 	 @InjectMocks
