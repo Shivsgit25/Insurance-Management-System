@@ -21,7 +21,7 @@ import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
 import com.project.service.AgentService;
 
-import ch.qos.logback.classic.Logger;
+
 @RestController
 @RequestMapping("/agents")
 public class AgentController {
@@ -183,7 +183,7 @@ public class AgentController {
      */
     @PostMapping("/login")
     public String login(@RequestBody Agent loginAgent) {
-//        Logger.info("Attempting to login user with email: {}", loginAgent.getContactInfo());
+
         return ser.loginAgent(loginAgent.getContactInfo(), loginAgent.getPassword());
     }
     
