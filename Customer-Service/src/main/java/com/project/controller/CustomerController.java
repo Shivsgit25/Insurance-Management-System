@@ -49,7 +49,7 @@ public class CustomerController {
     @PostMapping("/add")
     public String addCustomer(@RequestBody Customer customer) {
         logger.info("############################# Running AddCustomer function ######################################");
-        logger.info("Adding customer: {}", customer);
+        logger.info("Adding customer: {}", customer);       
         return service.addCustomer(customer);
     }
 

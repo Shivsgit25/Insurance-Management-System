@@ -122,7 +122,7 @@ class ServiceTest {
 		doNothing().when(repo).delete(customer);
 
 		String result = customerService.deleteByCustomerId(1);
-//		assertEquals("The Data for the Customer id : 1\nCustomer Name :John Doe\n Deleted Successfully !!!", result);
+		assertEquals("The Data for the Customer id : 1\nCustomer Name :John Doe\n Deleted Successfully !!!", result);
 		verify(repo, times(1)).findById(1);
 		verify(repo, times(1)).delete(customer);
 	}
