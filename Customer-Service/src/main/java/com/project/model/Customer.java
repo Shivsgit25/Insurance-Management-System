@@ -1,5 +1,7 @@
 package com.project.model;
 
+import java.sql.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,6 +20,9 @@ public class Customer {
 	private String name;
 	private String email;
 	private String password;
+	private String gender;
+	private Date date;
+	private Long aadharnumber;
 	private Long phone;
 	private String address;
 	private String role;
