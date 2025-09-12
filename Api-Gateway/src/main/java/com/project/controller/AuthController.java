@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.DTO.AgentDTO;
 import com.project.DTO.CustomerDTO;
 import com.project.model.AuthRequest;
 import com.project.service.AuthService;
@@ -34,5 +35,18 @@ public class AuthController {
         // Spring WebFlux will subscribe to this Mono automatically,
         // triggering the WebClient call.
         return ResponseEntity.ok(authService.registerUser(user));
+    }
+    
+    @PostMapping("/agentlogin")
+    public ResponseEntity<Mono<String>> agentlogin(@RequestBody AuthRequest request) {
+        Mono<String> token = authService.authenticateAgent(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(token);
+    }
+    
+    
+    
+    @PostMapping("/registeragent")
+    public ResponseEntity<Mono<String>> registerAgent(@RequestBody AgentDTO agent){
+    	return ResponseEntity.ok(authService.registerAgent(agent));
     }
 }

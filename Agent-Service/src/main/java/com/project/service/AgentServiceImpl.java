@@ -5,40 +5,37 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.AgentServiceApplication;
 import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.PolicyClient;
-import com.project.exception.AgentAlreadyExistsException;
 import com.project.exception.InvalidCredentialsException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
-import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
 import com.project.model.PolicyDTO;
 import com.project.repository.AgentRepository;
- 
- 
- 
+
+
 @Service
 public class AgentServiceImpl implements AgentService {
 	
-	@Autowired
 	private AgentRepository repo;
-	
-	@Autowired
 	PolicyClient policyclient;
-	
-	@Autowired
 	CustomerClient customerclient;
-	
-	@Autowired
 	ClaimClient claimclient;
+	
+	AgentServiceImpl(AgentRepository repo, PolicyClient policyClient , ClaimClient claimClient, CustomerClient customerClient, AgentServiceApplication agentServiceApplication){
+		this.claimclient =claimClient;
+		this.customerclient = customerClient;
+		this.policyclient = policyClient;
+		this.repo = repo;
+	}
 	
 	private static final Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
 
@@ -53,10 +50,10 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public String createAgent(Agent agent) {
 		logger.info("Creating agent with ID: {}", agent.getAgentId());
-		if(repo.findByContactInfo(agent.getContactInfo()) != null) {
-			throw new AgentAlreadyExistsException(String.format(AGENT_ALREADY_EXISTS_MESSAGE, agent.getContactInfo()));
-			
-		}
+//		if(repo.findByContactInfo(agent.getContactInfo()) != null) {
+//			throw new AgentAlreadyExistsException(String.format(AGENT_ALREADY_EXISTS_MESSAGE, agent.getContactInfo()));
+//			
+//		}
 	    repo.save(agent);
 	    logger.debug("Agent Saved: {}",agent);
 	    return "Agent saved";
@@ -100,29 +97,29 @@ public class AgentServiceImpl implements AgentService {
      * @throws RuntimeException if the agent is not found.
      */
  
-	@Override
-	public Agent updateAgent(Integer agentId, Agent updateAgent) {
-		logger.info("Updating agent with ID: {}",agentId);
-		return repo.findById(agentId)
-				.map(agent -> {
-					logger.debug("Existing agent data: {}");
-					agent.setName(updateAgent.getName());
-					agent.setContactInfo(updateAgent.getContactInfo());
-					agent.setAgentId(updateAgent.getAgentId());
-					agent.setPolicyId(updateAgent.getPolicyId());
-					agent.setClaimId(updateAgent.getClaimId());
-					agent.setCustomerId(updateAgent.getCustomerId());
-					
-					
-					return repo.save(agent);
-				})
-				.orElseThrow(()->{
-				logger.error("Agent not found for update with ID: {}",agentId);	
-				return new RuntimeException("Agent not found");
-		        
-				});
-	
-	}
+//	@Override
+//	public Agent updateAgent(Integer agentId, Agent updateAgent) {
+//		logger.info("Updating agent with ID: {}",agentId);
+//		return repo.findById(agentId)
+//				.map(agent -> {
+//					logger.debug("Existing agent data: {}");
+//					agent.setName(updateAgent.getName());
+//					agent.setContactInfo(updateAgent.getContactInfo());
+//					agent.setAgentId(updateAgent.getAgentId());
+////					agent.setPolicyId(updateAgent.getPolicyId());
+////					agent.setClaimId(updateAgent.getClaimId());
+////					agent.setCustomerId(updateAgent.getCustomerId());
+//					
+//					
+//					return repo.save(agent);
+//				})
+//				.orElseThrow(()->{
+//				logger.error("Agent not found for update with ID: {}",agentId);	
+//				return new RuntimeException("Agent not found");
+//		        
+//				});
+//	
+//	}
 	/**
 	 * Deletes an agent by their ID.
 	 *
@@ -146,10 +143,10 @@ public class AgentServiceImpl implements AgentService {
 	 */
 	
 	
-	public List<Agent> getAgentByPolicy(Integer policyId){
-		logger.info("Fetching agents by policy ID: {}");
-		return repo.findByPolicyId(policyId);
-	}
+//	public List<Agent> getAgentByPolicy(Integer policyId){
+//		logger.info("Fetching agents by policy ID: {}");
+//		return repo.findByPolicyId(policyId);
+//	}
 	
  
 	/**
@@ -261,29 +258,29 @@ public class AgentServiceImpl implements AgentService {
 	 * @throws ResourceNotFoundException if the agent is not found.
 	 */
 	
-	public AgentFullDetails getAgentFullDetails(Integer agentId) {
-		logger.info("Fetching full details for agent ID: {}", agentId);
-		Optional<Agent> optAgent = repo.findById(agentId);
-		
-	    if (optAgent.isEmpty()) {
-	    	
-	        throw new ResourceNotFoundException("Agent not found with ID: " + agentId);
-	    }
- 
-	    Agent agent = optAgent.get();
-	    List<PolicyDTO> agentPolicies = policyclient.getPolicies(agentId);
-	    List<PolicyDTO> customerPolicies = policyclient.getPolicies(agent.getCustomerId());
-        
-	    CustomerDTO customer =customerclient.getCustomerForAgent(agent.getCustomerId());
-	    
-	    AgentFullDetails details = new AgentFullDetails();
-	    details.setAgent(agent);
-	    details.setAgentPolicies(agentPolicies);
-//	    details.setCustomerPolicies(customerPolicies);
-	    details.setCustomer(customer);
- 
-	    return details;
-	}
+//	public AgentFullDetails getAgentFullDetails(Integer agentId) {
+//		logger.info("Fetching full details for agent ID: {}", agentId);
+//		Optional<Agent> optAgent = repo.findById(agentId);
+//		
+//	    if (optAgent.isEmpty()) {
+//	    	
+//	        throw new ResourceNotFoundException("Agent not found with ID: " + agentId);
+//	    }
+// 
+//	    Agent agent = optAgent.get();
+//	    List<PolicyDTO> agentPolicies = policyclient.getPolicies(agentId);
+////	    List<PolicyDTO> customerPolicies = policyclient.getPolicies(agent.getCustomerId());
+//        
+////	    CustomerDTO customer =customerclient.getCustomerForAgent(agent.getCustomerId());
+//	    
+//	    AgentFullDetails details = new AgentFullDetails();
+//	    details.setAgent(agent);
+//	    details.setAgentPolicies(agentPolicies);
+////	    details.setCustomerPolicies(customerPolicies);
+//	    details.setCustomer(customer);
+// 
+//	    return details;
+//	}
 	/**
 	 * Authenticates an agent using contact info and password.
 	 *
@@ -311,19 +308,16 @@ public class AgentServiceImpl implements AgentService {
 	 * @return A list of Agent objects associated with the given policy.
 	 */
  
+//	@Override
+//	public List<Agent> getallagentsbypolicyId(Integer policyId) {
+//		
+//		return repo.findAllByPolicyId(policyId);
+//	}
+
 	@Override
-	public List<Agent> getallagentsbypolicyId(Integer policyId) {
-		
-		return repo.findAllByPolicyId(policyId);
+	public Agent getAgentByEmail(String email) {
+		return repo.findByContactInfo(email);
 	}
- 
- 
- 
 	
- 
-	
-	
- 
- 
 }
  
