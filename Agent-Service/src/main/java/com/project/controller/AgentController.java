@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
-import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
@@ -74,15 +73,15 @@ public class AgentController {
 	 */
 	
     @PutMapping("/update/{agentId}")
-	public ResponseEntity<Agent> updateAgent(@PathVariable Integer agentId, @RequestBody Agent agent){
-		try {
-		Agent updated = ser.updateAgent(agentId,agent);
-		return ResponseEntity.ok(updated);
-		} catch(Exception e) {
-			return ResponseEntity.notFound().build();
-		}
-		
-	}
+//	public ResponseEntity<Agent> updateAgent(@PathVariable Integer agentId, @RequestBody Agent agent){
+//		try {
+//		Agent updated = ser.updateAgent(agentId,agent);
+//		return ResponseEntity.ok(updated);
+//		} catch(Exception e) {
+//			return ResponseEntity.notFound().build();
+//		}
+//		
+//	}
     /**
      * Deletes an agent from the system based on the provided agent ID.
      *
@@ -104,12 +103,12 @@ public class AgentController {
 	
     
     //get agent by policyId
-    @GetMapping("/policy/{policyId}")
-    public ResponseEntity<List<Agent>> getAgentByPolicy(@PathVariable Integer policyId){
-    	List<Agent> agents = ser.getAgentByPolicy(policyId);
-    	return ResponseEntity.ok(agents);
-    }
-    
+//    @GetMapping("/policy/{policyId}")
+//    public ResponseEntity<List<Agent>> getAgentByPolicy(@PathVariable Integer policyId){
+//    	List<Agent> agents = ser.getAgentByPolicy(policyId);
+//    	return ResponseEntity.ok(agents);
+//    }
+//    
     /**
      * Returns combined agent and policy details for a specific agent.
      *
@@ -170,11 +169,11 @@ public class AgentController {
      */
      
     //full details
-    @GetMapping("/fullDetails/{agentId}")
-    public ResponseEntity<AgentFullDetails> getAgentFullDetails(@PathVariable Integer agentId) {
-        AgentFullDetails details = ser.getAgentFullDetails(agentId);
-        return ResponseEntity.ok(details);
-    }
+//    @GetMapping("/fullDetails/{agentId}")
+//    public ResponseEntity<AgentFullDetails> getAgentFullDetails(@PathVariable Integer agentId) {
+//        AgentFullDetails details = ser.getAgentFullDetails(agentId);
+//        return ResponseEntity.ok(details);
+//    }
     /**
      * Authenticates an agent using contact information and password.
      *
@@ -193,13 +192,18 @@ public class AgentController {
      * @param policyId The ID of the policy to search agents by.
      * @return A list of Agent objects associated with the given policy.
      */
+//    
+//    @GetMapping("/getAgentDetails/{policyId}")
+//    public List<Agent> getAgent(@PathVariable("policyId") Integer policyId){
+//    	List<Agent> agents = ser.getallagentsbypolicyId(policyId);
+//    	return agents;
+//    }
     
-    @GetMapping("/getAgentDetails/{policyId}")
-    public List<Agent> getAgent(@PathVariable("policyId") Integer policyId){
-    	List<Agent> agents = ser.getallagentsbypolicyId(policyId);
-    	return agents;
+    
+    @GetMapping("/getAgentByEmail/{email}")
+    public Agent getAgentByEmail(@PathVariable("email") String email) {
+        return ser.getAgentByEmail(email);
     }
-    
     	
     
 

@@ -3,12 +3,8 @@ package com.project.service;
 import java.util.List;
 import java.util.Optional;
 
-
-
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
-
-import com.project.model.AgentFullDetails;
 import com.project.model.AgentPolicy;
 import com.project.model.ClaimDTO;
 import com.project.model.CustomerDTO;
@@ -25,13 +21,13 @@ public interface AgentService {
 	
 	Optional<Agent> getAgentById(Integer agentId);
 	
-	Agent updateAgent(Integer agentId, Agent updateAgent);
+//	Agent updateAgent(Integer agentId, Agent updateAgent);
 	
 	
 	String deleteAgent(Integer agentId);
 
 
-     List<Agent> getAgentByPolicy(Integer policyId);
+//     List<Agent> getAgentByPolicy(Integer policyId);
 
 
 
@@ -55,7 +51,7 @@ public interface AgentService {
 
 
 
-	AgentFullDetails getAgentFullDetails(Integer agentId);
+//	AgentFullDetails getAgentFullDetails(Integer agentId);
 
 
 
@@ -67,7 +63,13 @@ public interface AgentService {
 
 
 
-	List<Agent> getallagentsbypolicyId(Integer policyId);
+//	List<Agent> getallagentsbypolicyId(Integer policyId);
+
+
+
+
+
+	Agent getAgentByEmail(String email);
 
 
 

@@ -21,8 +21,8 @@ public class JwtUtil {
 		return extractClaims(token).getSubject();
 	}
 
-	public String generateToken(String username, String role) {
-		return Jwts.builder().setSubject(username).claim("role", role).setIssuedAt(new Date())
+	public String generateToken(String username, String role,Integer id) {
+		return Jwts.builder().setSubject(username).claim("customerId", id).claim("role", role).setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
 				.signWith(key, SignatureAlgorithm.HS256).compact();
 	}
