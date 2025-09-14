@@ -11,6 +11,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import com.project.DTO.AgentCredentialsDTO;
 import com.project.DTO.AgentDTO;
 import com.project.DTO.ClaimDTO;
 import com.project.DTO.CustomerDTO;
@@ -514,5 +516,43 @@ public class NotificationServiceImpl implements NotificationService {
             throw new CustomerNotFoundException("Customer with ID " + customerId + " not found.");
         }
         return customer;
+    }
+
+    @Override
+    public void sendAgentCred(AgentCredentialsDTO cred) throws AgentNotFoundException, EmailSendingException {
+        if (cred == null || cred.getContactInfo() == null) {
+            logger.error("Cannot send agent credentials email: AgentCredentialsDTO or agent email is null.");
+            return;
+        }
+
+        try {
+            String agentName = cred.getName();
+            String agentEmail = cred.getContactInfo();
+            String orgMail = cred.getOrgEmail();
+            String password = cred.getPassword();
+            
+            System.out.println(agentName +" ### "+ agentEmail +" ### ");
+
+            String subject = String.format("Welcome to %s! Your Agent Account Credentials", APP_NAME);
+            String body = String.format(
+                "Dear %s,\n\n"
+                + "Welcome to the %s team! Your agent account has been successfully created. "
+                + "You can now log in to the agent dashboard using the following credentials:\n\n"
+                + "**Username:** %s\n"
+                + "**Password:** %s\n\n"
+                + "\n\n"
+                + "You can access your dashboard here:\n"
+                + "%s\n\n"
+                + "If you have any questions, please do not hesitate to contact support.\n\n"
+                + SINCERELY_TEXT,
+                agentName, APP_NAME, orgMail, password, LOGIN_URL
+            );
+
+            sendEmail(agentEmail, subject, body);
+            logger.info("Agent credentials email sent successfully to {} for agent ID {}.", agentEmail);
+        } catch (MailException e) {
+            logger.error("Failed to send agent credentials email to {}.", cred.getContactInfo(), e);
+            throw new EmailSendingException("Failed to send agent credentials email for agent ID " + cred.getContactInfo(), e);
+        }
     }
 }

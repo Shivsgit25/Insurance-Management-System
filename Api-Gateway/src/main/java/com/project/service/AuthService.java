@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 
 import com.project.DTO.AgentDTO;
 import com.project.DTO.CustomerDTO;
+import com.project.DTO.loginCredentialsDto;
 import com.project.client.AgentClient;
 import com.project.client.CustomerClient;
+import com.project.client.NotificationClient;
 import com.project.utility.JwtUtil;
 
 import reactor.core.publisher.Mono; // Make sure this is imported
@@ -14,19 +16,18 @@ import reactor.core.publisher.Mono; // Make sure this is imported
 @Service
 public class AuthService {
 
-	private CustomerClient customerClient; // Correctly autowired WebClient-based client
+    private final NotificationClient notificationClient;
 
-	private AgentClient agentClient;
-
-	private JwtUtil jwtUtil;
-
-	private BCryptPasswordEncoder passwordEncoder;
-	
-	AuthService(CustomerClient customerClient , AgentClient agentClient , JwtUtil jwtUtil, BCryptPasswordEncoder passwordEncoder){
+	private final CustomerClient customerClient; // Correctly autowired WebClient-based client
+	private final AgentClient agentClient;
+	private final JwtUtil jwtUtil;
+	private final BCryptPasswordEncoder passwordEncoder;
+	AuthService(NotificationClient notificationClient , CustomerClient customerClient , AgentClient agentClient , JwtUtil jwtUtil, BCryptPasswordEncoder passwordEncoder){
 		this.agentClient = agentClient;
 		this.customerClient = customerClient;
 		this.jwtUtil = jwtUtil;
 		this.passwordEncoder = passwordEncoder;
+		this.notificationClient = notificationClient;
 	}
 
 	public Mono<String> authenticate(String username, String rawPassword) {
@@ -51,12 +52,22 @@ public class AuthService {
 		return customerClient.addCustomer(customer);
 	}
 
+	
 	public Mono<String> registerAgent(AgentDTO agent) {
+		loginCredentialsDto data = new loginCredentialsDto();
+		data.setContactInfo(agent.getContactInfo());
+		data.setName(agent.getName());
+		data.setOrgEmail(agent.getOrgEmail());
+		data.setPassword(agent.getPassword());
 		String hashedPassword = passwordEncoder.encode(agent.getPassword());
 		agent.setPassword(hashedPassword);
 		// Correctly return the Mono from the addCustomer call.
 		// The calling Controller (or other service) will then subscribe to this Mono.
-		return agentClient.createAgent(agent);
+		
+		Mono<String> res = agentClient.createAgent(agent);
+		Mono<String> notify = notificationClient.sendAgentCred(data);
+		Mono<String> result = Mono.zip(res ,  notify , (r1,r2)->(r1+" : "+r2));
+		return result;
 	}
 
 	public Mono<String> authenticateAgent(String email, String password) {

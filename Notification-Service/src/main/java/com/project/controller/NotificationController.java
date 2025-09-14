@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.DTO.AgentCredentialsDTO;
 import com.project.DTO.ClaimDTO;
 import com.project.DTO.CustomerDTO;
 import com.project.DTO.EmailDTO;
@@ -121,5 +122,11 @@ public class NotificationController {
     @PostMapping("/actemail")
     public String sendEmailNotification(@RequestBody EmailDTO emailRequest) throws EmailSendingException {
         return service.sendActualEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getBody());
+    }
+    
+    @PostMapping("/sendAgentCred")
+    public String sendAgentCred(@RequestBody AgentCredentialsDTO cred) throws AgentNotFoundException, EmailSendingException {
+    	service.sendAgentCred(cred);
+    	return "credential Sent To the Agent :" + cred.getName();
     }
 }

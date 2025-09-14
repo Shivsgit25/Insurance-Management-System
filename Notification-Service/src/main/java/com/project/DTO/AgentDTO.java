@@ -1,5 +1,7 @@
 package com.project.DTO;
 
+import java.sql.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AgentDTO {
 	private Integer agentId;
-	private String contactInfo;
 	private String name;
-	private Integer policyId;
-	private Integer claimId;
+	private String contactInfo;
+	private Long aadharnumber;
+	private Long phone;
+	private String address;
+	private String role;
 
 }
