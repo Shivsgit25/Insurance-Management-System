@@ -27,6 +27,7 @@ public class Agent {
 	private Integer agentId;
 	private String name;
 	private String contactInfo;
+	private String orgEmail;
 	private String password;
 	private String gender;
 	private Date date;

@@ -16,7 +16,9 @@ public interface AgentRepository extends JpaRepository<Agent, Integer> {
 
 
 
-	Agent findByContactInfo(String contactInfo);
+//	Agent findByContactInfo(String contactInfo);
+
+	Agent findByOrgEmail(String email);
 
 
 

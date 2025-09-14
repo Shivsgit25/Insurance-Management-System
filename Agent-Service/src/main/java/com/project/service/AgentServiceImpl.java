@@ -49,11 +49,13 @@ public class AgentServiceImpl implements AgentService {
 	 */
 	@Override
 	public String createAgent(Agent agent) {
+		
 		logger.info("Creating agent with ID: {}", agent.getAgentId());
 //		if(repo.findByContactInfo(agent.getContactInfo()) != null) {
 //			throw new AgentAlreadyExistsException(String.format(AGENT_ALREADY_EXISTS_MESSAGE, agent.getContactInfo()));
 //			
 //		}
+		
 	    repo.save(agent);
 	    logger.debug("Agent Saved: {}",agent);
 	    return "Agent saved";
@@ -292,7 +294,7 @@ public class AgentServiceImpl implements AgentService {
  
 	@Override
 	public String loginAgent(String contactInfo, String password) {
-		Agent agent = repo.findByContactInfo(contactInfo);
+		Agent agent = repo.findByOrgEmail(contactInfo);
 		
         if (agent == null || !agent.getPassword().equals(password)) {
             throw new InvalidCredentialsException("Invalid email or password.");
@@ -316,7 +318,7 @@ public class AgentServiceImpl implements AgentService {
 
 	@Override
 	public Agent getAgentByEmail(String email) {
-		return repo.findByContactInfo(email);
+		return repo.findByOrgEmail(email);
 	}
 	
 }

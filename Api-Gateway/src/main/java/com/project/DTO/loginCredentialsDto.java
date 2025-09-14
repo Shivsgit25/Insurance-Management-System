@@ -1,25 +1,16 @@
 package com.project.DTO;
 
-import java.sql.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AgentDTO {
-	private Integer agentId;
-	private String name;
+public class loginCredentialsDto {
 	private String contactInfo;
 	private String orgEmail;
 	private String password;
-	private String gender;
-	private Date date;
-	private Long aadharnumber;
-	private Long phone;
-	private String address;
-	private String role;
+	private String name;
+
 }

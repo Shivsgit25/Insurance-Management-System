@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.project.DTO.AgentCredentialsDTO;
 import com.project.DTO.ClaimDTO;
 import com.project.DTO.ClaimDTO.Status;
 import com.project.DTO.CustomerDTO;
@@ -24,6 +25,8 @@ public interface NotificationService {
 	void sendMailClaimUpdated(Integer claimId, Status status) throws PolicyNotFoundException, ClaimNotFoundException, EmailSendingException;
 
 	void sendPolicyRenewalReminders();
+
+	void sendAgentCred(AgentCredentialsDTO cred) throws AgentNotFoundException , EmailSendingException;
 
 
 }
