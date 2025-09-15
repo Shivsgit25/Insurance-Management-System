@@ -156,11 +156,28 @@ public class AgentController {
      */
     
     
+//    @PutMapping("/approve-claim/{claimId}")
+//    public ResponseEntity<ClaimDTO> approveClaim(@PathVariable Integer claimId) {
+//        ClaimDTO updatedClaim = ser.approveClaim(claimId);
+//        return ResponseEntity.ok(updatedClaim);
+//    }
     @PutMapping("/approve-claim/{claimId}")
-    public ResponseEntity<ClaimDTO> approveClaim(@PathVariable Integer claimId) {
-        ClaimDTO updatedClaim = ser.approveClaim(claimId);
+    public ResponseEntity<String> approveClaim(@PathVariable Integer claimId) {
+        try {
+            ser.approveClaim(claimId);
+            return ResponseEntity.ok("Claim approved successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error approving claim: " + e.getMessage());
+        }
+    }
+
+    
+    @PutMapping("/reject-claim/{claimId}")
+    public ResponseEntity<ClaimDTO> rejectClaim(@PathVariable Integer claimId) {
+        ClaimDTO updatedClaim = ser.rejectClaim(claimId);
         return ResponseEntity.ok(updatedClaim);
     }
+
     /**
      * Provides full details of an agent including linked policies, claims, and customer info.
      *

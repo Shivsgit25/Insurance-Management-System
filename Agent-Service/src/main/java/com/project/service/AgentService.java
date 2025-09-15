@@ -47,7 +47,7 @@ public interface AgentService {
 
 
 
-	ClaimDTO approveClaim(Integer claimId);
+	void approveClaim(Integer claimId);
 
 
 
@@ -70,6 +70,12 @@ public interface AgentService {
 
 
 	Agent getAgentByEmail(String email);
+
+
+
+
+
+	ClaimDTO rejectClaim(Integer claimId);
 
 
 
