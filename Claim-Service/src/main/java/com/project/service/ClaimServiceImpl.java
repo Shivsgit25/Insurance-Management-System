@@ -51,7 +51,7 @@ public class ClaimServiceImpl implements ClaimService {
 		claim.setStatus(Claim.Status.FILED);
 		Claim saved = claimRepository.save(claim);
 		logger.info("Claim filed with ID: {}", saved.getClaimId());
-		notificationClient.claimFilled(claim);
+		//notificationClient.claimFilled(claim);
 		return saved;
 	}
 
@@ -73,7 +73,7 @@ public class ClaimServiceImpl implements ClaimService {
 		claim.setStatus(status);
 		Claim updated = claimRepository.save(claim);
 		logger.info("Claim ID: {} updated to status: {}", claimId, status);
-		notificationClient.claimUpdated(claimId, status);
+		//notificationClient.claimUpdated(claimId, status);
 		return updated;
 	}
 
