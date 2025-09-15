@@ -86,17 +86,18 @@ public class CusotmerServiceImpl implements CustomerService {
      */
     @Override
     public String updateCustomer(Customer customer) {
-        repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
+      Customer updateCustomer= repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
                 String.format(CUSTOMER_NOT_FOUND_MESSAGE, customer.getCustomerId()) + " for update."));
-        repo.save(customer);
-        
+       	customer.setPassword(updateCustomer.getPassword());
+    	customer.setRole(updateCustomer.getRole());
+       repo.save(customer);
+      //inapp notification.
         InappNotificationDTO notify = new InappNotificationDTO();
         notify.setCustomerId(customer.getCustomerId());
         notify.setDetails("Your profile has been successfully updated on our system.");
         notify.setSubject("Profile Update Successful");
         notify.setType("Customer Profile Update");
         notificationclient.addNotification(notify);
-        
         return "Customer Updated Successfully on ID : " + customer.getCustomerId();
     }
  
