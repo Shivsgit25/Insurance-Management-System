@@ -47,21 +47,24 @@ public class SecurityConfig {
                     // Public endpoints
                     .pathMatchers("/auth/login", "/auth/register","/auth/agentlogin","/api/policylist").permitAll()
                     
-                 // CUSTOMER role endpoints
+                    // CUSTOMER role endpoints
+                    .pathMatchers(HttpMethod.DELETE, "/notify/delete/**").hasAnyRole("CUSTOMER", "AGENT", "ADMIN")
                     .pathMatchers(HttpMethod.GET, "/api/policies").hasAnyRole("CUSTOMER", "ADMIN")
                     .pathMatchers(HttpMethod.GET, "/api/policies/getCustomerPolicyDetails/**","api/claims/customer/**").hasRole("CUSTOMER")
-                    .pathMatchers(HttpMethod.GET, "/api/policies/**").hasAnyRole("CUSTOMER","AGENT")
-                    .pathMatchers(HttpMethod.GET, "/customer/getCustomer/**").hasAnyRole("CUSTOMER","AGENT")
+                    .pathMatchers(HttpMethod.GET, "/api/policies/**").hasRole("CUSTOMER")
+                    .pathMatchers(HttpMethod.GET, "/customer/getCustomer/**").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.PUT, "/customer/Update").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.POST, "/api/claims/file","api/policies/create").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.GET, "/api/claims/customer/**").hasRole("CUSTOMER")
-                    
+                    .pathMatchers(HttpMethod.GET, "/notify/customer/**").hasRole("CUSTOMER")
+
                     // AGENT role endpoints
                     .pathMatchers(HttpMethod.GET, "/api/claims/file").hasRole("AGENT")
                     .pathMatchers(HttpMethod.PUT, "/agents/approve-claim").hasRole("AGENT")
                     .pathMatchers(HttpMethod.GET,"/agents/claims/all","/agents/getCustomerForAgent/**","/agents/getAgentPolicyDetails/**").hasRole("AGENT")
                     .pathMatchers(HttpMethod.PUT,"/agents/approve-claim/**","/agents/reject-claim/**").hasRole("AGENT")
-                    
+                    .pathMatchers(HttpMethod.GET, "/notify/agent/**").hasRole("AGENT")
+
                     // ADMIN role endpoints
                     .pathMatchers(HttpMethod.POST, "/auth/registeragent").hasRole("ADMIN")
                     .pathMatchers(HttpMethod.GET, "/agents/all").hasRole("ADMIN")
@@ -73,6 +76,8 @@ public class SecurityConfig {
                     .pathMatchers(HttpMethod.POST, "/api/policylist").hasRole("ADMIN")
                     .pathMatchers(HttpMethod.POST, "/api/mail/send").hasRole("ADMIN")
                     .pathMatchers(HttpMethod.POST, "/api/sms/send").hasRole("ADMIN")
+                    .pathMatchers(HttpMethod.GET, "/notify/agent/**").hasRole("ADMIN")
+
                     
                     .anyExchange().authenticated())
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)

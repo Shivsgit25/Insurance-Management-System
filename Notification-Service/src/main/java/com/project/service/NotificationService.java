@@ -1,5 +1,7 @@
 package com.project.service;
 
+import java.util.List;
+
 import com.project.DTO.AgentCredentialsDTO;
 import com.project.DTO.ClaimDTO;
 import com.project.DTO.ClaimDTO.Status;
@@ -9,6 +11,7 @@ import com.project.exceptions.AgentNotFoundException;
 import com.project.exceptions.ClaimNotFoundException;
 import com.project.exceptions.EmailSendingException;
 import com.project.exceptions.PolicyNotFoundException;
+import com.project.model.InAppNotification;
 
 public interface NotificationService {
 
@@ -27,6 +30,14 @@ public interface NotificationService {
 	void sendPolicyRenewalReminders();
 
 	void sendAgentCred(AgentCredentialsDTO cred) throws AgentNotFoundException , EmailSendingException;
+
+	void addNotification(InAppNotification notification);
+
+	void deleteNotification(Integer id);
+
+	List<InAppNotification> getNotificationsByCustomerId(Integer customerId);
+
+	List<InAppNotification> getNotificationsByAgentId(Integer agentId);
 
 
 }
