@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import com.project.AgentServiceApplication;
 import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
+import com.project.client.InappNotificationClient;
 import com.project.client.PolicyClient;
+import com.project.exception.AgentAlreadyExistsException;
 import com.project.exception.InvalidCredentialsException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.Agent;
@@ -29,12 +31,14 @@ public class AgentServiceImpl implements AgentService {
 	PolicyClient policyclient;
 	CustomerClient customerclient;
 	ClaimClient claimclient;
+	InappNotificationClient notificationClient;
 	
-	AgentServiceImpl(AgentRepository repo, PolicyClient policyClient , ClaimClient claimClient, CustomerClient customerClient, AgentServiceApplication agentServiceApplication){
+	AgentServiceImpl(AgentRepository repo, PolicyClient policyClient , ClaimClient claimClient, CustomerClient customerClient, AgentServiceApplication agentServiceApplication, InappNotificationClient notificationClient){
 		this.claimclient =claimClient;
 		this.customerclient = customerClient;
 		this.policyclient = policyClient;
 		this.repo = repo;
+		this.notificationClient = notificationClient;
 	}
 	
 	private static final Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
@@ -51,11 +55,10 @@ public class AgentServiceImpl implements AgentService {
 	public String createAgent(Agent agent) {
 		
 		logger.info("Creating agent with ID: {}", agent.getAgentId());
-//		if(repo.findByContactInfo(agent.getContactInfo()) != null) {
-//			throw new AgentAlreadyExistsException(String.format(AGENT_ALREADY_EXISTS_MESSAGE, agent.getContactInfo()));
-//			
-//		}
-		
+		if(getAgentByEmail(agent.getContactInfo()) != null) {
+			throw new AgentAlreadyExistsException(String.format(AGENT_ALREADY_EXISTS_MESSAGE, agent.getContactInfo()));
+			
+		}
 	    repo.save(agent);
 	    logger.debug("Agent Saved: {}",agent);
 	    return "Agent saved";

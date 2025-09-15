@@ -5,13 +5,12 @@ package com.project.service;
 import java.util.List;
 import java.util.Random;
 
-import org.aspectj.weaver.loadtime.Agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.DTO.AgentDTO;
+import com.project.DTO.InappNotificationDTO;
 import com.project.clients.AgentClient;
 import com.project.clients.NotificationClient;
 import com.project.exception.ClaimNotFoundException;
@@ -68,6 +67,22 @@ public class ClaimServiceImpl implements ClaimService {
 		claim.setStatus(Claim.Status.FILED);
 		Claim saved = claimRepository.save(claim);
 		logger.info("Claim filed with ID: {}", saved.getClaimId());
+		
+		//inapp notification
+		InappNotificationDTO notify = new InappNotificationDTO();
+        notify.setCustomerId(saved.getCustomerId());
+        notify.setDetails("Your claim with ID " + saved.getClaimId() + " has been successfully filed and is being reviewed.");
+        notify.setSubject("Claim Filed Successfully");
+        notify.setType("Claim Filed by Customer");
+        notificationClient.addNotification(notify);
+        
+        InappNotificationDTO agentNotify = new InappNotificationDTO();
+        agentNotify.setCustomerId(claim.getAgentId());
+        agentNotify.setDetails("A new claim with ID " + saved.getClaimId() + " has been assigned to you for review.");
+        agentNotify.setSubject("New Claim Assigned");
+        agentNotify.setType("New Claim Assigned to Agent");
+        notificationClient.addNotification(agentNotify);
+        
 		//notificationClient.claimFilled(claim);
 		return saved;
 	}
@@ -90,6 +105,15 @@ public class ClaimServiceImpl implements ClaimService {
 		claim.setStatus(status);
 		Claim updated = claimRepository.save(claim);
 		logger.info("Claim ID: {} updated to status: {}", claimId, status);
+		
+		//inappnotification
+		InappNotificationDTO notify = new InappNotificationDTO();
+        notify.setCustomerId(updated.getCustomerId());
+        notify.setDetails("The status of your claim (ID: " + updated.getClaimId() + ") has been updated to: " + updated.getStatus());
+        notify.setSubject("Claim Status Updated");
+        notify.setType("Claim Status Update");
+        notificationClient.addNotification(notify);
+		
 		//notificationClient.claimUpdated(claimId, status);
 		return updated;
 	}
