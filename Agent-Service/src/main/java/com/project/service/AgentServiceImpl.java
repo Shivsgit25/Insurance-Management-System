@@ -217,40 +217,67 @@ public class AgentServiceImpl implements AgentService {
 	 * @throws ResourceNotFoundException if the claim or policy is not found.
 	 */
 	
+//	@Override
+//    public ClaimDTO approveClaim(Integer claimId) {
+//		logger.info("Approving claim with ID: {}", claimId);
+//     
+//		// Step 1: Get the claim
+//	    ClaimDTO claim = claimclient.getClaimById(claimId).getBody();
+//	    if (claim == null) {
+//	        throw new ResourceNotFoundException("Claim not found with ID: " + claimId);
+//	    }
+// 
+//	    // Step 2: Get the related policy
+//	    PolicyDTO policy = policyclient.getPolicyById(claim.getPolicyId()); // You may need to add this method in PolicyClient
+//	    if (policy == null) {
+//	        throw new ResourceNotFoundException("Policy not found with ID: " + claim.getPolicyId());
+//	    }
+// 
+//	    // Step 3: Calculate threshold
+//	    double threshold = policy.getPremiumAmount() * policy.getValidityPeriod();
+//	    logger.debug("Threshold amount: {}", threshold);
+//	    logger.debug("Claim amount: {}", claim.getClaimAmount());
+// 
+//	    // Step 4: Compare and decide
+//	    ClaimDTO.ClaimStatus status;
+//	    if (threshold < claim.getClaimAmount()) {
+//	        status = ClaimDTO.ClaimStatus.REJECTED;
+//	        logger.info("Claim rejected due to exceeding threshold.");
+//	    } else {
+//	        status = ClaimDTO.ClaimStatus.APPROVED;
+//	        logger.info("Claim approved.");
+//	    }
+// 
+//	    // Step 5: Update claim status
+//	    return claimclient.updateClaimStatus(claimId, status).getBody();
+//    }
+//	
+//	@Override
+//	public ClaimDTO approveClaim(Integer claimId) {
+//	    logger.info("Manually approving claim with ID: {}", claimId);
+//	    
+//	    // Simply update claim status to APPROVED
+//	    return claimclient.updateClaimStatus(claimId, ClaimDTO.ClaimStatus.APPROVED).getBody();
+//	}
 	@Override
-    public ClaimDTO approveClaim(Integer claimId) {
-		logger.info("Approving claim with ID: {}", claimId);
-     
-		// Step 1: Get the claim
-	    ClaimDTO claim = claimclient.getClaimById(claimId).getBody();
-	    if (claim == null) {
-	        throw new ResourceNotFoundException("Claim not found with ID: " + claimId);
-	    }
- 
-	    // Step 2: Get the related policy
-	    PolicyDTO policy = policyclient.getPolicyById(claim.getPolicyId()); // You may need to add this method in PolicyClient
-	    if (policy == null) {
-	        throw new ResourceNotFoundException("Policy not found with ID: " + claim.getPolicyId());
-	    }
- 
-	    // Step 3: Calculate threshold
-	    double threshold = policy.getPremiumAmount() * policy.getValidityPeriod();
-	    logger.debug("Threshold amount: {}", threshold);
-	    logger.debug("Claim amount: {}", claim.getClaimAmount());
- 
-	    // Step 4: Compare and decide
-	    ClaimDTO.ClaimStatus status;
-	    if (threshold < claim.getClaimAmount()) {
-	        status = ClaimDTO.ClaimStatus.REJECTED;
-	        logger.info("Claim rejected due to exceeding threshold.");
-	    } else {
-	        status = ClaimDTO.ClaimStatus.APPROVED;
-	        logger.info("Claim approved.");
-	    }
- 
-	    // Step 5: Update claim status
-	    return claimclient.updateClaimStatus(claimId, status).getBody();
-    }
+	public void approveClaim(Integer claimId) {
+	    logger.info("Manually approving claim with ID: {}", claimId);
+	    
+	    // Simply update claim status to APPROVED
+	    claimclient.updateClaimStatus(claimId, ClaimDTO.ClaimStatus.APPROVED);
+	}
+
+
+	// Add reject method
+	@Override
+	public ClaimDTO rejectClaim(Integer claimId) {
+	    logger.info("Manually rejecting claim with ID: {}", claimId);
+	    
+	    // Simply update claim status to REJECTED
+	    return claimclient.updateClaimStatus(claimId, ClaimDTO.ClaimStatus.REJECTED).getBody();
+	}
+
+	
  
 	/**
 	 * Retrieves full details of an agent including their policies and customer info.
