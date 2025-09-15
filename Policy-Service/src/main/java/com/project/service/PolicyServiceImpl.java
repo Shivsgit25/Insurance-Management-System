@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.project.client.AgentClient;
+import com.project.client.NotificationClient;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.AgentDTO;
+import com.project.model.InappNotificationDTO;
 import com.project.model.Policy;
 import com.project.model.PolicyAgent;
 import com.project.repository.PolicyRepository;
@@ -19,10 +21,12 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyRepository policyRepository;
     private final AgentClient agentclient;
+    private final NotificationClient inappNotficationclient;
 
-    public PolicyServiceImpl(PolicyRepository policyRepository, AgentClient agentclient) {
+    public PolicyServiceImpl(PolicyRepository policyRepository, AgentClient agentclient, NotificationClient inappNotficationclient) {
         this.policyRepository = policyRepository;
         this.agentclient = agentclient;
+        this.inappNotficationclient = inappNotficationclient;
     }
 
     /**
@@ -33,6 +37,12 @@ public class PolicyServiceImpl implements PolicyService {
      */
     @Override
     public Policy createPolicy(Policy policy) {
+    	InappNotificationDTO notify = new InappNotificationDTO();
+    	notify.setCustomerId(policy.getCustomerId());
+    	notify.setDetails("Your policy has been successfully Selected :"+policy.getName()+"  with coverage details : "+policy.getCoverageDetails()+"Thank you for chosing us!!!!!");
+    	notify.setSubject("policy selection success!!!");
+    	notify.setType("Policy Selection By Customer");
+    	inappNotficationclient.addNotification(notify);
         return policyRepository.save(policy);
     }
 

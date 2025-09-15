@@ -17,6 +17,7 @@ import com.project.exception.ExternalServiceException;
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;
+import com.project.model.InappNotificationDTO;
 import com.project.model.PolicyDTO;
 import com.project.repository.CustomerRepository;
 
@@ -65,6 +66,15 @@ public class CusotmerServiceImpl implements CustomerService {
         }
         
         repo.save(customer);
+        
+        //code for inapp notification
+        InappNotificationDTO notify = new InappNotificationDTO();
+        notify.setCustomerId(customer.getCustomerId());
+        notify.setDetails("Welcome to our family, " + customer.getName() + "!! We are glad to have you.");
+        notify.setSubject("Registration Successful!!!");
+        notify.setType("Customer Registration");
+        notificationclient.addNotification(notify);
+        
 //        notificationclient.customerRegisteredMail(customer);
         return "Customer Saved Successfully";
     }
@@ -79,6 +89,14 @@ public class CusotmerServiceImpl implements CustomerService {
         repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
                 String.format(CUSTOMER_NOT_FOUND_MESSAGE, customer.getCustomerId()) + " for update."));
         repo.save(customer);
+        
+        InappNotificationDTO notify = new InappNotificationDTO();
+        notify.setCustomerId(customer.getCustomerId());
+        notify.setDetails("Your profile has been successfully updated on our system.");
+        notify.setSubject("Profile Update Successful");
+        notify.setType("Customer Profile Update");
+        notificationclient.addNotification(notify);
+        
         return "Customer Updated Successfully on ID : " + customer.getCustomerId();
     }
  
