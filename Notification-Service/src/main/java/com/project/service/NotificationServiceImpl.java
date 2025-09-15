@@ -26,6 +26,8 @@ import com.project.exceptions.ClaimNotFoundException;
 import com.project.exceptions.CustomerNotFoundException;
 import com.project.exceptions.EmailSendingException;
 import com.project.exceptions.PolicyNotFoundException;
+import com.project.model.InAppNotification;
+import com.project.repository.InAppNotificationRepository;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -46,7 +48,8 @@ public class NotificationServiceImpl implements NotificationService {
     private final PolicyClient policyclient;
     private final AgentClient agentclient;
     private final ClaimClient claimclient;
-
+    private InAppNotificationRepository inappNotificationrepo;
+    
     @Value("${twilio.account.sid}")
     private String accountSid;
     @Value("${twilio.auth.token}")
@@ -57,12 +60,13 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${spring.mail.username}")
     private String senderEmail;
 
-    public NotificationServiceImpl(JavaMailSender javaMailSender, CustomerClient customerclient, PolicyClient policyclient, AgentClient agentclient, ClaimClient claimclient) {
+    public NotificationServiceImpl(JavaMailSender javaMailSender, CustomerClient customerclient, PolicyClient policyclient, AgentClient agentclient, ClaimClient claimclient, InAppNotificationRepository inappNotificationrepo) {
         this.javaMailSender = javaMailSender;
         this.customerclient = customerclient;
         this.policyclient = policyclient;
         this.agentclient = agentclient;
         this.claimclient = claimclient;
+        this.inappNotificationrepo = inappNotificationrepo;
     }
 
     /**
@@ -237,6 +241,14 @@ public class NotificationServiceImpl implements NotificationService {
         );
         sendEmail(customer.getEmail(), subject, body);
         logger.info("Claim Filed Mail Sent to Customer {} for Claim ID {}", customer.getEmail(), claim.getClaimId());
+        
+        // Add In-App Notification
+        InAppNotification inAppNotification = new InAppNotification();
+        inAppNotification.setSubject(subject);
+        inAppNotification.setType("Claim Filed");
+        inAppNotification.setDetails(body);
+        inAppNotification.setCustomerId(customer.getCustomerId());
+        addNotification(inAppNotification);
     }
 
     /**
@@ -273,6 +285,14 @@ public class NotificationServiceImpl implements NotificationService {
         );
         sendEmail(assignedAgent.getContactInfo(), subject, body);
         logger.info("Claim Filed Mail Sent to Agent {} for Claim ID {}", assignedAgent.getContactInfo(), claim.getClaimId());
+        
+        // Add In-App Notification
+        InAppNotification inAppNotification = new InAppNotification();
+        inAppNotification.setSubject(subject);
+        inAppNotification.setType("Claim Assigned");
+        inAppNotification.setDetails(body);
+        inAppNotification.setAgentId(assignedAgent.getAgentId());
+        addNotification(inAppNotification);
     }
 
     //-----------------------------------------------------------------------------------
@@ -306,6 +326,14 @@ public class NotificationServiceImpl implements NotificationService {
         try {
             sendEmail(customer.getEmail(), subject, body);
             logger.info("Claim Update Mail Sent to Customer {} for Claim ID {} with status {}", customer.getEmail(), claimId, status);
+
+            // Add In-App Notification
+            InAppNotification inAppNotification = new InAppNotification();
+            inAppNotification.setSubject(subject);
+            inAppNotification.setType("Claim Update");
+            inAppNotification.setDetails(body);
+            inAppNotification.setCustomerId(customer.getCustomerId());
+            addNotification(inAppNotification);
         } catch (MailException e) {
             logger.error("Failed to send claim updated email for claim ID {} with status {}.", claimId, status, e);
             throw new EmailSendingException("Failed to send claim updated email for claim ID " + claimId, e);
@@ -554,5 +582,26 @@ public class NotificationServiceImpl implements NotificationService {
             logger.error("Failed to send agent credentials email to {}.", cred.getContactInfo(), e);
             throw new EmailSendingException("Failed to send agent credentials email for agent ID " + cred.getContactInfo(), e);
         }
+    }
+
+    public void addNotification(InAppNotification notification) {
+        inappNotificationrepo.save(notification);
+    }
+    
+    public void addReminderNotification(InAppNotification notification) {
+        notification.setType("Reminder");
+        inappNotificationrepo.save(notification);
+    }
+
+    public void deleteNotification(Integer id) {
+        inappNotificationrepo.deleteById(id);
+    }
+    
+    public List<InAppNotification> getNotificationsByAgentId(Integer agentId) {
+        return inappNotificationrepo.findByAgentId(agentId);
+    }
+
+    public List<InAppNotification> getNotificationsByCustomerId(Integer customerId) {
+        return inappNotificationrepo.findByCustomerId(customerId);
     }
 }

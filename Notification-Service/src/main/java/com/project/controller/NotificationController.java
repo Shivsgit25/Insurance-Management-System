@@ -1,5 +1,11 @@
 package com.project.controller;
+import java.util.List;
+
+import org.apache.hc.core5.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +22,7 @@ import com.project.exceptions.AgentNotFoundException;
 import com.project.exceptions.ClaimNotFoundException;
 import com.project.exceptions.EmailSendingException;
 import com.project.exceptions.PolicyNotFoundException;
+import com.project.model.InAppNotification;
 import com.project.service.NotificationService;
 
 /**
@@ -128,5 +135,33 @@ public class NotificationController {
     public String sendAgentCred(@RequestBody AgentCredentialsDTO cred) throws AgentNotFoundException, EmailSendingException {
     	service.sendAgentCred(cred);
     	return "credential Sent To the Agent :" + cred.getName();
+    }
+    
+    
+    @PostMapping("/add")
+    public void addNotification(@RequestBody InAppNotification notification) {
+    	service.addNotification(notification);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteNotification(@PathVariable Integer id) {
+        try {
+            service.deleteNotification(id);
+            return "deleted";
+        } catch (Exception e) {
+            // Handle cases where the notification doesn't exist.
+            return "Not Found";
+        }
+    }
+    @GetMapping("/agent/{agentId}")
+    public ResponseEntity<List<InAppNotification>> getNotificationsByAgentId(@PathVariable Integer agentId) {
+        List<InAppNotification> notifications = service.getNotificationsByAgentId(agentId);
+        return ResponseEntity.ok(notifications);
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<InAppNotification>> getNotificationsByCustomerId(@PathVariable Integer customerId) {
+        List<InAppNotification> notifications = service.getNotificationsByCustomerId(customerId);
+        return ResponseEntity.ok(notifications);
     }
 }
