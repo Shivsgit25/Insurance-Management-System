@@ -65,7 +65,7 @@ public class CusotmerServiceImpl implements CustomerService {
         }
         
         repo.save(customer);
-        notificationclient.customerRegisteredMail(customer);
+//        notificationclient.customerRegisteredMail(customer);
         return "Customer Saved Successfully";
     }
  

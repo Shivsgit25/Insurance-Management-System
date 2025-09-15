@@ -1,5 +1,5 @@
 package com.project.config;
-
+ 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,21 +11,21 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-
+ 
 import com.project.utility.JwtAuthenticationFilter;
-
+ 
 import java.util.Arrays;
-
+ 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-
+ 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+ 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
-
+ 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -38,14 +38,14 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
+ 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(exchanges -> exchanges
                     // Public endpoints
-                    .pathMatchers("/auth/login", "/auth/register","/auth/agentlogin").permitAll()
+                    .pathMatchers("/auth/login", "/auth/register","/auth/agentlogin","/api/policylist").permitAll()
                     
                     // CUSTOMER role endpoints
                     .pathMatchers(HttpMethod.GET, "/api/policies").hasAnyRole("CUSTOMER", "ADMIN")
@@ -78,7 +78,7 @@ public class SecurityConfig {
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
-
+ 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
