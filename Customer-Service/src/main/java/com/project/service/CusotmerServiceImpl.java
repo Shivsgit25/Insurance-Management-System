@@ -4,6 +4,7 @@ package com.project.service;
  
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.http.auth.InvalidCredentialsException;
 import org.springframework.stereotype.Service;
@@ -76,12 +77,28 @@ public class CusotmerServiceImpl implements CustomerService {
      */
     @Override
     public String updateCustomer(Customer customer) {
-        repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
+      Customer updateCustomer= repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
                 String.format(CUSTOMER_NOT_FOUND_MESSAGE, customer.getCustomerId()) + " for update."));
-        repo.save(customer);
+       	customer.setPassword(updateCustomer.getPassword());
+    	customer.setRole(updateCustomer.getRole());
+       repo.save(customer);
         return "Customer Updated Successfully on ID : " + customer.getCustomerId();
     }
  
+//    @Override
+//    public Customer updateCustomer(Customer customer) {
+//    	Optional<Customer>existingCustomer=repo.findById(customer.getCustomerId());
+//    	if(existingCustomer.isPresent()) {
+//    		Customer exicust=existingCustomer.get();
+//    		exicust.setAddress(customer.getAddress());
+//    		exicust.setGender(customer.getGender());
+//    		exicust.setPhone(customer.getPhone());
+//    		return repo.save(exicust);
+//    	}
+//    	else {
+//    		throw new RuntimeException("Customer not found with ID:" +customer.getCustomerId());
+//    	}
+//    }
     /**
      * @Override: Retrieves a customer by their unique ID, throwing an exception if not found.
      * @param id: The unique ID of the customer to retrieve.
