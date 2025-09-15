@@ -164,6 +164,14 @@ public class NotificationServiceImpl implements NotificationService {
         try {
             sendEmail(customer.getEmail(), subject, body);
             logger.info("Policy Opted Mail Sent Successfully to {} for policy {}", customer.getEmail(), policy.getPolicyId());
+
+            // Add In-App Notification
+            InAppNotification inAppNotification = new InAppNotification();
+            inAppNotification.setSubject(subject);
+            inAppNotification.setType("Policy Opted");
+            inAppNotification.setDetails(body);
+            inAppNotification.setCustomerId(customer.getCustomerId());
+            addNotification(inAppNotification);
         } catch (MailException e) {
             logger.error("Failed to send policy opted email to {} for policy {}.", customer.getEmail(), policy.getPolicyId(), e);
             throw new EmailSendingException("Failed to send policy opted email to " + customer.getEmail(), e);
@@ -456,6 +464,15 @@ public class NotificationServiceImpl implements NotificationService {
                     }
                  
                     logger.info("Renewal reminder sent for policy {} to customer {}.", policyNumber, customer.getEmail());
+
+                    // Add In-App Notification
+                    InAppNotification inAppNotification = new InAppNotification();
+                    inAppNotification.setSubject(subject);
+                    inAppNotification.setType("Reminder");
+                    inAppNotification.setDetails(body);
+                    inAppNotification.setCustomerId(customer.getCustomerId());
+                    addNotification(inAppNotification);
+
                 } catch (MailException | CustomerNotFoundException e) {
                     logger.error("Failed to send renewal reminder for policy {}.", policy.getPolicyId(), e);
                 }
