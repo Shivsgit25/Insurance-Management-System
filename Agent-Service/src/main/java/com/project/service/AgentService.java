@@ -81,6 +81,26 @@ public interface AgentService {
 
 
 
+	/**
+	 * Updates an existing agent's details.
+	 *
+	 * @param agentId The ID of the agent to update.
+	 * @param updateAgent The Agent object containing updated data.
+	 * @return The updated Agent object.
+	 * @throws RuntimeException if the agent is not found.
+	 */
+	Agent updateAgent(Integer agentId, Agent updatedAgentData);
+
+
+
+
+
+	
+
+
+
+
+
 
 
 	
