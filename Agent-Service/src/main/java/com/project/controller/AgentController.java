@@ -72,7 +72,7 @@ public class AgentController {
 	 * @return A ResponseEntity with the updated Agent object, or 404 if the agent is not found.
 	 */
 	
-    @PutMapping("/update/{agentId}")
+//    @PutMapping("/update/{agentId}")
 //	public ResponseEntity<Agent> updateAgent(@PathVariable Integer agentId, @RequestBody Agent agent){
 //		try {
 //		Agent updated = ser.updateAgent(agentId,agent);
@@ -94,6 +94,17 @@ public class AgentController {
     	ser.deleteAgent(agentId);
     	return "Agent Deleted";
     }
+    
+//    @DeleteMapping("/delete/{agentId}")
+//    public ResponseEntity<String> deleteAgent(@PathVariable Integer agentId) {
+//        try {
+//            ser.deleteAgent(agentId);
+//            return ResponseEntity.ok("Agent Deleted");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("Error deleting agent: " + e.getMessage());
+//        }
+//    }
+
     /**
      * Retrieves all agents associated with a given policy ID.
      *
@@ -221,7 +232,18 @@ public class AgentController {
     public Agent getAgentByEmail(@PathVariable("email") String email) {
         return ser.getAgentByEmail(email);
     }
-    	
+    
+    @PutMapping("/update/{agentId}")
+    public ResponseEntity<Agent> updateAgent(@PathVariable Integer agentId, @RequestBody Agent agent) {
+        try {
+            Agent updated = ser.updateAgent(agentId, agent);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+	
     
 
 

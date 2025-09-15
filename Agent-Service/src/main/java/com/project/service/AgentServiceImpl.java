@@ -122,6 +122,34 @@ public class AgentServiceImpl implements AgentService {
 //				});
 //	
 //	}
+    @Override
+    public Agent updateAgent(Integer agentId, Agent updatedAgent) {
+        Optional<Agent> existingAgentOptional = repo.findById(agentId);
+
+        if (existingAgentOptional.isPresent()) {
+            Agent existingAgent = existingAgentOptional.get();
+
+            // Update only the allowed fields from the incoming payload
+            existingAgent.setName(updatedAgent.getName());
+            existingAgent.setContactInfo(updatedAgent.getContactInfo());
+            existingAgent.setOrgEmail(updatedAgent.getOrgEmail());
+            existingAgent.setGender(updatedAgent.getGender());
+            existingAgent.setDate(updatedAgent.getDate());
+            existingAgent.setAadharnumber(updatedAgent.getAadharnumber());
+            existingAgent.setPhone(updatedAgent.getPhone());
+            existingAgent.setAddress(updatedAgent.getAddress());
+
+            // The following fields are intentionally NOT updated to protect data integrity
+            // existingAgent.setAgentId(updatedAgentData.getAgentId()); // Do not update ID
+            // existingAgent.setPassword(updatedAgentData.getPassword()); // Do not update password
+            // existingAgent.setRole(updatedAgentData.getRole()); // Do not update role
+
+            return repo.save(existingAgent);
+        } else {
+            // Handle the case where the agent is not found, e.g., by throwing an exception
+            throw new RuntimeException("Agent not found with ID: " + agentId);
+        }
+    }
 	/**
 	 * Deletes an agent by their ID.
 	 *
@@ -348,5 +376,6 @@ public class AgentServiceImpl implements AgentService {
 		return repo.findByOrgEmail(email);
 	}
 	
+		
 }
  
