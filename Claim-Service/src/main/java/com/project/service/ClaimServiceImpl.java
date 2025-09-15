@@ -3,12 +3,16 @@
 package com.project.service;
 
 import java.util.List;
+import java.util.Random;
 
+import org.aspectj.weaver.loadtime.Agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.DTO.AgentDTO;
+import com.project.clients.AgentClient;
 import com.project.clients.NotificationClient;
 import com.project.exception.ClaimNotFoundException;
 import com.project.model.Claim;
@@ -22,22 +26,24 @@ import com.project.repository.ClaimRepository;
 public class ClaimServiceImpl implements ClaimService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ClaimServiceImpl.class);
+	
+	private  NotificationClient notificationClient;
+	private  ClaimRepository claimRepository;
+	private  AgentClient agentClient;
 
-	private final ClaimRepository claimRepository;
 
 	/**
 	 * Constructor for dependency injection of ClaimRepository.
+	 * @param notificationClient 
+	 * @param agentClient 
 	 * 
 	 * @param claimRepository: The repository for claim data.
 	 */
-	public ClaimServiceImpl(ClaimRepository claimRepository) {
-		this.claimRepository = claimRepository;
-		logger.info("ClaimServiceImpl initialized");
+	public ClaimServiceImpl(ClaimRepository claimRepository, NotificationClient notificationClient, AgentClient agentClient) {
+		this.agentClient = agentClient;
+		this.claimRepository =claimRepository;
+		this.notificationClient = notificationClient;
 	}
-
-	@Autowired
-	private NotificationClient notificationClient;
-
 	/**
 	 * @Override: Indicates that this method is overriding a method from the
 	 *            ClaimService interface. Files a new claim, sets its initial status
@@ -48,6 +54,17 @@ public class ClaimServiceImpl implements ClaimService {
 	@Override
 	public Claim fileClaim(Claim claim) {
 		logger.info("Filing new claim for policyId: {}", claim.getPolicyId());
+
+		List<AgentDTO> agents = agentClient.getAllAgents().getBody();
+
+		if (agents != null && !agents.isEmpty()) {
+        // Select an agent (e.g., randomly)
+			AgentDTO selectedAgent = agents.get(new Random().nextInt(agents.size()));
+			claim.setAgentId(selectedAgent.getAgentId());
+			logger.info("Assigned Agent ID: {}", selectedAgent.getAgentId());
+		} else {
+			logger.warn("No agents available to assign.");
+		}
 		claim.setStatus(Claim.Status.FILED);
 		Claim saved = claimRepository.save(claim);
 		logger.info("Claim filed with ID: {}", saved.getClaimId());

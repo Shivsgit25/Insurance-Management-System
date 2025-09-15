@@ -47,11 +47,11 @@ public class SecurityConfig {
                     // Public endpoints
                     .pathMatchers("/auth/login", "/auth/register","/auth/agentlogin","/api/policylist").permitAll()
                     
-                    // CUSTOMER role endpoints
+                 // CUSTOMER role endpoints
                     .pathMatchers(HttpMethod.GET, "/api/policies").hasAnyRole("CUSTOMER", "ADMIN")
                     .pathMatchers(HttpMethod.GET, "/api/policies/getCustomerPolicyDetails/**","api/claims/customer/**").hasRole("CUSTOMER")
-                    .pathMatchers(HttpMethod.GET, "/api/policies/**").hasRole("CUSTOMER")
-                    .pathMatchers(HttpMethod.GET, "/customer/getCustomer/**").hasRole("CUSTOMER")
+                    .pathMatchers(HttpMethod.GET, "/api/policies/**").hasAnyRole("CUSTOMER","AGENT")
+                    .pathMatchers(HttpMethod.GET, "/customer/getCustomer/**").hasAnyRole("CUSTOMER","AGENT")
                     .pathMatchers(HttpMethod.PUT, "/customer/Update").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.POST, "/api/claims/file","api/policies/create").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.GET, "/api/claims/customer/**").hasRole("CUSTOMER")
