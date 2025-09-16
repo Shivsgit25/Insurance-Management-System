@@ -1,5 +1,8 @@
 package com.project.exception;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -37,4 +40,23 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body("An unexpected error occurred. Please contact support.");
 	}
+
+
+    @ExceptionHandler(AadharAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleAadharAlreadyExistsException(AadharAlreadyExistsException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Conflict");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidAadharNumberException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidAadharNumberException(InvalidAadharNumberException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Bad Request");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+  
 }

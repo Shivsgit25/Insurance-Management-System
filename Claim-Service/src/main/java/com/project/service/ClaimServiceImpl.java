@@ -70,15 +70,15 @@ public class ClaimServiceImpl implements ClaimService {
 		
 		//inapp notification
 		InappNotificationDTO notify = new InappNotificationDTO();
-        notify.setCustomerId(saved.getCustomerId());
-        notify.setDetails("Your claim with ID " + saved.getClaimId() + " has been successfully filed and is being reviewed.");
+        notify.setCustomerId(claim.getCustomerId());
+        notify.setDetails("Your claim with ID " + claim.getClaimId() + " has been successfully filed and is being reviewed.");
         notify.setSubject("Claim Filed Successfully");
         notify.setType("Claim Filed by Customer");
         notificationClient.addNotification(notify);
         
         InappNotificationDTO agentNotify = new InappNotificationDTO();
-        agentNotify.setCustomerId(claim.getAgentId());
-        agentNotify.setDetails("A new claim with ID " + saved.getClaimId() + " has been assigned to you for review.");
+        agentNotify.setAgentId(claim.getAgentId());
+        agentNotify.setDetails("A new claim with ID " + claim.getClaimId() + " has been assigned to you for review.");
         agentNotify.setSubject("New Claim Assigned");
         agentNotify.setType("New Claim Assigned to Agent");
         notificationClient.addNotification(agentNotify);

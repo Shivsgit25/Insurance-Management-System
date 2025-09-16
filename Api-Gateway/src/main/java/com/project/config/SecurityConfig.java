@@ -53,7 +53,9 @@ public class SecurityConfig {
                     .pathMatchers(HttpMethod.GET, "/api/policies/getCustomerPolicyDetails/**","api/claims/customer/**").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.GET, "/api/policies/**").hasAnyRole("CUSTOMER","AGENT")
                     .pathMatchers(HttpMethod.GET, "/customer/getCustomer/**").hasAnyRole("CUSTOMER","AGENT")
+
                     .pathMatchers(HttpMethod.GET, "/api/claims/**").hasAnyRole("AGENT","ADMIN","CUSTOMER")
+
                     .pathMatchers(HttpMethod.PUT, "/customer/Update").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.POST, "/api/claims/file","api/policies/create").hasRole("CUSTOMER")
                     .pathMatchers(HttpMethod.GET, "/api/claims/customer/**").hasRole("CUSTOMER")

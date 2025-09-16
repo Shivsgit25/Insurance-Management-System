@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import com.project.client.ClaimClient;
 import com.project.client.NotificationClient;
 import com.project.client.PolicyClient;
+import com.project.exception.AadharAlreadyExistsException;
 import com.project.exception.CustomerAlreadyExistsException;
 import com.project.exception.CustomerNotFoundException;
 import com.project.exception.ExternalServiceException;
+import com.project.exception.InvalidAadharNumberException;
 import com.project.model.ClaimDTO;
 import com.project.model.Customer;
 import com.project.model.CustomerPolicy;
@@ -31,7 +33,8 @@ public class CusotmerServiceImpl implements CustomerService {
     
     private static final String CUSTOMER_NOT_FOUND_MESSAGE = "Customer with ID %s not found.";
     private static final String CUSTOMER_ALREADY_EXISTS_MESSAGE = "Customer with email %s already exists.";
-
+    private static final String INVALID_AADHAR_MESSAGE = "Aadhaar number must be a 12-digit number.";
+    private static final String AADHAR_ALREADY_EXISTS_MESSAGE = "Customer with Aadhaar number %s already exists.";
 
     private final CustomerRepository repo;
     private final PolicyClient policyclient;
@@ -64,6 +67,14 @@ public class CusotmerServiceImpl implements CustomerService {
         if (repo.findByEmail(customer.getEmail()) != null) {
             throw new CustomerAlreadyExistsException(String.format(CUSTOMER_ALREADY_EXISTS_MESSAGE, customer.getEmail()));
         }
+
+        // New check for duplicate Aadhaar
+        if (repo.findByAadharnumber(customer.getAadharnumber()) != null) {
+            throw new AadharAlreadyExistsException(String.format(AADHAR_ALREADY_EXISTS_MESSAGE, customer.getAadharnumber()));
+        }
+
+        // Aadhaar format validation
+        validateAadhar(customer.getAadharnumber());
         
         repo.save(customer);
         
@@ -88,6 +99,16 @@ public class CusotmerServiceImpl implements CustomerService {
     public String updateCustomer(Customer customer) {
       Customer updateCustomer= repo.findById(customer.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException(
                 String.format(CUSTOMER_NOT_FOUND_MESSAGE, customer.getCustomerId()) + " for update."));
+       	
+       // New check for duplicate Aadhaar, allowing the current user to keep their own number
+       Customer existingByAadhar = repo.findByAadharnumber(customer.getAadharnumber());
+       if (existingByAadhar != null && !existingByAadhar.getCustomerId().equals(customer.getCustomerId())) {
+           throw new AadharAlreadyExistsException(String.format(AADHAR_ALREADY_EXISTS_MESSAGE, customer.getAadharnumber()));
+       }
+
+       // Aadhaar format validation
+       validateAadhar(customer.getAadharnumber());
+
        	customer.setPassword(updateCustomer.getPassword());
     	customer.setRole(updateCustomer.getRole());
        repo.save(customer);
@@ -215,5 +236,17 @@ public class CusotmerServiceImpl implements CustomerService {
         }
 
         return "Welcome Home, " + customer.getName() + "!";
+    }
+
+    /**
+     * Helper method to validate the Aadhaar number.
+     * An Aadhaar number must be a 12-digit number.
+     * @param aadhar: The Aadhaar number to validate.
+     * @throws InvalidAadharNumberException: If the Aadhaar number is null or not a 12-digit number.
+     */
+    private void validateAadhar(Long aadhar) {
+        if (aadhar == null || String.valueOf(aadhar).length() != 12) {
+            throw new InvalidAadharNumberException(INVALID_AADHAR_MESSAGE);
+        }
     }
 }
