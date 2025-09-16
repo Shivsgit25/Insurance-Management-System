@@ -65,9 +65,9 @@ public class AuthService {
 		// The calling Controller (or other service) will then subscribe to this Mono.
 		
 		Mono<String> res = agentClient.createAgent(agent);
-		Mono<String> notify = notificationClient.sendAgentCred(data);
-		Mono<String> result = Mono.zip(res ,  notify , (r1,r2)->(r1+" : "+r2));
-		return result;
+//		Mono<String> notify = notificationClient.sendAgentCred(data);
+//		Mono<String> result = Mono.zip(res ,  notify , (r1,r2)->(r1+" : "+r2));
+		return res;
 	}
 
 	public Mono<String> authenticateAgent(String email, String password) {
