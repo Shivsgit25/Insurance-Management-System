@@ -2,6 +2,7 @@ package com.project.model;
 
 import java.sql.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class Customer {
 	private String password;
 	private String gender;
 	private Date date;
+	@Column(unique = true)
 	private Long aadharnumber;
 	private Long phone;
 	private String address;
