@@ -12,8 +12,9 @@ import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.InappNotificationClient;
 import com.project.client.PolicyClient;
-import com.project.exception.AgentAlreadyExistsException;
+import com.project.exception.ContactInfoAlreadyExistsException;
 import com.project.exception.InvalidCredentialsException;
+import com.project.exception.OrganisationEmailAlreadyExistsException;
 import com.project.exception.ResourceNotFoundException;
 import com.project.model.Agent;
 import com.project.model.AgentClaim;
@@ -53,17 +54,24 @@ public class AgentServiceImpl implements AgentService {
 	 */
 	@Override
 	public String createAgent(Agent agent) {
-		
-		logger.info("Creating agent with ID: {}", agent.getAgentId());
-		if(getAgentByEmail(agent.getContactInfo()) != null) {
-			throw new AgentAlreadyExistsException(String.format(AGENT_ALREADY_EXISTS_MESSAGE, agent.getContactInfo()));
-			
-		}
+	    logger.info("Creating agent with ID: {}", agent.getAgentId());
+
+	    // Check for duplicate contactInfo
+	    if (repo.findByContactInfo(agent.getContactInfo()) != null) {
+	        throw new ContactInfoAlreadyExistsException("Contact info already exists: " + agent.getContactInfo());
+	    }
+
+	    // Check for duplicate orgEmail
+	    if (repo.findByOrgEmail(agent.getOrgEmail()) != null) {
+	        throw new OrganisationEmailAlreadyExistsException("Organisation email already exists: " + agent.getOrgEmail());
+	    }
+
 	    repo.save(agent);
-	    logger.debug("Agent Saved: {}",agent);
+	    logger.debug("Agent Saved: {}", agent);
 	    return "Agent saved";
-	    
 	}
+
+
 	/**
 	 * Retrieves all agents from the repository.
 	 *
