@@ -27,7 +27,17 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleAgentAlreadyExists(AgentAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.SC_CONFLICT).body("Same agent registered again"); // 409 Conflict
     }
+	@ExceptionHandler(OrganisationEmailAlreadyExistsException.class)
+	public ResponseEntity<String> handleOrganisationEmailExists(OrganisationEmailAlreadyExistsException ex) {
+	    return ResponseEntity.status(HttpStatus.SC_CONFLICT).body(ex.getMessage()); // 409 Conflict
+	}
+	@ExceptionHandler(ContactInfoAlreadyExistsException.class)
+	public ResponseEntity<String> handleContactInfoExists(ContactInfoAlreadyExistsException ex) {
+	    return ResponseEntity.status(HttpStatus.SC_CONFLICT).body(ex.getMessage()); // 409 Conflict
+	}
 	
+
+
 	
 	
 	

@@ -20,11 +20,14 @@ public interface AgentRepository extends JpaRepository<Agent, Integer> {
 
 	Agent findByOrgEmail(String email);
 
+	Agent findByContactInfo(String contactInfo);
+
 
 
 //	List<Agent> findAllByPolicyId(Integer policyId);
 
 //	Agent findByContactInfo(String email);
 
+	
 
 }
