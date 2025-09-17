@@ -24,6 +24,7 @@ public class Policy {
     private Integer policyId;
 
     private String name;
+    private String policyType;
     private Double premiumAmount;
     private String coverageDetails;
     private Integer validityPeriod;
