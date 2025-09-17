@@ -32,9 +32,9 @@ import feign.FeignException;
 public class CusotmerServiceImpl implements CustomerService {
     
     private static final String CUSTOMER_NOT_FOUND_MESSAGE = "Customer with ID %s not found.";
-    private static final String CUSTOMER_ALREADY_EXISTS_MESSAGE = "Customer with email %s already exists.";
+    private static final String CUSTOMER_ALREADY_EXISTS_MESSAGE = "Customer with this email already exists.";
     private static final String INVALID_AADHAR_MESSAGE = "Aadhaar number must be a 12-digit number.";
-    private static final String AADHAR_ALREADY_EXISTS_MESSAGE = "Customer with Aadhaar number %s already exists.";
+    private static final String AADHAR_ALREADY_EXISTS_MESSAGE = "Customer with this Aadhaar number already exists.";
 
     private final CustomerRepository repo;
     private final PolicyClient policyclient;

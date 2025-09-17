@@ -21,11 +21,11 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
     
-    @ExceptionHandler(CustomerAlreadyExistsException.class)
-    public ResponseEntity<String> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
-        logger.error("Customer already exists: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }
+	 @ExceptionHandler(CustomerAlreadyExistsException.class)
+	    public ResponseEntity<String> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
+	        logger.error("Customer already exists: {}", ex.getMessage());
+	        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+	    }
 
 	@ExceptionHandler(ExternalServiceException.class)
 	public ResponseEntity<String> handleExternalServiceException(ExternalServiceException ex) {
@@ -42,19 +42,21 @@ public class GlobalExceptionHandler {
 	}
 
 
+//    @ExceptionHandler(AadharAlreadyExistsException.class)
+//    public ResponseEntity<String> handleAadharAlreadyExistsException(AadharAlreadyExistsException ex) {
+//       Map<String, String> response = new HashMap<>();
+//        logger.error("Aadhaar already exists: {}", ex.getMessage());
+//        return  ResponseEntity.status(HttpStatus.CONFLICT).body("already exist adhacard");
+//    }
     @ExceptionHandler(AadharAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleAadharAlreadyExistsException(AadharAlreadyExistsException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", "Conflict");
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    public ResponseEntity<String> handleAadharAlreadyExistsException(AadharAlreadyExistsException ex) {
+        logger.error("Aadhar already exists: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Customer with Aadhar number already exists");
     }
-
     @ExceptionHandler(InvalidAadharNumberException.class)
     public ResponseEntity<Map<String, String>> handleInvalidAadharNumberException(InvalidAadharNumberException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put("error", "Bad Request");
-        response.put("message", ex.getMessage());
+        logger.error("Invalid Aadhaar number: {}", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
