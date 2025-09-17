@@ -1,7 +1,15 @@
 package com.project.exception;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+@ResponseStatus(HttpStatus.CONFLICT)
 public class AadharAlreadyExistsException extends RuntimeException {
-    public AadharAlreadyExistsException(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public AadharAlreadyExistsException(String message) {
         super(message);
     }
 }
