@@ -197,4 +197,20 @@ public class ClaimController {
 		logger.info("Found {} claims with status: {}", claims.size(), status);
 		return ResponseEntity.ok(claims);
 	}
+	
+	
+	@GetMapping("/agent/{agentId}")
+	public ResponseEntity<List<Claim>> getClaimsByAgent(@PathVariable Integer agentId) {
+		logger.info("Fetching claims for agent ID: {}", agentId);
+		List<Claim> claims = claimService.getClaimsByAgent(agentId);
+		if (claims == null || claims.isEmpty()) {
+			logger.warn("No claims found for agent ID: {}", agentId);
+			throw new ClaimNotFoundException("No claims found for agent ID: " + agentId);
+		}
+		logger.info("Found {} claims for agent ID: {}", claims.size(), agentId);
+		return ResponseEntity.ok(claims);
+	}
+	
+	
+	
 }

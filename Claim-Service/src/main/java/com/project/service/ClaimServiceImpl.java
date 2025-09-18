@@ -145,6 +145,14 @@ public class ClaimServiceImpl implements ClaimService {
 		logger.info("Found {} claims for customer ID: {}", claims.size(), customerId);
 		return claims;
 	}
+	
+	@Override
+	public List<Claim> getClaimsByAgent(Integer agentId) {
+		logger.info("Fetching claims for customer ID: {}", agentId);
+		List<Claim> claims = claimRepository.findByAgentId(agentId);
+		logger.info("Found {} claims for customer ID: {}", claims.size(), agentId);
+		return claims;
+	}
 
 	/**
 	 * @Override: Fetches a list of all claims from the repository.

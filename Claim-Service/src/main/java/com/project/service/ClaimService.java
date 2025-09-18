@@ -21,4 +21,6 @@ public interface ClaimService {
 
 	List<Claim> getClaimsByStatus(Claim.Status status);
 
+	List<Claim> getClaimsByAgent(Integer agentId);
+
 }
