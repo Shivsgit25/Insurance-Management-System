@@ -12,6 +12,7 @@ import com.project.client.ClaimClient;
 import com.project.client.CustomerClient;
 import com.project.client.InappNotificationClient;
 import com.project.client.PolicyClient;
+import com.project.exception.AdharcardNumberAlreadyExistException;
 import com.project.exception.ContactInfoAlreadyExistsException;
 import com.project.exception.InvalidCredentialsException;
 import com.project.exception.OrganisationEmailAlreadyExistsException;
@@ -44,8 +45,6 @@ public class AgentServiceImpl implements AgentService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
 
-	private static final String AGENT_ALREADY_EXISTS_MESSAGE = "Agent already exist with this email";
-    
 	/**
 	 * Creates a new agent and saves it to the database.
 	 *
@@ -58,12 +57,17 @@ public class AgentServiceImpl implements AgentService {
 
 	    // Check for duplicate contactInfo
 	    if (repo.findByContactInfo(agent.getContactInfo()) != null) {
-	        throw new ContactInfoAlreadyExistsException("Contact info already exists: " + agent.getContactInfo());
+	        throw new ContactInfoAlreadyExistsException("Email info already exists: " + agent.getContactInfo());
 	    }
 
 	    // Check for duplicate orgEmail
 	    if (repo.findByOrgEmail(agent.getOrgEmail()) != null) {
 	        throw new OrganisationEmailAlreadyExistsException("Organisation email already exists: " + agent.getOrgEmail());
+	    }
+	    
+	    //check for aadhar duplicate 
+	    if(repo.findByAadharnumber(agent.getAadharnumber())!= null) {
+	    	throw new AdharcardNumberAlreadyExistException("This AdharCard Is Already Exists: "+agent.getAadharnumber());
 	    }
 
 	    repo.save(agent);
